@@ -1,211 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
-
-  <meta name="description" content="硬件环境NVIDIA Jetson AGX Xavier Developer Kit (32GB)  GPU 搭载 Tensor Core 的 512 核 Volta GPU CPU 8 核 ARM v8.2 64 位 CPU、8 MB L2 + 4 MB L3 内存 32 GB 256 位 LPDDR4x | 137 GB&#x2F;秒 存储 32 GB eMMC 5.1 PCIe X16 X8">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Arm64v8架构下Autopolit环境Docker镜像制作 | MinMinMsn</title><meta name="author" content="Jerry Min"><meta name="copyright" content="Jerry Min"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="硬件环境NVIDIA Jetson AGX Xavier Developer Kit (32GB)  GPU 搭载 Tensor Core 的 512 核 Volta GPU CPU 8 核 ARM v8.2 64 位 CPU、8 MB L2 + 4 MB L3 内存 32 GB 256 位 LPDDR4x | 137 GB&#x2F;秒 存储 32 GB eMMC 5.1 PCIe X16 X8">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Arm64v8架构下Autopolit环境Docker镜像制作">
 <meta property="og:url" content="https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/index.html">
 <meta property="og:site_name" content="MinMinMsn">
 <meta property="og:description" content="硬件环境NVIDIA Jetson AGX Xavier Developer Kit (32GB)  GPU 搭载 Tensor Core 的 512 核 Volta GPU CPU 8 核 ARM v8.2 64 位 CPU、8 MB L2 + 4 MB L3 内存 32 GB 256 位 LPDDR4x | 137 GB&#x2F;秒 存储 32 GB eMMC 5.1 PCIe X16 X8">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
 <meta property="article:published_time" content="2021-06-09T00:00:00.000Z">
 <meta property="article:modified_time" content="2023-05-26T07:06:35.202Z">
 <meta property="article:author" content="Jerry Min">
 <meta property="article:tag" content="docker">
 <meta property="article:tag" content="xavier">
 <meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>Arm64v8架构下Autopolit环境Docker镜像制作 | MinMinMsn</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Arm64v8架构下Autopolit环境Docker镜像制作',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-05-26 15:06:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-</head>
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">MinMinMsn</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
   
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Arm64v8架构下Autopolit环境Docker镜像制作
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-06-09 08:00:00" itemprop="dateCreated datePublished" datetime="2021-06-09T08:00:00+08:00">2021-06-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
     
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
     
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <h3 id="硬件环境"><a href="#硬件环境" class="headerlink" title="硬件环境"></a><strong>硬件环境</strong></h3><p><strong>NVIDIA Jetson AGX Xavier Developer Kit (32GB)</strong></p>
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="MinMinMsn"><span class="site-name">MinMinMsn</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Arm64v8架构下Autopolit环境Docker镜像制作</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-06-09T00:00:00.000Z" title="Created 2021-06-09 08:00:00">2021-06-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-05-26T07:06:35.202Z" title="Updated 2023-05-26 15:06:35">2023-05-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/op/">op</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Arm64v8架构下Autopolit环境Docker镜像制作"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="硬件环境"><a href="#硬件环境" class="headerlink" title="硬件环境"></a><strong>硬件环境</strong></h3><p><strong>NVIDIA Jetson AGX Xavier Developer Kit (32GB)</strong></p>
 <ul>
 <li>GPU 搭载 Tensor Core 的 512 核 Volta GPU</li>
 <li>CPU 8 核 ARM v8.2 64 位 CPU、8 MB L2 + 4 MB L3</li>
@@ -234,199 +192,4 @@
 <li>opencv4.1</li>
 </ul>
 <h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a><strong>Dockerfile</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line">FROM arm64v8/ubuntu:18.04</span><br><span class="line"></span><br><span class="line">COPY file/clean-layer.sh /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line">RUN chmod +x /usr/bin/clean-layer.sh \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh \</span><br><span class="line">    &amp;&amp; ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \</span><br><span class="line">    &amp;&amp; echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone</span><br><span class="line"></span><br><span class="line">#COPY file</span><br><span class="line">ADD file/1_sys_config.sh /tmp/</span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; apt-get install -y vim busybox net-tools iputils-ping iproute2 gpg apt-utils locales \</span><br><span class="line">    &amp;&amp; sh /tmp/1_sys_config.sh \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line">#Install VNC&amp;XFCE</span><br><span class="line">RUN gpg --keyserver keyserver.ubuntu.com --recv F42ED6FBAB17C888 \</span><br><span class="line">    &amp;&amp; gpg --export --armor F42ED6FBAB17C888 | apt-key add - \</span><br><span class="line">    &amp;&amp; sed -i -e &#x27;s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/&#x27; /etc/locale.gen \</span><br><span class="line">    &amp;&amp; locale-gen \</span><br><span class="line">    &amp;&amp; dpkg-reconfigure --frontend=noninteractive locales \</span><br><span class="line">    &amp;&amp; update-locale LANG=en_US.UTF-8 \</span><br><span class="line">    &amp;&amp; apt-get update \</span><br><span class="line">    &amp;&amp; apt-get install -y xfce4 xfce4-terminal tigervnc-standalone-server \</span><br><span class="line">    &amp;&amp; bash -c &quot;yes | apt-get install -y sudo&quot; \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line">RUN echo &quot;user&quot; | adduser autopolit &amp;&amp; \</span><br><span class="line">    echo &quot;autopolit ALL=(ALL) NOPASSWD: ALL&quot; &gt;&gt; /etc/sudoers &amp;&amp; \</span><br><span class="line">    usermod -aG dialout autopolit</span><br><span class="line"># Install ros</span><br><span class="line">ADD file/ros.key /tmp/ros.key</span><br><span class="line">RUN apt-key add /tmp/ros.key \</span><br><span class="line">    &amp;&amp; apt-get update \</span><br><span class="line">    &amp;&amp; apt install -y ros-melodic-desktop-full \</span><br><span class="line">       ros-melodic-cv-bridge ros-melodic-abseil-cpp \</span><br><span class="line">       python-rosdep libgoogle-glog-dev libpcap-dev \</span><br><span class="line">       python3-qtpy python3-pip \</span><br><span class="line">       libopenblas-dev liblapacke-dev \</span><br><span class="line">       cmake libavcodec-dev libavformat-dev libavutil-dev \</span><br><span class="line">       libeigen3-dev libglew-dev libgtk2.0-dev libgtk-3-dev \</span><br><span class="line">       libjpeg-dev libpng-dev libpostproc-dev libswscale-dev \</span><br><span class="line">       libtbb-dev libtiff5-dev libv4l-dev libxvidcore-dev \</span><br><span class="line">       libx264-dev qt5-default \</span><br><span class="line">       zlib1g-dev libgl1 libglvnd-dev pkg-config \</span><br><span class="line">       libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \</span><br><span class="line">       python-simplejson python-pip exfat-utils \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line">RUN sudo -H pip3 install jetson-stats rosdep \</span><br><span class="line">    &amp;&amp; sudo pip install google protobuf \</span><br><span class="line">    &amp;&amp; ln -s /usr/bin/vtk6 /usr/bin/vtk \</span><br><span class="line">    &amp;&amp; ln -s /usr/lib/aarch64-linux-gnu/python2.7/site-packages/vtk/libvtkRenderingPythonTkWidgets.aarch64-linux-gnu.so /usr/lib/aarch64-linux-gnu/libvtkRenderingPythonTkWidgets.so</span><br><span class="line"></span><br><span class="line">#安装中文字体</span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; apt-get install -y fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line"># Install osqp &amp; qpOASES</span><br><span class="line">ADD tools/osqp.zip /tmp/osqp.zip</span><br><span class="line">ADD tools/qpOASES-3.2.1.zip  /tmp/qpOASES.zip</span><br><span class="line">RUN cd /tmp \</span><br><span class="line">    &amp;&amp; unzip osqp.zip \</span><br><span class="line">    &amp;&amp; unzip qpOASES.zip \</span><br><span class="line">    &amp;&amp; cd /tmp/osqp \</span><br><span class="line">    &amp;&amp; bash install.sh \</span><br><span class="line">    &amp;&amp; cd /tmp/qpOASES-3.2.1 \</span><br><span class="line">    &amp;&amp; mkdir build \</span><br><span class="line">    &amp;&amp; cd build \</span><br><span class="line">    &amp;&amp; cmake .. \</span><br><span class="line">    &amp;&amp; make install \</span><br><span class="line">    &amp;&amp; cd / \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/*</span><br><span class="line"># Install cuda</span><br><span class="line">ADD tools/cuda /tmp/</span><br><span class="line">RUN dpkg -i /tmp/*.deb \</span><br><span class="line">    &amp;&amp; apt-key add /var/cuda-repo-10-2-local-10.2.89/7fa2af80.pub \</span><br><span class="line">    &amp;&amp; apt-get update \</span><br><span class="line">    &amp;&amp; apt-get install cuda-toolkit-10.2 -y \</span><br><span class="line">    &amp;&amp; echo &quot;export PATH=/usr/local/cuda/bin:$PATH&quot; &gt;&gt; /home/autopolit/.bashrc \</span><br><span class="line">    &amp;&amp; echo &quot;export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH&quot; &gt;&gt; /home/autopolit/.bashrc \</span><br><span class="line">    &amp;&amp; echo &quot;export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH&quot; &gt;&gt; /home/autopolit/.bashrc \</span><br><span class="line">    &amp;&amp; echo &quot;source /opt/ros/melodic/setup.bash&quot; &gt;&gt; /home/autopolit/.bashrc \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/* \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line"># Install pcan</span><br><span class="line">ADD file/linux-headers-4.9.140-tegra /usr/src/linux-headers-4.9.140-tegra/</span><br><span class="line">ADD file/pcanlib/etc/modules.conf.local /etc/</span><br><span class="line">ADD file/pcanlib/lib/modules/4.9.140-tegra /lib/modules/4.9.140-tegra/</span><br><span class="line">ADD file/pcanlib/usr/include /usr/include/</span><br><span class="line">ADD file/pcanlib/usr/lib /usr/lib/</span><br><span class="line">ADD file/pcanlib/usr/local/bin /usr/local/bin/</span><br><span class="line">ADD tools/peak-linux-driver-8.10.2.tar.gz /tmp/</span><br><span class="line">ADD file/tegra /usr/lib/aarch64-linux-gnu/tegra/</span><br><span class="line">RUN echo &quot;/usr/lib/aarch64-linux-gnu/tegra&quot; &gt;&gt; /etc/ld.so.conf.d/aarch64-linux-gnu.conf \</span><br><span class="line">    &amp;&amp; ldconfig</span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; apt-get install -y kmod libpopt-dev \</span><br><span class="line">    &amp;&amp; cd /tmp/peak-linux-driver-8.10.2 \</span><br><span class="line">    &amp;&amp; make all NET=NO PCI=NO ISA=NO DNG=NO PCC=NO \</span><br><span class="line">    &amp;&amp; modprobe pcan \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/* \</span><br><span class="line">    &amp;&amp; /usr/bin/clean-layer.sh</span><br><span class="line"></span><br><span class="line">#Install  opencv</span><br><span class="line">ADD tools/build_opencv /tmp/</span><br><span class="line">RUN cd /tmp \</span><br><span class="line">    &amp;&amp; ./buildOpenCV.sh \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/*</span><br><span class="line"></span><br><span class="line"># lib</span><br><span class="line">ADD tools/libnvinfer-dev_7.1.3-1+cuda10.2_arm64.deb /tmp/</span><br><span class="line">ADD tools/libnvinfer7_7.1.3-1+cuda10.2_arm64.deb /tmp/</span><br><span class="line">RUN dpkg -i /tmp/*.deb \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/*</span><br><span class="line"></span><br><span class="line">#Install tensorrt</span><br><span class="line">ADD tools/tensorrt /tmp</span><br><span class="line">RUN dpkg -i /tmp/libnv* \</span><br><span class="line">    &amp;&amp; dpkg -i /tmp/tensorrt_7.1.3.0-1+cuda10.2_arm64.deb \</span><br><span class="line">    &amp;&amp; rm -rf /tmp/*</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#添加VNC文件,设置环境变量</span><br><span class="line">ADD file/xstartup /autocar-code/xstartup</span><br><span class="line">ADD file/passwd /autocar-code/passwd</span><br><span class="line">ADD file/.Xauthority /autocar-code/.Xauthority</span><br><span class="line">RUN mkdir /home/autopolit/.vnc \</span><br><span class="line">    &amp;&amp; cp /autocar-code/passwd /home/autopolit/.vnc/ \</span><br><span class="line">    &amp;&amp; cp /autocar-code/xstartup /home/autopolit/.vnc/ \</span><br><span class="line">    &amp;&amp; cp /autocar-code/.Xauthority /home/autopolit/ \</span><br><span class="line">    &amp;&amp; chown -R autopolit:autopolit /home/autopolit \</span><br><span class="line">    &amp;&amp; chown -R autopolit:autopolit /autocar-code</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"># docker</a>
-              <a href="/tags/xavier/" rel="tag"># xavier</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2021/05/21/2021/05/2021-05-21-nvidia-jetson-agx-xavier%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index/" rel="prev" title="Nvidia JetSON AGX Xavier查看版本常用命令">
-      <i class="fa fa-chevron-left"></i> Nvidia JetSON AGX Xavier查看版本常用命令
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/07/27/2021/07/2021-07-27-%E5%BD%B1%E5%93%8Dubuntu18-04%E7%B3%BB%E7%BB%9Fdns%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9B%A0%E7%B4%A0/index/" rel="next" title="影响ubuntu18.04系统DNS的几个因素">
-      影响ubuntu18.04系统DNS的几个因素 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">硬件环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">软件环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dockerfile"><span class="nav-number">3.</span> <span class="nav-text">Dockerfile</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Jerry Min</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">260</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-</body>
-</html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://minminmsn.github.io">Jerry Min</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/">https://minminmsn.github.io/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker/">docker</a><a class="post-meta__tags" href="/tags/xavier/">xavier</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/07/27/2021/07/2021-07-27-%E5%BD%B1%E5%93%8Dubuntu18-04%E7%B3%BB%E7%BB%9Fdns%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9B%A0%E7%B4%A0/index/" title="影响ubuntu18.04系统DNS的几个因素"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">影响ubuntu18.04系统DNS的几个因素</div></div></a></div><div class="next-post pull-right"><a href="/2021/05/21/2021/05/2021-05-21-nvidia-jetson-agx-xavier%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index/" title="Nvidia JetSON AGX Xavier查看版本常用命令"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Nvidia JetSON AGX Xavier查看版本常用命令</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2019/05/23/2019/05/2019-05-23-%E5%88%B6%E4%BD%9Cjava%E5%9F%BA%E7%A1%80docker%E9%95%9C%E5%83%8F/index/" title="制作java基础docker镜像"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-05-23</div><div class="title">制作java基础docker镜像</div></div></a></div><div><a href="/2019/05/26/2019/05/2019-05-26-java%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C%E5%8F%8A%E5%9C%A8kubernetes%E4%B8%8A%E5%8F%91%E5%B8%83/index/" title="Java应用程序镜像制作及在kubernetes上发布"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-05-26</div><div class="title">Java应用程序镜像制作及在kubernetes上发布</div></div></a></div><div><a href="/2019/11/04/2019/11/2019-11-04-%E8%93%9D%E9%B2%B8%E9%85%8D%E7%BD%AE%E5%B9%B3%E5%8F%B0/index/" title="蓝鲸配置平台"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-11-04</div><div class="title">蓝鲸配置平台</div></div></a></div><div><a href="/2021/08/30/2021/08/2021-08-30-xavier%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0docker%E4%B8%AD%E5%AE%89%E8%A3%85pcan/index/" title="Xavier开发者平台Docker中安装PCAN"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-30</div><div class="title">Xavier开发者平台Docker中安装PCAN</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jerry Min</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">硬件环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text">软件环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile"><span class="toc-number">3.</span> <span class="toc-text">Dockerfile</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" title="运维能力要求">运维能力要求</a><time datetime="2022-12-27T00:00:00.000Z" title="Created 2022-12-27 08:00:00">2022-12-27</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/" title="浅谈基于 OpenStack 和 k8s 轻量研发私有云建设">浅谈基于 OpenStack 和 k8s 轻量研发私有云建设</a><time datetime="2022-11-01T00:00:00.000Z" title="Created 2022-11-01 08:00:00">2022-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" title="数学公式集锦">数学公式集锦</a><time datetime="2022-06-17T00:00:00.000Z" title="Created 2022-06-17 08:00:00">2022-06-17</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/" title="运维工作总结">运维工作总结</a><time datetime="2022-06-14T00:00:00.000Z" title="Created 2022-06-14 08:00:00">2022-06-14</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" title="明儒学案学习笔记">明儒学案学习笔记</a><time datetime="2022-06-11T00:00:00.000Z" title="Created 2022-06-11 08:00:00">2022-06-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Jerry Min</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,1292 +1,219 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
-
-  <meta property="og:type" content="website">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MinMinMsn</title><meta name="author" content="Jerry Min"><meta name="copyright" content="Jerry Min"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
 <meta property="og:title" content="MinMinMsn">
 <meta property="og:url" content="https://minminmsn.github.io/page/7/index.html">
 <meta property="og:site_name" content="MinMinMsn">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
 <meta property="article:author" content="Jerry Min">
 <meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://minminmsn.github.io/page/7/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'en'
-  };
-</script>
-
-  <title>MinMinMsn</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://minminmsn.github.io/page/7/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MinMinMsn',
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-05-26 16:35:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">MinMinMsn</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content index posts-expand">
-            
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/05/07/2020/05/2020-05-07-%E5%AE%88%E6%94%BB%E9%81%93/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/07/2020/05/2020-05-07-%E5%AE%88%E6%94%BB%E9%81%93/index/" class="post-title-link" itemprop="url">守攻道</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-05-07 08:00:00" itemprop="dateCreated datePublished" datetime="2020-05-07T08:00:00+08:00">2020-05-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/wisdom/" itemprop="url" rel="index"><span itemprop="name">wisdom</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>引子</strong> 今天学习小组里面一位大牛发了一份文档《2019家庭红宝书：预防家庭小崩溃》，我觉得这个调查研究挺有意思的。然后转发给了一位书友让他也看看，本意山是想看他对号入座归于哪一种家庭呢，最后经过一番探讨得出结论，他觉得他不归于文档种几种类型，最后我的结论山你属于随遇而安型的，我说但愿如此。</p>
-<p>回家吃饭的时候我还在想这个问题。我想要是更深入的探讨我可能会追问：能否接受命运的安排，不管遇到什么事情？比如命途多舛；再比如遇到大挫折；又比如上天让你喜欢猪八戒，你会不会喜欢。当然应该还有更极端的例子，虽然那样效果更好，但是也不能过于残忍，毕竟只是为了好奇。</p>
-<p>然后思绪万千，饭没有多吃，碗也没有洗，就着一罐啤酒打开了大儿子的小破电脑（他说这是最破的电脑，因为经常在他看动画片关键的时候掉链子自动关机赛见，当然了我用时一切会恢复正正常的），急忙记下脑海中的想法，可是已经忘了不少了。每次都是这样，第一次思考时感觉灵感充沛可以浮想联翩，接着就是再二衰，三而竭了，这次就撮合看吧。</p>
-<p><strong>关于守</strong> 从来没有想过与马老师主演的电影名字撞衫，然后今天却遇到了，奈何马老师捷足先登，把好名字占位了，索性调换下顺序，这样反而更贴合我想表达的意思，是不是有点儿妙手偶的之的感觉。</p>
-<p>这里八卦下，马老师主演了《攻守道》一人横扫所有门派后，有人就说有钱真的可以为所欲为啊！或许，Maybe，Perhaps真是这样的吧。但是我觉得只看到这一层肯定说太小瞧我们的马老师了，至少我们应该去了解乃至理解这三个字的含义吧。这里确实娱乐了一把，顺便说一句娱乐时又想到了Linux之父Just for Fun年轻时所著的《Just for Fun》，书里表达了他的观点人生的意义是从生存到稳定到娱乐，到了娱乐就算成功了，也算是到头了，需要循环去找下个娱乐点。</p>
-<p>写到这里我突然发现这些大佬们确实都有娱乐精神哈！我又想到了另外一个我比较喜欢的青年学者熊逸，他在互联网上隐藏得很深，至今没人知道他的真名，记得他开始写《春秋大义》、《孟子他说》、《周易江湖》时是何其的幽默风趣，后来变得越来越理性思辩了，可是又有什么东西经得起思辩呢，所以后来他写的关于王阳明的《一切心法》就严肃得多了（而且提交了关于阳明先生家庭琐事的资料，一下子让阳明先生有血有肉多了，那些把阳明封神的人肯定接受不了这一版本的王阳明吧），没有把娱乐精神坚持到底，不过他本人已经到了看山还是山的境界了，不需要再好奇了。</p>
-<p>能接受任何事情，这一点是通过我小儿子的经历得来的。小孩子难带大家都懂的，在他四五个月的时候我妈抱着时完成了首摔，后来七八个月时我和孩子妈由于各自的疏忽大意都导致过他从儿童椅上摔下来，等于说他几个月内已经摔了三次头，现在大家都不互相埋怨了，因为在每个人手中孩子都受到过小小的伤害。虽然都不严重，但是作为家长还是很担心的，怕孩子哪儿摔坏啊，或者长大不聪明什么的。为此我还伤感了一段时间，后来有一天不知是看了黄勃主演的电影《被光抓走的人》还是什么受到了启发，不管他怎样或者不管发生任何情况，只要我都能接受都能陪着他不就好了，何必担心这些没有发生的事情，不管什么结果我都负责不就好了。想到这里我突然就不惆怅了，我立马就觉得该珍惜时间，该干嘛就干嘛了。</p>
-<p>其实我之前经常周期性的或者遇到挫败时会担忧或者焦急，那时候我也会去寻找问题的解答，那时我找的答案是：“子曰，‘君子道者三，我无能焉：仁者不忧，知者不惑，勇者不惧。’”可是这个连孔圣人都做不到，何况我等常人。现在找到这个能接受任何事情的解答真是感觉太爽 了，只是不知道这是和自己和解还是人生之道就是如此？</p>
-<p>我觉得应该不是守住初心的守，因为你守住初心是为了方得始终。初是始，是因，是为了终，果才刻意为之的，有功利心在里面，而且不可控。我这里的守，强调的是受（看到没有守和受读音都差不多，不知道是不是巧合），受力的受，接受一切的受：就好像《天龙八部》里面的扫地僧一样，他的守可谓一流，能随便打他都能接受，跟没事一样；或者像《碟中谍6：全面瓦解》中有一段质问假扮拉克的伊森能你的底线是什么，他回答我没有底线（当然这个例子可能不太恰当）；也许像庄子说的：“在蝼蚁，在稊稗，在瓦甓，在屎溺。”。</p>
-<p>以上就是我说的守。</p>
-<p><strong>关于攻</strong> 既然能接受一切，为啥还要攻呢，只有守不也能活得坦然自在嘛，简简单单的一生多好。我觉得主要是一种强烈的责任感在驱使着我们，让我们富有同情心来关注广大有情众生的福祉。</p>
-<p>用《钢铁是怎样炼成的》中的保尔·柯察金的话说就是：“一个人的一生应该是这样度过的，当他回首往事的时候，不因虚度年华而悔恨，也不因碌碌无为而羞耻。”</p>
-<p>用爱因斯坦的话说就是：“我的精神生活和物质生活都依靠别人（包括活着的人和死去的人）的劳动，我必须尽力以同样的分量来报偿我所领受了的和至今还在领受的东西。”</p>
-<p>用佛家的思想说就是：“你这一生是经过多少的花花草草、飞禽走兽的供养才能有今天，你难道不应该惜福与回报社会吗？”</p>
-<p>用《疯狂的麦克斯：狂暴之路》中战子的话说就是：“见证我！见证我踏入英灵之殿！”（ 当然这个例子可能不太恰当）</p>
-<p>顺便说一句，难怪爱因斯坦的世界观这么正，可能是受到质能方程E&#x3D;mc²的影响，他发现宇宙的天体发光发热的奥秘，质量越大能量越大。相对于我们人来说就是你体重越大那么你的责任也就越大，要不然怎样燃烧能的小宇宙，怎样去发光发热呢？显然这里也揭示了减肥的原理，多付出少获取才是减肥的正道啊。</p>
-<p>不多说了扯远了，夜深了，思路已经不清晰了，下面是收尾环节。</p>
-<p>所以攻就是选择付出，扛起责任。</p>
-<p>以上就是我说的攻。</p>
-<p><strong>关于道</strong> 不可说。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/30/2020/04/2020-04-30-sre%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97mikey%E9%87%91%E5%AD%97%E5%A1%94/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/30/2020/04/2020-04-30-sre%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97mikey%E9%87%91%E5%AD%97%E5%A1%94/index/" class="post-title-link" itemprop="url">SRE生存指南Mikey金字塔</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-30 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-30T08:00:00+08:00">2020-04-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>Mikey金字塔摘选自纳特·韦尔奇著作《SRE生存指南：系统中断响应与正常运行时间最大化》，译者为冯文辉。</strong></p>
-<blockquote>
-<p><img src="/images/sre.jpg"> 注：这个七层金字塔围绕着沟通设计。每一层都建立在前一层的基础之上。它被沟通所包围，因为每一层都需要沟通才能成功。</p>
-</blockquote>
-<p>SRE工程师是大厂才有的细分的一个职位，其中Mikey金字塔是本书的灵魂，理解后会有一套成熟的方法论应对日常的运维工作。 金字塔以沟通为核心，贯穿始终，自下而上分为监控、事故响应、事后回顾、测试与发布、容量规划、构建工具、用户体验七层。 具体需要在工作中良好应用，形成良性循环，发挥其最大功效，保障服务的可用性、可持续性、可扩展性、可维护性、可操作性、稳定性及安全性。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/" class="post-title-link" itemprop="url">凤凰项目：一个IT运维的传奇故事读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-27 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-27T08:00:00+08:00">2020-04-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="作者简介"><a href="#作者简介" class="headerlink" title="作者简介"></a><strong>作者简介</strong></h3><p><strong>吉恩·金(Gene Kim)</strong> 信息技术流程研究所联合创始人、研究总监，Tripwire公司创始人，担任公司CTO长达13年之久，一直热衷于研究如何提高IT组织的效能。 <strong>凯文·贝尔（Kevin Behr)</strong> PraxisFlow咨询公司首席科学官，信息技术流程研究所联合创始人，拥有25年以上的IT管理经验，常为CEO、CIO、CTO等提供指导和建议。 <strong>乔治·斯帕福德(George Spafford)</strong> 高德纳公司高级研究总监，行业分析师，在IT运维方面拥有丰富经验，曾在多个国家提供过信息技术治理和流程改进等方面的咨询和培训。 <strong>简·思西尔特(JanSchilt)</strong> GamingWorks创始人，国际最佳实践管理联盟资深专家。IT管理类全球知名沙盘创作者，如IT服务管理类“阿波罗13号”、项目管理类“挑战埃及”和DevOps沙盘“凤凰项目”等。</p>
-<h3 id="译者介绍"><a href="#译者介绍" class="headerlink" title="译者介绍"></a><strong>译者介绍</strong></h3><p><strong>成小留</strong> 上班族，朝九晚六；好读书，不求甚解。用闲云野鹤的态度度过按部就班的人生。 <strong>刘征</strong> Nutanix路坦力资深架构师，EXIN首批国内DevOps Master禾DDevOpsProfessional认证讲师，持有红帽RHCA认证和AWS高级架构师认证，谙熟企业数据中心的IT服务管理。目前致力于推广DevOps相关的理念和实践，在DevOps社区中积极地参与培训和研讨会等活动，是DevOpsDays大会社区在中国的核心组织者和志愿工作者。 <strong>沙盘章节翻译：国际最佳实践管联盟</strong> 国际最佳实践管理联盟承担GamingWorks全部沙盘演练产品在中国的知识产权管理和保护工作，参加凤凰沙盘演练后将有机会获得由国际最佳实践管理联盟颁发的凤凰项目沙盘证书。追求卓越，最佳实践！</p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>第一次见到这本书还是三年前，那时候看到领导座位旁边放着一本。我看这名字挺好奇的，于是拿起来看了一会，心里想这是什么玩意儿，后来就放下了。 昨天早上我看微信读书有好友在读这本书，点进去看评分竟然高达9.3分（今天变成了9.4），一般8.0以上就算是好书了，9.0以上肯定是精品了。 所谓精品我理解一般是创始人或者行业泰斗等著的书。我这次没有错失良机，于是继续读了下去，一发不可收拾，越读越心潮澎湃，今天就读完了。可见同一本书，不同的时间去读，感觉完全是不一样的。总之这是一本非常适合CEO、CFO、CIO、各种部门VP、审计、安全、开发、运维等角色读的书。能让你高屋建瓴，从全局来考虑问题，让你认识到什么才是真正的工作。 话说回来，读完遍后就算设想声临其境中也很难领略其中真谛之万一，虽然现在DevOps已经普遍流行了，但是真正难得的是开创人怎样思考经历了怎样的心路历程才得出这个成果的，这才是我们最值得思考的！ 其实读书并不是在读书，只是在看别人经历过什么，如果自己不去经历，基本上可以不用去读，因为就算当时获取了一些认知也是会反复、回转、可逆的，总归还是不测底的。所以需要去实践，然后总结，获得自己的一套知识体系，最后再去验证，如此反复锻炼去粗取精，这样才能得出自己的一点点成果。</p>
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p>本书讲的是主人公比尔在公司股价大跌、IT运维VP与CIO被裁时，经过CEO忽悠后临危受命成为了IT运维的副总裁。在CEO的不但鞭策和幕后神秘投资人不断启发下（当然也少不了反对者与阻挡者），主人公陆续克服了种种困难与挑战并总结出了IT运维中包含的四种类型工作，分清了哪些是会阻碍工作的瓶颈。通过对工厂运维的苦思冥想，最终与团队伙伴一起创造了新的IT运维工作法则：三步工作法，并由此衍生出了DevOps的行为和模式（想继续深入学习的同学可以读《DevOps实践指南》）。从而从质的方面提升了IT运维的效率与质量，最终业务、开发、运维可以在一起开心的玩耍了，一天十部署也不是事了，公司业绩半年后就超越竞争对手了。结局可想而知，主人公成了CEO的重点培养对象，从IPVP到COO到CEO都不是梦了。</p>
-<h3 id="感兴趣的备注"><a href="#感兴趣的备注" class="headerlink" title="感兴趣的备注"></a><strong>感兴趣的备注</strong></h3><p><strong>何为变更</strong> 变更就是对应用程序、数据库、操作系统、网络或硬件进行的物理、逻辑或虚拟操作，并且这样的操作可能对相关服务产生影响。</p>
-<p><strong>生产运维与IT运维</strong> “如果你认为IT运维部没有什么可向生产运维部学习的，那你就错了。大错特错。”他说，“作为IT运维部的副总裁，你的工作是确保形成一条迅速、可预测、持续不断的计划内工作流，从而向业务部门交付工作价值，同时尽可能降低计划外工作的影响和破坏，那样你才能提供稳定的、可预期的、安全的IT服务。”</p>
-<p><strong>三步工作法：流通，反馈，持续学习与实验。</strong> “年轻人，一旦明白了这些，你就能踏上理解‘三步工作法’的征途了。”他说，“第一步帮助我们理解在工作从开发部移向IT运维部时该如何建立快速工作流，因为那就是业务部门与客户之间的衔接。第二步告诉我们如何缩短及放大反馈环路，从而在源头上解决质量问题，避免返工。第三步告诉我们如何建立一种文化，既能鼓励探索、从失败中吸取教训，又能理解反复实践是精通工作的先决条件。”</p>
-<blockquote>
-<p><img src="/images/first-way2-400x191.png"> <img src="/images/second-way1-400x211.png"> <img src="/images/third-way-400x224.png"> 三步工作法（来源：吉恩·金在IT Revolution Press博客上发布的“三步工作法：DevOps的基础原则”，访问于2016年8月9日，<a target="_blank" rel="noopener" href="http://itrevolution.com/the-three-ways-principles-underpinning-devops/%EF%BC%89">http://itrevolution.com/the-three-ways-principles-underpinning-devops/）</a></p>
-</blockquote>
-<p><strong>高德拉特在《目标》五个聚焦步骤</strong></p>
-<ul>
-<li>识别系统的约束点</li>
-<li>决定如何利用这个系统约束点；</li>
-<li>基于上述决定，考虑全局工作；</li>
-<li>改善系统的约束点；</li>
-<li>如果约束点已经突破了，请回到第一步，但要杜绝惯性导致的系统约束。</li>
-</ul>
-<p><strong>开发除了关注功能还应该关注什么</strong> 你在开发部的同僚切斯特，把他所有的工作周期都花在了功能开发上，而没有用在稳定性、安全性、可扩展性、可维护性、可操作性、持续性以及其他诸如此类的美好性能上。</p>
-<p><strong>四种类型工作</strong> 比尔提到了四种类型的工作：业务项目、IT运维项目、变更以及计划外工作。如果不加控制，技术债务必将导致公司里唯一能够完成的工作就是计划外工作！</p>
-<p><strong>IT运维工作和工厂工作非常类似</strong> 既然我已经在自己的部门里亲眼见证了埃瑞克的那套成果，我明白了，IT运维工作和工厂工作非常类似。 （我在干IT运维工作之前也在工厂干过，可惜从来没有想过他们之间的联系，看来以后得把自己做过的事情连接起来看看能不能成为一个体系。）</p>
-<h3 id="书中提到的影视作品"><a href="#书中提到的影视作品" class="headerlink" title="书中提到的影视作品"></a><strong>书中提到的影视作品</strong></h3><ul>
-<li>《IT狂人》</li>
-<li>《功夫熊猫》</li>
-<li>《老板度假去》</li>
-<li>《四眼田鸡》</li>
-<li>《星际迷航》</li>
-<li>《苍白骑士》</li>
-<li>《二维世界》</li>
-<li>《狂犬惊魂》</li>
-</ul>
-<h3 id="书中提到的书籍"><a href="#书中提到的书籍" class="headerlink" title="书中提到的书籍"></a><strong>书中提到的书籍</strong></h3><ul>
-<li>《目标：简单而有效的常识管理》</li>
-<li>《目标之外》</li>
-<li>《DevOps实践指南》</li>
-<li>《团队发展的五大障碍》</li>
-<li>《持续交付》</li>
-<li>《精益创业》</li>
-<li>《直觉》</li>
-<li>《精益思想》</li>
-<li>《第五项修炼：学习型组织的艺术与实践》</li>
-<li>《探索吧！深入理解探索式软件测试》</li>
-<li>《丰田套路》</li>
-<li>《走动管理》</li>
-<li>《财富》</li>
-<li>《名利场》</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/19/2020/04/2020-04-19-testdisk%E6%81%A2%E5%A4%8D%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98%E6%95%B0%E6%8D%AE/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/19/2020/04/2020-04-19-testdisk%E6%81%A2%E5%A4%8D%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98%E6%95%B0%E6%8D%AE/index/" class="post-title-link" itemprop="url">testdisk恢复格式化磁盘数据</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-19 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-19T08:00:00+08:00">2020-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bigdata/" itemprop="url" rel="index"><span itemprop="name">bigdata</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a><strong>缘起</strong></h3><p>由于疫情影响，上幼儿园的大儿子在家待了几个月了。最近他迷恋玩电脑了，为了防止他沉迷其中，为父只好把win10系统换成了deepin20。系统安装好后，不料一时疏忽大意误把数据分区给格式化了，所以就产生了这篇数据恢复的操作记录。</p>
-<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a><strong>步骤</strong></h3><p><strong>1.原系统分区情况</strong> 系统盘C 数据盘D 数据盘E 安装deepin20系统时只是把系统盘格式化了，数据盘并没有受影响。新系统启动后原数据盘D和E以只读形式挂载在&#x2F;media下。其中&#x2F;dev&#x2F;sda4映射为数据盘E，&#x2F;dev&#x2F;sda5映射为数据盘D，且数据盘D中重要数据比较少，我用16G U盘把数据先备份了下，准备格式化后做成可写分区再把数据盘E中数据迁移过来。 问题出在操作时，mkfs.ex4时选了&#x2F;dev&#x2F;sda4，这下本来是想先格式化D盘的，变成了格式化E盘。而原E盘有60G重要数据，是之前保留的比较重要的资料、照片、视频等。</p>
-<p><strong>2.寻找数据恢复方法</strong></p>
-<p>意识到格式化错了后，立马卸载了&#x2F;deb&#x2F;sda4，防止对其操作。网上查找恢复数据方法，linux下大部分记录的是rm误删除后数据恢复的办法。找了很久没有发现格式化数据恢复方法，但是此时并没有放弃，继续找方法，因为之前有遇到磁盘损坏的情况，发现别人也能恢复数据成功，我这只是格式化，应该有办法。功夫不负有心人，最后终于发现有个linux下testdisk可以恢复磁盘分区错误方面的数据。</p>
-<p><strong>3.安装testdisk</strong></p>
-<p>deepi系统是基于ubuntu系统的，所以安装软件包一般用apt-get ,于是我用apt-get install testdisk来安装，没想到立马就安装了。由于磁盘操作需要root权限，后续操作我sudo su - 切换到root下执行。</p>
-<p><strong>4.起东testdisk开始分析</strong></p>
-<p>起到testdisk，创建一个日志文件，可以记录文件恢复记录 <img src="/images/1.png"></p>
-<p>选择需要恢复的磁盘 <img src="/images/2.png"></p>
-<p>选择分区表类型，默认选择推荐的即可，这里是ETF GPT 备注：就算这里选择错了也不影响分析，只是最后恢复时找不到文件，第二次选择正确的分区表类型即可，这时会跳过分析直接进入恢复步骤，分析比较耗时，500G磁盘大概花了5小时左右 <img src="/images/3.png"></p>
-<p>默认选择Analyse，先分析，这里大概需要几小时，磁盘越大时间越久 <img src="/images/4.png"></p>
-<p>分析后展示磁盘分区情况如下 发现有6个分区，其中4和5应该对应原系统数据盘D和E 选择快速搜索 <img src="/images/5.png"></p>
-<p>MS DATA继续 <img src="/images/6.png"></p>
-<p>这里D代表之前删除的数据 发现有四个D，可以分别用上下键选择然后按键P，列出文件，有文件列表的就可以做数据恢复了 <img src="/images/7.png"></p>
-<p>这个是选择第二个D，发现的文件类别 其实之前的数据盘D和数据盘E数据都在这里，这个MS DATA 280G，之前数据盘D和E都是136G <img src="/images/8.png"></p>
-<p>数据恢复 按键C，选择需要恢复的文件或目录 按键A，全部选择 按键c，恢复选择的文件，即是恢复按键C活A选择的文件 默认文件会复制到&#x2F;root路径下，testdisk也是在这个目录启动的，应该三在哪儿启动数据就恢复到当前启动路径下 重复移动上下键，按C选择，按c开始复制，直到所有需要的数据都恢复完成，这里能显示的目录或者文件都可以恢复 <img src="/images/9.png"></p>
-<p>这是数据恢复完成后，&#x2F;root路径下恢复的文件情况 <img src="/images/10.png"></p>
-<p>这个是所以工作完成后分区情况 <img src="/images/11.png"></p>
-<h3 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a><strong>尾声</strong></h3><p>现在大儿子只能玩些简单的游戏了，比如俄罗斯方块，再也不会随便把我的电脑搞得乱七八糟的了，因为每次发现他安装好多软件。 另外在线视频软件也没有，为了给他偶尔看看动画片，也做了2个快捷方式可以看在线浏览器看视频。自从换了系统后他再也不迷恋这个电脑了，linux真的能改变人生哈。 下面把deepin20桌面给大家欣赏下，真的简洁实用。 <img src="/images/12.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/09/2020/04/2020-04-09-%E5%AE%8B%E6%9C%9D%E6%96%87%E4%BA%BA%E8%AF%97%E8%AF%8D%E6%AC%A3%E8%B5%8F/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/09/2020/04/2020-04-09-%E5%AE%8B%E6%9C%9D%E6%96%87%E4%BA%BA%E8%AF%97%E8%AF%8D%E6%AC%A3%E8%B5%8F/index/" class="post-title-link" itemprop="url">宋朝文人诗词欣赏</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-09 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-09T08:00:00+08:00">2020-04-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/poetry/" itemprop="url" rel="index"><span itemprop="name">poetry</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="苏轼"><a href="#苏轼" class="headerlink" title="苏轼"></a><strong>苏轼</strong></h3><p>字子瞻、和仲，号铁冠道人、东坡居士，世称苏东坡、苏仙，汉族，眉州眉山（四川省眉山市）人，祖籍河北栾城，北宋著名文学家、书法家、画家，历史治水名人。苏轼是北宋中期文坛领袖，在诗、词、散文、书、画等方面取得很高成就。文纵横恣肆；诗题材广阔，清新豪健，善用夸张比喻，独具风格，与黄庭坚并称“苏黄”；词开豪放一派，与辛弃疾同是豪放派代表，并称“苏辛”；散文著述宏富，豪放自如，与欧阳修并称“欧苏”，为“唐宋八大家”之一。苏轼善书，“宋四家”之一；擅长文人画，尤擅墨竹、怪石、枯木等。作品有《东坡七集》《东坡易传》《东坡乐府》《潇湘竹石图卷》《古木怪石图卷》等。</p>
-<p><strong>定凤波·莫听穿林打叶声</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">莫听穿林打叶声，何妨呤啸且徐行。</span><br><span class="line">竹杖芒鞋轻胜马，谁怕，一蓑烟雨任平生。</span><br><span class="line"></span><br><span class="line">料峭春风吹酒醒，微冷，山头斜照却相迎。</span><br><span class="line">回首向来萧瑟处，归去，也无风雨也无晴。</span><br></pre></td></tr></table></figure>
-
-<p><strong>念奴娇·赤壁怀古</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">大江东去，浪淘尽，千古风流人物。故垒西边，人道是，三国周郎赤壁。乱石穿空，惊涛拍岸，转起千堆雪。江山如画，一时多少豪杰。</span><br><span class="line"></span><br><span class="line">遥想公瑾当年，小乔出嫁了，雄姿英发。羽扇纶巾，谈笑间，樯橹灰飞烟灭。故国神游，多情应笑我，早生华发。人生如梦，一尊还酹江月。</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/03/2020/04/2020-04-03-%E5%BB%BF%E4%B8%80%E5%8F%B2%E5%BC%B9%E8%AF%8D/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/03/2020/04/2020-04-03-%E5%BB%BF%E4%B8%80%E5%8F%B2%E5%BC%B9%E8%AF%8D/index/" class="post-title-link" itemprop="url">廿一史弹词</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-03 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-03T08:00:00+08:00">2020-04-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/poetry/" itemprop="url" rel="index"><span itemprop="name">poetry</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">《廿一史弹词》为杨慎谪戍云南时所作，原名《历代史略十段锦词话》，传世后易名为《廿一史弹词》。</span><br><span class="line">它取材于正史，用浅近文言写成，被誉为“后世弹词之祖”。杨慎是明朝人，只写了明朝以前。后人续作说明朝、说清朝等，乃称二十五史弹词。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第一段 总说</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">西江月</span><br><span class="line">天上乌飞兔走，人间古往今来。沉吟屈指数英才，多少是非成败。</span><br><span class="line">富贵歌楼舞榭，凄凉废冢荒台。万般回首化尘埃，只有青山不改。</span><br><span class="line">西江月</span><br><span class="line">滚滚龙争虎斗，匆匆兔走乌飞。席前花影坐间移，百岁光阴有几。</span><br><span class="line">说古谈今话本，图王霸业兵机。要知成败是和非，都在渔樵话里。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第二段 说三代</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">南乡子</span><br><span class="line">携酒上吟亭，满目江山列画屏。赚得英雄头似雪，功名。虎啸龙吟几战争。</span><br><span class="line">一枕梦魂惊，落叶西风别换声。谁弱谁强都罢手，伤情。打入渔樵话里听。</span><br><span class="line">西江月</span><br><span class="line">阅尽残篇断简，细评千古英雄。功名富贵笑谈中，回首一场春梦。</span><br><span class="line">昨日香车宝马，今朝禾黍秋风。谁强谁弱总成空，傀儡棚中搬弄。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第三段 说秦汉</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">临江仙</span><br><span class="line">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。青山依旧在，几度夕阳红。</span><br><span class="line">白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。古今多少事，都付笑谈中。</span><br><span class="line">西江月</span><br><span class="line">落日西飞滚滚，大江东去滔滔。夜来今日又明朝，蓦地青春过了。</span><br><span class="line">千古风流人物，一时多少英豪。龙争虎斗漫劬劳，落得一场谈笑。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第四段 说三分两晋</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">西江月</span><br><span class="line">道德三皇五帝，功名夏后商周。五霸七雄闹春秋，秦汉兴亡过手。</span><br><span class="line">青史几行名姓，北邙无数荒丘。前人耕种后人收，说甚龙争虎斗。</span><br><span class="line">西江月</span><br><span class="line">豪杰千年往事，渔樵一曲高歌。乌飞兔走疾如梭，眨眼风惊雨过。</span><br><span class="line">妙笔龙韬虎略，英雄铁马金戈。争名夺利竟如何，必有收因结果。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第五段 说南北史</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">清平乐</span><br><span class="line">闲行间坐，不必争人我。百岁光阴弹指过，成得甚么功果。</span><br><span class="line">昨日羯鼓催花，今朝疏柳啼鸦。王谢堂前燕子，不知飞入谁家。</span><br><span class="line">西江月</span><br><span class="line">飒飒西风渭水，萧萧落叶长安。英雄回首北邙山，虎斗龙争过眼。</span><br><span class="line">闲看灞桥杨柳，凄凉露冷风寒。断蝉声里凭阑干，不觉斜阳又晚。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第六段 说五胡</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">点绛唇</span><br><span class="line">暮鼓晨钟。春花秋月何时了，七颠八倒，往事知多少。</span><br><span class="line">昨日今朝，镜里容颜老。千年调，一场谈笑，几个人知道。</span><br><span class="line">西江月</span><br><span class="line">六代瓜分世界，五胡云扰中原。纵横三百有余年，几度交锋索战。</span><br><span class="line">马过生灵齑粉，血流河洛腥膻。耳闻犹自不堪言，有眼休教看见。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第七段 说隋唐二代</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">临江仙</span><br><span class="line">一片残山并剩水，年年虎斗龙争。秦宫汉苑晋家茔，川源流恨血，毛发凛威灵。</span><br><span class="line">白发诗人闲驻马，感时怀古伤情。战场田地好宽平，前人将不去，留与后人耕。</span><br><span class="line">西江月</span><br><span class="line">追想千年往事，六朝踪迹茫然。隋唐相继统中原，世态几回云变。</span><br><span class="line">杨柳凄迷汴水，丹青惨淡凌烟。乐游原上草连天，飞起寒鸦一片。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第八段 说五代史</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">定风波</span><br><span class="line">雨汗淋漓赴选场，秀才落得甚干忙。白发渔樵诸事懒，萧散。闲谈今古论兴亡。</span><br><span class="line">虞夏商周秦楚汉，三分南北至隋唐。看到史官褒贬处，得避。不摇纨扇自然凉。</span><br><span class="line">西江月</span><br><span class="line">千古伤心旧事，一场谈笑春风。残篇断简记英雄，总为功名引动。</span><br><span class="line">个个轰轰烈烈，人人扰扰匆匆。荣华富贵转头空，恰似南柯一梦。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第九段 说宋辽金夏</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">蝶恋花</span><br><span class="line">简尽残编并断简，细数兴亡，总是英雄汉。物有无常人有限。到头落得空长叹。</span><br><span class="line">富贵荣华春过眼，汉主长陵，霸王乌江岸。早悟夜筵终有散，当初赌甚英雄汉。</span><br><span class="line">西江月</span><br><span class="line">三百余年宋史，辽金西夏纵横。争强赌胜弄刀兵，谁解倒悬民命。</span><br><span class="line">富贵草梢零露，英雄水上浮萍。是非成败总虚名，一枕南柯梦醒。</span><br></pre></td></tr></table></figure>
-
-<p><strong>第十段 说元史</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">西江月</span><br><span class="line">山色消磨今古，水声流尽年光。翻云覆雨数兴亡，回首一般模样。</span><br><span class="line">清景好天良夜，赏心春暖花香。百年身世细思量，不及樽前席上。</span><br><span class="line">西江月</span><br><span class="line">细思三皇五帝，一般锦绣江山，风调雨顺万民安，不见许多公案。</span><br><span class="line">后世依他样子，齐家治国何难。流芳百世在人间，万古称扬赞叹。</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/03/2020/04/2020-04-03-%E6%8A%8A%E5%8E%86%E5%8F%B2%E5%BD%93%E5%B0%8F%E8%AF%B4%E6%9D%A5%E8%AF%BB/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/03/2020/04/2020-04-03-%E6%8A%8A%E5%8E%86%E5%8F%B2%E5%BD%93%E5%B0%8F%E8%AF%B4%E6%9D%A5%E8%AF%BB/index/" class="post-title-link" itemprop="url">把历史当小说来读</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-03 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-03T08:00:00+08:00">2020-04-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/talk/" itemprop="url" rel="index"><span itemprop="name">talk</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="导读"><a href="#导读" class="headerlink" title="导读"></a><strong>导读</strong></h3><p><strong>关于读史，下面分别引用英国历史学家与明朝博览第一杨慎的话，让大家有个初步认知。</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">历史都是假的，除了名字；小说都是真的，除了名字。</span><br><span class="line">英国历史学家卡莱尔</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">廿一史弹词 说秦汉</span><br><span class="line">明代：杨慎</span><br><span class="line">临江仙</span><br><span class="line">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。青山依旧在，几度夕阳红。</span><br><span class="line">白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。古今多少事，都付笑谈中。</span><br><span class="line"></span><br><span class="line">西江月</span><br><span class="line">落日西飞滚滚，大江东去滔滔。夜来今日又明朝，蓦地青春过了。</span><br><span class="line">千古风流人物，一时多少英豪。龙争虎斗漫劬劳，落得一场谈笑。</span><br></pre></td></tr></table></figure>
-
-<p><strong>虽然从宏观上讲我们都是时空中一粒尘埃，但是从微观上讲我们每个人都是一个小宇宙，一切都在我们的脑海中，三界唯心，万法唯识，这就是人生的乐趣所在。 本文选取了夏商、战国、秦、隋唐、宋、明相关的历史小说书籍来推荐给读者，没有特别注明的朝代可以参考易中天中华史。</strong></p>
-<h3 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a><strong>推荐</strong></h3><p><strong>夏商 山海经密码</strong></p>
-<blockquote>
-<p><img src="/images/%E5%B1%B1%E6%B5%B7%E7%BB%8F%E5%AF%86%E7%A0%81.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 《山海经密码》是2011年凤凰出版社出版的图书，作者是阿菩。 这是一个历史记载的真实故事：4000年前，一个叫有莘不破的少年，独自游荡在如今已是繁华都市的大荒原上，他本是商王朝的王孙，王位的继承人，此时却是一个逃出王宫的叛逆少年。在他的身后，中国古老的两个王朝正在交替，夏王朝和商王朝之间，爆发了一场有史以来最规模宏大的战争。</p>
-<p>本书将带您重返那个远古战场，和那些古老的英雄（他们如今已是神话人物）一起，游历《山海经》中的蛮荒世界，您将遇到后羿的子孙、祝融的后代，看到女娲补天缺掉的那块巨石，您将经过怪兽横行的雷泽（今天的江苏太湖）、战火纷飞的巴国（今天的重庆），直至遭遇中华文明蒙昧时代原始、神秘的信仰。</p>
-<p>本书依据中国古老的经典《山海经》写成，再现了上古时代的地理及人文风俗。我们今天能看到这些，全拜秦始皇所赐：《山海经》——秦始皇焚书时，看了唯独舍不得烧的书。</p>
-<p><strong>作者简介</strong> 阿菩，著名作家，广东揭阳人。暨南大学史学硕士、文艺学博士，大学教师。现任中国作协会员，广东省政协委员、网络作家协会副主席。出版长篇小说10余部，1200多万字。多部小说被改编成影视作品，并翻译成多国语言，远销海外。曾获得第九届广东省鲁迅文学艺术奖。</p>
-<p>代表作品：《山海经密码》《山海经•候人兮猗》（绘本）《唐骑》《边戎》等。</p>
-<p><strong>战国 鬼谷子的局</strong></p>
-<blockquote>
-<p><img src="/images/%E9%AC%BC%E8%B0%B7%E5%AD%90%E7%9A%84%E5%B1%80.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> “智慧的游戏”系列作品《鬼谷子的局》，是一部长篇历史小说。讲述谋略家、兵法家、纵横家、阴阳家、道家共同的祖师爷——鬼谷子布局天下的辉煌传奇！</p>
-<p>战国时期，在一个叫清溪鬼谷的山上（今河南鹤壁市），隐居着一位被尊称为鬼谷子的老人（本名王诩），他每天在山上看书、打坐、冥想，不与世人来往，过着与世隔绝的生活。但是，两千多年来，兵法家尊他为圣人，纵横家尊他为始祖，算命占卜的尊他为祖师爷，道教则将他与老子同列，尊为王禅老祖。</p>
-<p><strong>作者简介</strong> 寒川子，原名王月瑞，为自由作家、编剧、翻译家。2013第八届中国作家富豪榜上榜作家。著有《战国纵横：鬼谷子的局》《第一商会》等书，翻译古罗马奥维德《爱的艺术》等经典作品。2017年出版《鬼谷子的局》全新增订版，并与长江文艺出版社联手打造“智慧的游戏”系列高品质读物。</p>
-<p><strong>秦 大秦帝国</strong></p>
-<blockquote>
-<p><img src="/images/%E7%A7%A6.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 在礼崩乐坏、群雄逐鹿的战国末年，面临亡国之祸的秦国于列强环伺之下，崛起于铁血竞争的群雄列强之林。从秦孝公开始，筚路蓝缕、彻底变革、崇尚法制、统一政令，历一百六十余年六代领袖坚定不移地努力追求，才完成了一场伟大的帝国革命，扫六合而一统天下，建立起一个强大统一的帝国。</p>
-<p>全书 共分为六部 ：《黑色裂变》、《国命纵横》、《金戈铁马》、《阳谋春秋》、《铁血文明》、《帝国烽烟》。这部鸿篇巨著还原了巨大的历史落差与戏剧性的帝国命运，再现了一个国家一步步实现自己梦想的悲壮历程。书中每一行每一页都充满着智慧方略、阳谋政治的风骨，奋发惕厉、强势生存的精神，充满着来自中国原生文明时代的英雄风骨与本色灵魂。</p>
-<p><strong>作者简介</strong> 孙皓晖，共和国同龄人，生于陕西三原，曾任西北大学法律系教授，现任西北大学特聘教授、秦文明研究院院长。严肃的作家、学者，历时十六年，创作了长篇小说《大秦帝国》，中国当代四大历史小说家之一。同时以创建“中国民族强势生存”、“中国原生文明”理论，成为整体研究中国文明的重要理论家。</p>
-<p><strong>唐 大唐兴亡三百年</strong></p>
-<blockquote>
-<p><img src="/images/%E5%94%90.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 唐朝是一个令后人无比向往的伟大朝代，但它近300年错综复杂的历史，也让人望而却步——正史《唐书》《资治通鉴》不但卷帙浩繁，读起来也晦涩难懂；小说《隋唐演义》虽然通俗易懂，但大量人物情节纯属虚构。</p>
-<p>知名畅销书作家王觉仁，凭借深厚的唐史功底，以幽默生动的文笔，创作出比《唐书》通俗，比《资治通鉴》有趣，比《隋唐演义》靠谱的《大唐兴亡三百年》，已成为多数读者了解唐朝历史的选择。</p>
-<p>翻开本书，领略让你全程上瘾的300年大唐全史。</p>
-<p><strong>作者简介</strong> 王觉仁，知名畅销书作家，影视编剧，传统文化研究者，迄今已出版作品600余万字，代表作有：《大唐兴亡三百年》（原名《血腥的盛唐》）、《王阳明心学》、《兰亭序杀局》（已改编成影视作品）、《大汉天机》（剧本）。</p>
-<p>多年致力于唐朝的研究，对重大的政治事件和历史人物均有独到解读，《大唐兴亡三百年》是其潜心多年的力作。本书完整还原了唐朝近300年的风云历程，已成为多数读者了解唐朝历史的选择。</p>
-<p><strong>宋 新宋</strong></p>
-<blockquote>
-<p><img src="/images/%E5%AE%8B.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 架空历史小说必提《新宋》！ 创作历时15年，360万字长篇历史小说完美收官！《新宋》是完全尊重历史的故事，其中涉及许多北宋的真实历史，对宋朝的风俗、礼节、服饰、建筑、制度、科举、官场等细节都有历史考究。从皇宫到市井，从黎民百姓到士大夫，全景还原一个真实、有趣且好玩的宋朝。 《新宋》的内容包罗万象，作者通过严谨的历史考究与流畅的文笔，真实再现了宋朝的风土人情，塑造了一个个鲜活的形象。文武之学、朝堂纷争、战场厮杀、寻常生活等，均有涉及，全景还原了一个在历史上为“中华文明精神之”的宋朝。</p>
-<p><strong>作者简介</strong> 阿越</p>
-<p>1980年出生于湖南省涟源市，湖南师范大学历史学硕士，四川大学中国史博士研究生，云南省作协会员。现居云南昆明。</p>
-<p>其代表作《新宋》全书近400万字，曾荣获2009年网络文学十年盘点十佳优秀作品，2013年“西湖•类型文学双年奖”铜奖等多种奖项，并入选2012年中国作协首届网络文学作品研讨会研讨作品。</p>
-<p><strong>明 明朝那些事儿</strong></p>
-<blockquote>
-<p><img src="/images/%E6%98%8E.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 《明朝那些事儿》讲述从1344年到1644年，明朝三百年间的历史。作品以史料为基础，以年代和具体人物为主线，运用小说的笔法，对明朝十七帝和其他王公权贵和小人物的命运进行全景展示，尤其对官场政治、战争、帝王心术着墨最多。作品也是一部明朝政治经济制度、人伦道德的演义。</p>
-<p><strong>作者简介</strong> 当年明月，副研究员，中国明史学会会员，青年历史学者，畅销书作家，强调写史即写人，写人即写心。所著作品《明朝那些事儿》获得“新浪图书风云榜”图书、当 当网“终身五星级图书”、“卓越亚马逊畅销书大奖”等荣誉，多年来畅销不衰，该系列作品已被译为日、韩、英等多国文字出版。</p>
-<p><strong>全部中华史 易中天中华史</strong></p>
-<blockquote>
-<p><img src="/images/%E4%B8%AD%E5%8D%8E%E5%8F%B2.jpg"></p>
-</blockquote>
-<p><strong>内容简介</strong> 学者易中天，颠覆传统史学著作的写作方法，以优美诗意的语言、独特创新的全球视角，创作六部共32卷“易中天中华史”：第一部《先秦》，第二部《秦汉魏晋南北朝》，第三部《隋唐》，第四部《宋元》，第五部《明清》，第六部《近现代》。现已出版1-20卷。</p>
-<p>跟随《易中天中华史（先秦到宋元 套装共20册）》，我们将进行一场历史寻根之旅，体验夏的质朴、商的绚烂、周的儒雅、汉的强悍、唐的四海为家八方来朝，品味宋的纤细、元的空灵，直至明的世俗，清的官腔。由此解开诸多历史的疑惑：夏商周是王朝吗？先秦诸子都是谁？魏晋风度长什么样？盛唐之音你听见过吗？当旅程结束时，我们或将明白：什么是中华根、中华梦、中华魂。</p>
-<p><strong>作者简介</strong> 易中天，1947年生于长沙，曾任教于武汉大学、厦门大学。现居江南某镇，潜心写作“中华史”。在易中天看来，《二十四史》基本上是“帝王家谱”，《资治通鉴》则是可供统治者借鉴的历史经验和教训。正因为如此，他认为汗牛充栋的各类中华史，大多没有全球视野和现代史观，因此他将在直觉、逻辑和证据的基础上，书写人们“不知道和想知道”的历史。</p>
-<p>已出版作品：《易中天文集》（1-16卷），《易中天中华史》（总序、1-12卷）。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/01/2020/04/2020-04-01-zabbix-server%E7%AA%81%E7%84%B6down%E6%8E%89%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/01/2020/04/2020-04-01-zabbix-server%E7%AA%81%E7%84%B6down%E6%8E%89%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/index/" class="post-title-link" itemprop="url">zabbix-server突然down掉处理过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-01 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-01T08:00:00+08:00">2020-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>参考文档</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://blog.51cto.com/seekerwolf/2357220</span><br><span class="line">https://www.centos.bz/2017/08/zabbix-zbx_mem_malloc-out-of-memory/</span><br></pre></td></tr></table></figure>
-
-<p><strong>环境</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CentOS 7.5.1804</span><br><span class="line">Zabbix 3.4.15</span><br></pre></td></tr></table></figure>
-
-<p><strong>现象</strong> zabbix web图形界面显示zabbix server is not running，进入zabbix服务器 systemctl status zabbix-server显示服务down掉</p>
-<p><strong>排查</strong> 1.试着重新启动zabbix-server，启动不成功 2.查看日志&#x2F;var&#x2F;log&#x2F;zabbix&#x2F;zabbix_server.log</p>
-<p>首先发现如下错误</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">zabbix_server [7988]: cannot open log: cannot create semaphore set: [28] No space left on device</span><br><span class="line">zabbix_server [8008]: cannot open log: cannot create semaphore set: [28] No space left on device</span><br><span class="line">zabbix_server [8022]: cannot open log: cannot create semaphore set: [28] No space left on device</span><br></pre></td></tr></table></figure>
-
-<p>根据网上资料修改kernel.sem参数，默认如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@zabbix zabbix]# cat /proc/sys/kernel/sem</span><br><span class="line">250     32000   32      128</span><br></pre></td></tr></table></figure>
-
-<p>其中含义分别如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">250       SEMMSL    max semaphores per array     信号集容纳最大信号数量   </span><br><span class="line">32000     SEMMNS    max semaphores system wide   所有信号的最大数量 </span><br><span class="line">32        SEMOPM    max ops per semop call       调用单个信号集中最大信号数量 </span><br><span class="line">128       SEMMNI    max number of arrays         信号集的最大值</span><br></pre></td></tr></table></figure>
-
-<p>直接增加1倍，并使其生效</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@zabbix zabbix]# echo &#x27;kernel.sem = 500 64000 64 256&#x27; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">[root@zabbix zabbix]# sysctl -p</span><br><span class="line">kernel.sem = 500 64000 64 256</span><br></pre></td></tr></table></figure>
-
-<p>最后杀掉zabbix占用的共享信道</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@zabbix zabbix]# ipcs -s|wc -l</span><br><span class="line">143</span><br><span class="line">[root@zabbix zabbix]# ipcs -s | grep zabbix | awk &#x27;&#123;print $2&#125;&#x27; | xargs -n 1 ipcrm -s</span><br><span class="line">[root@zabbix zabbix]# ipcs -s|wc -l</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
-
-<p>3.第二次启动zabbix-server发现如下错误</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">8599:20200401:140301.791 using configuration file: /etc/zabbix/zabbix_server.conf</span><br><span class="line">8599:20200401:140301.798 current database version (mandatory/optional): 03040000/03040007</span><br><span class="line">8599:20200401:140301.799 required mandatory version: 03040000</span><br><span class="line">8599:20200401:140302.063 __mem_malloc: skipped 0 asked 120 skip_min 4294967295 skip_max 0</span><br><span class="line">8599:20200401:140302.063 [file:dbconfig.c,line:90] zbx_mem_malloc(): out of memory (requested 120 bytes)</span><br><span class="line">8599:20200401:140302.063 [file:dbconfig.c,line:90] zbx_mem_malloc(): please increase CacheSize configuration parameter</span><br></pre></td></tr></table></figure>
-
-<p>报错显示zabbix分配内存时出现了oom，默认zabbix服务器内存是够用的，幸好有提示请增加CacheSize，查资料发现可以在配置文件里增加该值，默认是8M，增加到1024M，第三次启动zabbix-server终于能正常启动了。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@zabbix zabbix]# grep CacheSize /etc/zabbix/zabbix_server.conf </span><br><span class="line">### Option: VMwareCacheSize</span><br><span class="line"># VMwareCacheSize=8M</span><br><span class="line">### Option: CacheSize</span><br><span class="line">CacheSize=1024M</span><br><span class="line">### Option: HistoryCacheSize</span><br><span class="line"># HistoryCacheSize=16M</span><br><span class="line">### Option: HistoryIndexCacheSize</span><br><span class="line"># HistoryIndexCacheSize=4M</span><br><span class="line">### Option: TrendCacheSize</span><br><span class="line"># TrendCacheSize=4M</span><br><span class="line">### Option: ValueCacheSize</span><br><span class="line"># ValueCacheSize=8M</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/01/2020/04/2020-04-01-%E5%BF%83%E7%BB%8F%E8%A7%A3%E8%AF%BB-%E6%AF%94%E5%B0%94%C2%B7%E6%B3%A2%E7%89%B9/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/01/2020/04/2020-04-01-%E5%BF%83%E7%BB%8F%E8%A7%A3%E8%AF%BB-%E6%AF%94%E5%B0%94%C2%B7%E6%B3%A2%E7%89%B9/index/" class="post-title-link" itemprop="url">心经解读-比尔·波特</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-04-01 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-01T08:00:00+08:00">2020-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zen/" itemprop="url" rel="index"><span itemprop="name">zen</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="般若波罗蜜多心经汉英梵"><a href="#般若波罗蜜多心经汉英梵" class="headerlink" title="般若波罗蜜多心经汉英梵"></a><strong>般若波罗蜜多心经汉英梵</strong></h3><p><strong>唐三藏法师玄奘 译</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">1 观自在菩萨，</span><br><span class="line">行深般若波罗蜜多时，</span><br><span class="line">照见五蕴照见五蕴皆空[度一切苦厄]。</span><br><span class="line">5 舍利子，</span><br><span class="line">（色空，空是色；）</span><br><span class="line">色不异空，空不异色；</span><br><span class="line">色即是空，空即是色；</span><br><span class="line">受想行识，亦复如是。</span><br><span class="line">10 舍利子，</span><br><span class="line">是诸法空相，</span><br><span class="line">不生不灭，不垢不净，不增不减。</span><br><span class="line">是故（舍利子，）空中无色，</span><br><span class="line">无受想行识；</span><br><span class="line">无眼耳鼻舌身意；</span><br><span class="line">15 无色声香味触法；</span><br><span class="line">无眼界，乃至无意识界；</span><br><span class="line">无无明，亦无无明尽，</span><br><span class="line">乃至无老死，亦无老死尽；</span><br><span class="line">无苦集灭道；</span><br><span class="line">20 无智亦无得（亦无无得）。</span><br><span class="line">（舍利子，）以无所得故，</span><br><span class="line">菩提萨埵，依般若波罗蜜多，</span><br><span class="line">故心无挂碍。</span><br><span class="line">无挂碍故无有恐怖，</span><br><span class="line">25 远离颠倒梦想究竟涅槃。</span><br><span class="line">三世诸佛，</span><br><span class="line">依般若波罗蜜多，</span><br><span class="line">故得阿耨多罗三藐三菩提。</span><br><span class="line">故知般若波罗蜜多是大神咒，</span><br><span class="line">30 是大明咒，</span><br><span class="line">是无上咒，</span><br><span class="line">是无等等咒，</span><br><span class="line">能除一切苦，真实不虚。</span><br><span class="line">故说般若波罗蜜多咒，即说咒曰：</span><br><span class="line">35 揭帝揭帝，般罗揭帝，般罗僧揭帝，菩提僧莎诃。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>The Heart Sutra translated by Red Pine （BillPorter）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">1 The noble Avalokiteshvara Bodhisattva,</span><br><span class="line">while practicing the deep practice of Prajnaparamita,</span><br><span class="line">looked upon the Five Skandhas and seeing they were empty ofself-existence,</span><br><span class="line">5 said, &quot;Here, Shariputra,</span><br><span class="line">form is emptiness, emptiness is form;</span><br><span class="line">emptiness is not separate from form,</span><br><span class="line">form is not separate from emptiness;</span><br><span class="line">whatever is emptiness is form.</span><br><span class="line">The same holds for sensation and perception,</span><br><span class="line">memory and consciousness.</span><br><span class="line">10 Here, Shariputra, all dharmas are defined by emptiness,</span><br><span class="line">not birth or destruction, </span><br><span class="line">purity or defilement,conpleteness or deficiency.</span><br><span class="line">Therefore, Shariputra, in emptiness there is no form,</span><br><span class="line">no sensation, no perception, no memory and no consciousness;</span><br><span class="line">no eye, no ear, no nose, no tongue, no body and no mind;</span><br><span class="line">15 no shape, no sound, no smell, no taste, no feeling and nothought;</span><br><span class="line">no element of perception, from eye to conceptual consciousness;</span><br><span class="line">no causal link, from ignorance to old age and death,</span><br><span class="line">and no end of causal link, from ignorance to old age and death;</span><br><span class="line">no suffering, no source, no relief, no path;</span><br><span class="line">20 no knowledge, no attainment and no non-attainment.</span><br><span class="line">Therefore, Shariputra, without attainment,</span><br><span class="line">bodhisattavas take refuge in Prajnaparamita,</span><br><span class="line">and live without walls of the mind.</span><br><span class="line">Without walls of the mind and thus without fears,</span><br><span class="line">25 they see through delusions and finally nirvana.</span><br><span class="line">All buddhas past, present and future also take refuge inPrajnaparamitaand realize unexcelled, </span><br><span class="line">perfect enlightenment.You should therefore know the great mantra of Prajnaparamita,</span><br><span class="line">30 the mantra of great magic,</span><br><span class="line">the unexcelled mantra,</span><br><span class="line">the mantra equal to the unequalled,</span><br><span class="line">which heals all suffering and is true, not false, the mantra inPrajnaparamita spoken thus:</span><br><span class="line">35 &#x27;Gate gate, paragate, parasangate, bodhi svaha.&#x27;&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>Prajnaparamita Hridaya Sutran</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1 arya avalokiteshvaro bodhisattvo</span><br><span class="line">gambhiran prajna-paramita caryan caramano vyaavalokayati smapanca skandhas</span><br><span class="line">tansh ca svabhava shunyan pashyati sma</span><br><span class="line">5 iha shariputra</span><br><span class="line">rupan shunyata shunyataiva rupan</span><br><span class="line">rupan na prithak shunyata shunyataya na prithag rupan yad rupansa shunyata ya shunyata tad rupan evam eva vedana sanjnasanskara vijnanam</span><br><span class="line">10 iha shariputra sarva dharmah shunyata lakshana</span><br><span class="line">anutpanna aniruddha amala avimala anuna aparipurnah</span><br><span class="line">tasmac shariputra shunyatayan na rupan</span><br><span class="line">na vedana na sanjna na sanskarah na vijnanam</span><br><span class="line">na cakshuh shrotra ghrana jihva kaya manansi</span><br><span class="line">15 na rupa shabda gandha rasa sprashtavya dharmah</span><br><span class="line">na cakshur-dhatur yavan na manovijnanan-dhatuh</span><br><span class="line">na avidya na avidya kshayo</span><br><span class="line">yavan na jaramaranan na jaramarana kshayo</span><br><span class="line">na duhkha samudaya nirodha marga</span><br><span class="line">20 na jnanan na praptir na-apraptih</span><br><span class="line">tasmac shariputra apraptitvad</span><br><span class="line">bodhisattvo prajnaparamitam ashritya</span><br><span class="line">viharaty acitta-avaranah</span><br><span class="line">citta-avarana nastitvad atrasto</span><br><span class="line">25 viparyasa atikranto nishtha nirvanah</span><br><span class="line">tryadhva vyavasthitah sarva-buddhah</span><br><span class="line">prajnaparamitam ashrityaanuttaran samyak sambodhim abhisambuddhah</span><br><span class="line">tasmaj jnatavyan prajnaparamita maha-mantro</span><br><span class="line">30 maha-vidya mantro</span><br><span class="line">anuttara mantro</span><br><span class="line">asama-sama mantrah</span><br><span class="line">sarva-duhkha prashamanah satyam amithyatvat</span><br><span class="line">prajnaparamitayam ukto mantrah tadyatha</span><br><span class="line">35 gate gate paragate parasangate bodhi svaha</span><br></pre></td></tr></table></figure>
-
-<h3 id="大本心经"><a href="#大本心经" class="headerlink" title="大本心经"></a><strong>大本心经</strong></h3><p><strong>罽宾国三藏般若共利言等 译</strong></p>
-<p>如是我闻。一时佛在王舍城耆阇崛山中，与大比丘众及菩萨众俱。</p>
-<p>时佛世尊即入三昧，名广大甚深。尔时众中有菩萨摩诃萨，名观自在，行深般若波罗蜜多时，照见五蕴皆空，离诸苦厄。即时舍利弗承佛威力，合掌恭敬白观自在菩萨摩诃萨言：“善男子，若有欲学甚深般若波罗蜜多行者，云何修行？”如是问已。</p>
-<p>尔时观自在菩萨摩诃萨，告具寿舍利弗言：“舍利子，若善男子善女人，行甚深般若波罗蜜多行时，应观五蕴性空。舍利子，色不异空，空不异色。色即是空，空即是色。受想行识，亦复如是。舍利子，是诸法空相。不生不灭，不垢不净，不增不减。是故空中无色，无受想行识。无眼耳鼻舌身意，无色声香味触法，无眼界乃至无意识界，无无明亦无无明尽，乃至无老死亦无老死尽。无苦集灭道，无智亦无得。以无所得故，菩提萨埵依般若波罗蜜多，故心无挂碍。无挂碍故无有恐怖，远离颠倒梦想究竟涅槃。三世诸佛依般若波罗蜜多，故得阿耨多罗三藐三菩提。故知般若波罗蜜多是大神咒，是大明咒，是无上咒，是无等等咒。能除一切苦，真实不虚。故说般若波罗蜜多咒。即说咒曰：</p>
-<p>揭谛揭谛。波罗揭谛。波罗僧揭谛。菩提萨婆诃。</p>
-<p>如是舍利弗，诸菩萨摩诃萨于甚深般若波罗蜜多行，应如是行。”如是说已，即时世尊从广大甚深三摩地起，赞观自在菩萨摩诃萨言：“善哉善哉。善男子，如是如是。如汝所说，甚深般若波罗蜜多行，应如是行，如是行时一切如来皆悉随喜。”尔时世尊说是语已，具寿舍利弗大喜充遍，观自在菩萨摩诃萨亦大欢喜。时彼众会天人阿修罗乾闼婆等，闻佛所说皆大欢喜，信受奉行般若波罗蜜多心经。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/03/25/2020/03/2020-03-25-%E7%A6%85%E9%97%AE%E7%AD%94/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/25/2020/03/2020-03-25-%E7%A6%85%E9%97%AE%E7%AD%94/index/" class="post-title-link" itemprop="url">禅问答</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-03-25 08:00:00" itemprop="dateCreated datePublished" datetime="2020-03-25T08:00:00+08:00">2020-03-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/zen/" itemprop="url" rel="index"><span itemprop="name">zen</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>本文选取了精心达摩、弘忍、惠能、南岳怀让、百丈怀海、黄檗希运、临济义玄等著名禅师的禅问答，希望读者阅读后能有所悟。</strong></p>
-<h3 id="达摩与梁武帝"><a href="#达摩与梁武帝" class="headerlink" title="达摩与梁武帝"></a><strong>达摩与梁武帝</strong></h3><p>许多佛教典籍对达摩大师与梁武帝具有历史意义的会面都有记载，据《景德传灯录》卷三记载： 帝问曰：“朕即位以来，造寺写经，度僧不可胜记，有何功德？”师曰：“并无功德。”帝曰：“何以无功德？”师曰：“此但人天小果有漏之因，如影随形，虽有非实。”帝曰：“如何是真功德？”师曰：“净智妙圆，体自空寂，如是功德，不以世求。”帝又问：“如何是圣谛第一义？”师曰：“廓然无圣。”帝曰：“对朕者谁？”师曰：“不识。”</p>
-<p><strong>有马赖底译</strong> 梁武帝：“我自从当了皇帝后，为了兴隆佛法，写佛经、造佛寺，供养了无数僧人，不可胜记。同时还广结善缘、净身持戒，敢问有何功德？” 达摩：“没有功德。” 梁武帝：“为什么没有功德？” 达摩：“你大兴三宝、造寺写经、度僧礼佛、戒斋布施、念佛坐禅，着实令人敬佩。但是你奉行的种种善行都是人天小果，有漏因。外修诸事的有漏善只不过是世间的福德，福德与功德不同，倘若不能自身内证得自性即是无功德，终不可能出离生死苦海。所以你梁武帝引以为豪的一切，是影非形，是虚非实，做得再多也成不了佛。” 梁武帝：“什么才算是真功德？怎样才能修成佛？” 达摩：“能自见真如自性就是功，能视一切众生平等就是德，功德原本在法身中，不在修福善举上。心即是佛，佛在心中。功德要靠内心修炼，明心见性，方成正果。” 梁武帝：“超越了真俗二谛的佛教至高无上的真理是什么？” 达摩：“境本无境，界亦无界，世界本是空廓无相，凡与圣毫无区别，所以没有必要舍弃‘凡’，更没有必要去寻找‘圣’。 梁武帝：：“坐在我对面高僧‘你’到底是个什么人？ 达摩：“：“不知道！”</p>
-<h3 id="达摩与慧可"><a href="#达摩与慧可" class="headerlink" title="达摩与慧可"></a><strong>达摩与慧可</strong></h3><p>可曰：“诸佛法印，可得闻乎？” 祖曰：“诸佛法印，匪从人得。” 可曰：“我心未宁，乞师与安。” 祖曰：“将心来，与汝安。” 可良久，曰：“觅心了不可得。” 祖曰：“我与汝安心竟。”</p>
-<p><strong>有马赖底译</strong> 慧可启口参问达摩本师：“如何才能获得诸佛法印呢？可以说给徒弟听吗？” 达摩答道：“诸佛的法印，不是从他人那里听来的。” 慧可说：“我的心还没有安宁，乞求大师帮我安宁下来。” 达摩说：“把你那颗不安宁的心拿来，我帮助你安宁。” 为了求得这颗“心”，慧可结趺深入禅定。片刻之后，他禀告达摩：“觅心，而心终不可得。” 达摩说：“我已经给你的心安定好了。”</p>
-<h3 id="弘忍与惠能"><a href="#弘忍与惠能" class="headerlink" title="弘忍与惠能"></a><strong>弘忍与惠能</strong></h3><p>次日，祖潜至碓坊，见能腰石舂米，语曰：“求道之人，当如是乎？”乃问曰：“米熟也未？” 惠能曰：“米熟久矣，犹欠筛在。” 祖以杖击碓三下而去。惠能即会祖意，三鼓入室；祖以袈裟遮围，不令人见，为说金刚经。至“应无所住而生其心”，惠能言下大悟，一切万法，不离自性。 遂启祖言：“何期自性，本自清净；何期自性，本不生灭；何期自性，本自具足；何期自性，本无动摇；何期自性，能生万法。” 祖知悟本性，谓惠能曰：“不识本心，学法无益；若识自本心，见自本性，即名丈夫、天人师、佛。” 三更受法，人尽不知，便传顿教及衣钵。云：“汝为第六代祖，善自护念，广度有情，流布将来，无令断绝。听吾偈曰：‘有情水下种，因地果还生，无情亦无种，无性亦无生。’ 祖复曰：“昔达摩大师，初来此土，人未之信，故传此衣，以为信体，代代相承。法则以心传心，皆令自悟自解。自古，佛佛惟传本体，师师密付本心；衣为争端，止汝勿传。若传此衣，命如悬丝，汝须速去，恐人害汝。” 惠能启曰：“向甚处去？” 祖云：“逢怀则止，遇会则藏。” 三更，领得衣钵，五祖送至九江驿，祖令上船，惠能随即把橹。 祖云：“合是吾渡汝。” 惠能云：“迷时师度，悟了自度；度名虽一，用处不同。惠能生在边才，语音不正，蒙师付法！今已得悟，只合向性自度。” 祖云：“如是，如是。以后佛法，由汝大行矣。汝今好去，努力向南，不宜速说，佛法难起。”</p>
-<p><strong>有马赖底译</strong> 翌日独自一人来到慧能舂米的碓房，目睹慧能为了增加自身的体重，在腰间系着一块石头舂米的模样，不禁感叹而言：“热心求道之人，乃忘我者也！”于是问慧能：“米舂好了吗？”这是在借机试探慧能：“你已经得悟了吗？”慧能答道：“米已经舂完，只是尚未筛过！”意思是说，我虽然已经得悟，但是还没有梳理妥当。五祖随即吩咐慧能当晚前来，然后离去。 子夜，五祖向应命前来的慧能宣讲《金刚经》。当五祖讲到“应无所住而生其心”一句时，慧能对自身之悟产生了绝对的自信，喜形于色。他感觉到自己的本性无生无住，本来清净。若生此心，则将从所有心的束缚中解放出来，而成为自由之人。 五祖见状，十分欣慰地叮嘱慧能：“即使通读万卷经书，若不能认识自身，终究没有任何益处。一旦识得本心而开悟，即可称佛。”说完就把“衣”和“钵”授予慧能。后世把传承传统技艺等称作传授“衣钵”，就是起源于此。</p>
-<h3 id="慧能与印宗"><a href="#慧能与印宗" class="headerlink" title="慧能与印宗"></a><strong>慧能与印宗</strong></h3><p>遂出至广州法性寺；值印宗法师，讲涅槃经。因二僧论风幡义，一曰风动，一曰幡动，议论不已。 惠能进曰：“不是风动，不是幡动，仁者心动。” 一众骇然，印宗延至上席，征诘奥义，见惠能言简理当，不由文字。 宗云：“行者定非常人，久闻黄梅衣法南来，莫是行者否？” 惠能曰：“不敢！” 宗于是作礼，告请传来衣钵，出示大众。 宗复问曰：“黄梅付嘱？如何指授？” 惠能曰：“指授即无，惟论见性，不论禅定解脱。” 宗曰：“何不论禅定解脱？” 谓曰：“为是二法，不是佛法，佛法是不二之法。” 宗又问：“如何是佛法不二之法？” 惠能曰：“法师讲涅槃经，明佛性是佛法不二之法。如高贵德王菩萨白佛言：“犯四重禁，作五逆罪，及一阐提等，当断善根佛性否？”佛言：‘善根有二：一者常，二者无常；佛性非常非无常，是故不断，名为不二。’一者善，二者不善；佛性非善非不善，是名不二。蕴之与界，凡夫见二，智者了达其性无二；无二之性，即是佛性。” 印宗闻说，欢喜合掌，言：“某甲讲经，犹如瓦砾；仁者论义，犹如其金。” 于是为惠能剃发，愿事为师。</p>
-<p><strong>有马赖底译</strong> 有一天，广州法性寺住持印宗禅师开讲《涅槃经》。寺内高挂着告示讲经的旗幡，喧闹异常。旗幡周围一群人在争论不休。原来，一个僧人看见随风飘动的旗幡，张口就说：“那是风在动。”而另一个僧人则反唇相讥：“错！那是旗幡在动。”两人互相争执不下。 慧能耳闻目睹眼前的一切，从人群中走出来对僧众说：“这既不是风在动，也不是幡在动，而是你自己的心在动。”僧众听了很为诧异。 印宗闻讯后，立刻招呼慧能入室，提出种种问题试探盘查，慧能回答得言简意赅，句句仿佛真理彻耳。印宗曾耳闻五祖弘忍大师传法南方，因而揣测此人一定就是六祖。印宗便问：“久闻黄梅衣法南来，莫非就是行者？”慧能出示了五祖所传衣钵，眼前的衣钵证实了印宗的揣测。 印宗随即请慧能入上座，求问：“黄梅弘忍大师咐嘱之法是什么？”慧能答道：“大师并没有咐嘱什么特殊之法。我只论见性，而不谈禅定解脱。”这句答语，实际上决定了中国禅的走向，意义深远。</p>
-<h3 id="慧能与南岳怀让"><a href="#慧能与南岳怀让" class="headerlink" title="慧能与南岳怀让"></a><strong>慧能与南岳怀让</strong></h3><p>禅宗史籍记载，怀让禅师二十三岁前往河南，参谒慧安禅师，不久即到广东拜谒六祖。 初相见时，六祖问曰：“从那里来？” 怀让禅师答曰：“从嵩山安和尚处来。” 六祖又问：“什么东西到这里来？” 怀让禅师未能即时答复。三十一岁开悟，告六祖曰：“某甲有个会处。” 六祖问曰：“怎么样？” 怀让答曰：“说是一物即不对。” 六祖又问：“需要修证么？” 怀让答曰：“修证则不无，污染即不能。” 六祖遂曰：“这个不污染是诸佛所护念，你已如是，我亦如是。” 即授密印，其后又侍随六祖十五年。</p>
-<p><strong>有马赖底译</strong> 南岳怀让，山东省金州人，十五岁入湖北省荆州玉泉寺，师事弘景律师出家，修习律学。其后，登嵩山随慧安修习佛法。闻知慧能禅师在曹溪兴禅，经慧安举荐，转投六祖门下参禅问道。 六祖见到跋山涉水、远道而来的修行者，劈头就问南岳：“从什么地方来？” 南岳老老实实地回答：“从嵩山慧安门下来。” 六祖接着又问：“是什么东西，怎么来的？” 六祖的这一问，使南岳瞠目结舌，无言以对。自己远道而来拜师的目的到底是什么呢？南岳抱着这个没有解开的疑团，在六祖门下参学修行了八年。 第八个年头的某一天，南岳终于有所悟得，急急忙忙地前去拜见六祖道：“禅师最初问的那个难题，我终于完全搞清楚了！” 六祖问道：“是么？到底明白了什么呢？” 南岳回答说：“说是一物即不中。”（如若具体说像个什么东西，反而说不准——译注）六祖听了答语当场首肯印可。 南岳的意思是说，如果说出什么来看，本身就已经离谱了。六祖的本意，并不是想了解来自什么地方，而是询问：“佛法的本源在什么地方？”即究竟南岳自身所依佛法在哪里。六祖的问语超越了所有既成概念，而只是来来去去，周而复始，所以“说是什么都不对”。</p>
-<h3 id="南岳怀让与马祖道一"><a href="#南岳怀让与马祖道一" class="headerlink" title="南岳怀让与马祖道一"></a><strong>南岳怀让与马祖道一</strong></h3><p>开元年间，有一个沙门名叫道一，来到般若寺中，不读佛经，也不向人求法，只是一个人独坐，禅定思维。 怀让知道他不是平凡人物，因而问他说：“大德如此坐禅，图的是什么？” 道一回答：“图作佛。” 怀让知道他不愿听人说法，也不多说，拿起一块砖头便在道一面前打磨起来。开始时道一并不理睬，仍自独坐禅思。怀让始终不停地磨。 久之，道一心中奇怪，便问：“磨砖作什么？” 怀让回答：“磨砖作镜子。”道一一楞，说：“磨砖怎能作成镜子呢？” 怀让说：“磨砖既不能成镜，坐禅怎能成佛？”</p>
-<p><strong>有马赖底译</strong> 马祖道一，出家于四川省资州处寂门下，后来听说怀让嗣法六祖慧能之法，正在湖南省南岳山中举扬顿悟禅法。当即决定奔赴南岳，入门后就与众僧一道勤奋打坐参禅。南岳得知一个相貌奇异的青年闯入寺门，初次相见就看出马祖是一个大器之才。于是对这个相貌奇异的修行者劈头就问：“坐禅有何所图？”马祖回答：“图成佛。”南岳听后轻轻地点了一下头，走到马祖面前，拿起一块砖就在石头上磨了起来。马祖见状诧异不解，就问：“磨它做什么？”南岳答道：“磨砖做镜。”马祖又问：“砖头怎么磨也做不成镜子呀？”南岳回答：“那么坐禅就能成佛吗？” 南岳的答语给了马祖当头一棒。既然砖头磨不成镜子，同样，用任何单纯追求形式的坐禅手段，终究不可能成佛。马祖大吃一惊，改换坐姿，又问：“那么如何修行才好呢？”南岳答道：“这就好比牛车一样，如果牛车不动，你是打车，还是打牛呢？” 这段话头称为“南岳磨砖”。南岳忠实地继承了六祖慧能“无所得”的坐禅宗旨，运用通俗易懂的比喻，明确地阐述了坐禅的精髓，即别无所求，只是专心致志地坐就是了。南岳借助磨砖这一行动教示马祖，能否成佛难道不是话外之题吗？南岳是在告诫马祖：“道一，你是在磨砖做镜啊！”</p>
-<h3 id="马祖道一与百丈怀海"><a href="#马祖道一与百丈怀海" class="headerlink" title="马祖道一与百丈怀海"></a><strong>马祖道一与百丈怀海</strong></h3><p>马大师与百丈行次，见野鸭子飞过。 大师云：是什么? 丈云：野鸭子。 大师云：什么处去也? 丈云：飞过去也。 大师遂扭百丈鼻头。丈作忍痛声。 大师云：何曾飞去?”</p>
-<p><strong>有马赖底译</strong> 有一天，马祖携怀海外出，归途中几只野鸭子“扑棱扑棱”地从路旁草丛中飞了出来， 马祖见状借机就问：“那是什么？” 怀海张口就答：“野鸭子。” 马祖跟着又问：“哪里去了？” 怀海答道：“往那边飞了。” 怀海话音刚落，马祖倏然回过头来，冷不防狠狠地扭住怀海的鼻头。 怀海疼得不由得喊叫起来：“疼死啦！疼死啦！” 马祖见状随口又说：“噢，原来还在这儿呀。我还以为真的飞走了呢！” 听了马祖这句话，怀海豁然开悟。</p>
-<h3 id="百丈怀海与黄檗希运"><a href="#百丈怀海与黄檗希运" class="headerlink" title="百丈怀海与黄檗希运"></a><strong>百丈怀海与黄檗希运</strong></h3><p>百丈大智再参马祖，祖见来，竖起拂子。 丈云：“只触此用，离此用。” 祖以拂子挂旧处。良久，云：“汝以后开两片皮，将何为人？” 丈亦竖起拂子。 祖云：“只触此用，离此用。” 丈亦挂旧处，祖便振威一喝。丈大悟，直得三日耳聋。后黄檗来参，举此遂，闻吐舌。</p>
-<p><strong>有马赖底译</strong> 希运为福建省福州人，在福州黄檗山出家，后游学天台山，又登百丈山师事百丈怀海参禅问道。希运游历参学诸方，目的地原为马祖门下，游方途经百丈山，中途歇脚马祖高足百丈怀海处，得知马祖已经圆寂，感到万分遗憾。于是，请教百丈禅师：“没有机缘参拜马祖大师，抱憾终身。请禅师教示马祖大师生平和教诲。”百丈就把耳闻马大师一喝，三天双耳失聪的往事讲给希运听。希运闻之，浑身仿佛一股强烈的冲击波袭来，几乎当场失去知觉，下巴也惊掉了下来，长舌从口中滑了出来。</p>
-<h3 id="黄檗希运与临济义玄"><a href="#黄檗希运与临济义玄" class="headerlink" title="黄檗希运与临济义玄"></a><strong>黄檗希运与临济义玄</strong></h3><p>师一日辞黄檗，黄檗曰：“什么处去？” 师曰：“不是河南，即河北去！” 黄檗拈起拄杖便打，师捉住拄杖曰：“遮老汉！莫盲枷瞎棒，已后错打人。” 黄檗唤侍者︰“把将几案禅板来！” 师曰：“侍者！把将火来！” 黄檗曰：“不然！子但将去，已后坐断天下人舌头在。” 师即便发去。</p>
-<p><strong>有马赖底译</strong> 话说临济准备下黄檗山，游方博参。黄檗问道：“准备去哪儿？” 临济答道：“不是河南，便是河北。” 言外之意是在说，东西南北，自由自在。黄檗闻言，当下就是一棒。临济也毫不示弱，抓着师父，挥手就是一掌。黄檗当即放声大笑，吩咐侍者取来先师百丈的禅板和几案，交付临济。 临济见到实物说：“拿火把它烧了吧！”对此丝毫不在心上。 黄檗说：“倒也是……不过你还是把它带走吧，日后一定会有用场”</p>
-<h3 id="龙潭崇信与德山宣鉴"><a href="#龙潭崇信与德山宣鉴" class="headerlink" title="龙潭崇信与德山宣鉴"></a><strong>龙潭崇信与德山宣鉴</strong></h3><p>（德山宣鉴禅师）一夕侍立次，潭（龙潭崇信禅师）曰：“更深，何不下去。” 师道珍重便出，却回曰：“外面黑。” 潭点纸烛度与师。 师拟接，潭复吹灭，师于此大悟。便礼拜。 潭曰：“子见个甚么？”师曰：“从今向去，更不疑天下老和尚舌头也。” 至来日，龙潭升座谓众曰：“可中有个汉，牙如剑树，口似血盆，一棒打不回头。他时向孤峰顶上，立吾道去在。”</p>
-<p>德山禅师经常用棒喝猛截学人之情思理究，尤其以“棒打”著名。他寻常手执一条白棒，佛来亦打，祖来亦打。德山名言是“道得也三十棒，道不得也三十棒”，棒喝交驰，其威力直传至今。禅门心法用语言是无法阐述的，但不用语言亦是错误，即“不立文字亦不离文字”。德山既不让说，也不允许不说，超越有无、超越是非。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
-  </nav>
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
       }
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Jerry Min</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <span class="site-state-item-count">260</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><hr/></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="MinMinMsn"><span class="site-name">MinMinMsn</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">MinMinMsn</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/05/07/2020/05/2020-05-07-%E5%AE%88%E6%94%BB%E9%81%93/index/" title="守攻道">守攻道</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-05-07T00:00:00.000Z" title="Created 2020-05-07 08:00:00">2020-05-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/wisdom/">wisdom</a></span></div><div class="content">引子 今天学习小组里面一位大牛发了一份文档《2019家庭红宝书：预防家庭小崩溃》，我觉得这个调查研究挺有意思的。然后转发给了一位书友让他也看看，本意山是想看他对号入座归于哪一种家庭呢，最后经过一番探讨得出结论，他觉得他不归于文档种几种类型，最后我的结论山你属于随遇而安型的，我说但愿如此。
+回家吃饭的时候我还在想这个问题。我想要是更深入的探讨我可能会追问：能否接受命运的安排，不管遇到什么事情？比如命途多舛；再比如遇到大挫折；又比如上天让你喜欢猪八戒，你会不会喜欢。当然应该还有更极端的例子，虽然那样效果更好，但是也不能过于残忍，毕竟只是为了好奇。
+然后思绪万千，饭没有多吃，碗也没有洗，就着一罐啤酒打开了大儿子的小破电脑（他说这是最破的电脑，因为经常在他看动画片关键的时候掉链子自动关机赛见，当然了我用时一切会恢复正正常的），急忙记下脑海中的想法，可是已经忘了不少了。每次都是这样，第一次思考时感觉灵感充沛可以浮想联翩，接着就是再二衰，三而竭了，这次就撮合看吧。
+关于守 从来没有想过与马老师主演的电影名字撞衫，然后今天却遇到了，奈何马老师捷足先登，把好名字占位了，索性调换下顺序，这样反而更贴合我 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/30/2020/04/2020-04-30-sre%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97mikey%E9%87%91%E5%AD%97%E5%A1%94/index/" title="SRE生存指南Mikey金字塔">SRE生存指南Mikey金字塔</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-30T00:00:00.000Z" title="Created 2020-04-30 08:00:00">2020-04-30</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">Mikey金字塔摘选自纳特·韦尔奇著作《SRE生存指南：系统中断响应与正常运行时间最大化》，译者为冯文辉。
+
+ 注：这个七层金字塔围绕着沟通设计。每一层都建立在前一层的基础之上。它被沟通所包围，因为每一层都需要沟通才能成功。
+
+SRE工程师是大厂才有的细分的一个职位，其中Mikey金字塔是本书的灵魂，理解后会有一套成熟的方法论应对日常的运维工作。 金字塔以沟通为核心，贯穿始终，自下而上分为监控、事故响应、事后回顾、测试与发布、容量规划、构建工具、用户体验七层。 具体需要在工作中良好应用，形成良性循环，发挥其最大功效，保障服务的可用性、可持续性、可扩展性、可维护性、可操作性、稳定性及安全性。
+</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/" title="凤凰项目：一个IT运维的传奇故事读书笔记">凤凰项目：一个IT运维的传奇故事读书笔记</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-27T00:00:00.000Z" title="Created 2020-04-27 08:00:00">2020-04-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">作者简介吉恩·金(Gene Kim) 信息技术流程研究所联合创始人、研究总监，Tripwire公司创始人，担任公司CTO长达13年之久，一直热衷于研究如何提高IT组织的效能。 凯文·贝尔（Kevin Behr) PraxisFlow咨询公司首席科学官，信息技术流程研究所联合创始人，拥有25年以上的IT管理经验，常为CEO、CIO、CTO等提供指导和建议。 乔治·斯帕福德(George Spafford) 高德纳公司高级研究总监，行业分析师，在IT运维方面拥有丰富经验，曾在多个国家提供过信息技术治理和流程改进等方面的咨询和培训。 简·思西尔特(JanSchilt) GamingWorks创始人，国际最佳实践管理联盟资深专家。IT管理类全球知名沙盘创作者，如IT服务管理类“阿波罗13号”、项目管理类“挑战埃及”和DevOps沙盘“凤凰项目”等。
+译者介绍成小留 上班族，朝九晚六；好读书，不求甚解。用闲云野鹤的态度度过按部就班的人生。 刘征 Nutanix路坦力资深架构师，EXIN首批国内DevOps Master禾DDevOpsProfessional认证讲师，持有红帽RHCA认证和AWS ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/19/2020/04/2020-04-19-testdisk%E6%81%A2%E5%A4%8D%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98%E6%95%B0%E6%8D%AE/index/" title="testdisk恢复格式化磁盘数据">testdisk恢复格式化磁盘数据</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-19T00:00:00.000Z" title="Created 2020-04-19 08:00:00">2020-04-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/bigdata/">bigdata</a></span></div><div class="content">缘起由于疫情影响，上幼儿园的大儿子在家待了几个月了。最近他迷恋玩电脑了，为了防止他沉迷其中，为父只好把win10系统换成了deepin20。系统安装好后，不料一时疏忽大意误把数据分区给格式化了，所以就产生了这篇数据恢复的操作记录。
+步骤1.原系统分区情况 系统盘C 数据盘D 数据盘E 安装deepin20系统时只是把系统盘格式化了，数据盘并没有受影响。新系统启动后原数据盘D和E以只读形式挂载在&#x2F;media下。其中&#x2F;dev&#x2F;sda4映射为数据盘E，&#x2F;dev&#x2F;sda5映射为数据盘D，且数据盘D中重要数据比较少，我用16G U盘把数据先备份了下，准备格式化后做成可写分区再把数据盘E中数据迁移过来。 问题出在操作时，mkfs.ex4时选了&#x2F;dev&#x2F;sda4，这下本来是想先格式化D盘的，变成了格式化E盘。而原E盘有60G重要数据，是之前保留的比较重要的资料、照片、视频等。
+2.寻找数据恢复方法
+意识到格式化错了后，立马卸载了&#x2F;deb&#x2F;sda4，防止对其操作。网上查找恢复数据方法，linux下大部分记录的是r ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/09/2020/04/2020-04-09-%E5%AE%8B%E6%9C%9D%E6%96%87%E4%BA%BA%E8%AF%97%E8%AF%8D%E6%AC%A3%E8%B5%8F/index/" title="宋朝文人诗词欣赏">宋朝文人诗词欣赏</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-09T00:00:00.000Z" title="Created 2020-04-09 08:00:00">2020-04-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/poetry/">poetry</a></span></div><div class="content">苏轼字子瞻、和仲，号铁冠道人、东坡居士，世称苏东坡、苏仙，汉族，眉州眉山（四川省眉山市）人，祖籍河北栾城，北宋著名文学家、书法家、画家，历史治水名人。苏轼是北宋中期文坛领袖，在诗、词、散文、书、画等方面取得很高成就。文纵横恣肆；诗题材广阔，清新豪健，善用夸张比喻，独具风格，与黄庭坚并称“苏黄”；词开豪放一派，与辛弃疾同是豪放派代表，并称“苏辛”；散文著述宏富，豪放自如，与欧阳修并称“欧苏”，为“唐宋八大家”之一。苏轼善书，“宋四家”之一；擅长文人画，尤擅墨竹、怪石、枯木等。作品有《东坡七集》《东坡易传》《东坡乐府》《潇湘竹石图卷》《古木怪石图卷》等。
+定凤波·莫听穿林打叶声
+12345莫听穿林打叶声，何妨呤啸且徐行。竹杖芒鞋轻胜马，谁怕，一蓑烟雨任平生。料峭春风吹酒醒，微冷，山头斜照却相迎。回首向来萧瑟处，归去，也无风雨也无晴。
+
+念奴娇·赤壁怀古
+123大江东去，浪淘尽，千古风流人物。故垒西边，人道是，三国周郎赤壁。乱石穿空，惊涛拍岸，转起千堆雪。江山如画，一时多少豪杰。遥想公瑾当年，小乔出嫁了，雄姿英发。羽扇纶巾，谈笑间，樯橹灰飞烟灭。故国神游，多情应笑我，早生华发。人生如梦，一尊 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/03/2020/04/2020-04-03-%E5%BB%BF%E4%B8%80%E5%8F%B2%E5%BC%B9%E8%AF%8D/index/" title="廿一史弹词">廿一史弹词</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-03T00:00:00.000Z" title="Created 2020-04-03 08:00:00">2020-04-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/poetry/">poetry</a></span></div><div class="content">12《廿一史弹词》为杨慎谪戍云南时所作，原名《历代史略十段锦词话》，传世后易名为《廿一史弹词》。它取材于正史，用浅近文言写成，被誉为“后世弹词之祖”。杨慎是明朝人，只写了明朝以前。后人续作说明朝、说清朝等，乃称二十五史弹词。
+
+第一段 总说
+123456西江月天上乌飞兔走，人间古往今来。沉吟屈指数英才，多少是非成败。富贵歌楼舞榭，凄凉废冢荒台。万般回首化尘埃，只有青山不改。西江月滚滚龙争虎斗，匆匆兔走乌飞。席前花影坐间移，百岁光阴有几。说古谈今话本，图王霸业兵机。要知成败是和非，都在渔樵话里。
+
+第二段 说三代
+123456南乡子携酒上吟亭，满目江山列画屏。赚得英雄头似雪，功名。虎啸龙吟几战争。一枕梦魂惊，落叶西风别换声。谁弱谁强都罢手，伤情。打入渔樵话里听。西江月阅尽残篇断简，细评千古英雄。功名富贵笑谈中，回首一场春梦。昨日香车宝马，今朝禾黍秋风。谁强谁弱总成空，傀儡棚中搬弄。
+
+第三段 说秦汉
+123456临江仙滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。古今多少事，都付笑谈中。西江月落日西飞滚滚，大江东去滔滔 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/03/2020/04/2020-04-03-%E6%8A%8A%E5%8E%86%E5%8F%B2%E5%BD%93%E5%B0%8F%E8%AF%B4%E6%9D%A5%E8%AF%BB/index/" title="把历史当小说来读">把历史当小说来读</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-03T00:00:00.000Z" title="Created 2020-04-03 08:00:00">2020-04-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/talk/">talk</a></span></div><div class="content">导读关于读史，下面分别引用英国历史学家与明朝博览第一杨慎的话，让大家有个初步认知。
+12历史都是假的，除了名字；小说都是真的，除了名字。英国历史学家卡莱尔
+
+123456789廿一史弹词 说秦汉明代：杨慎临江仙滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。古今多少事，都付笑谈中。西江月落日西飞滚滚，大江东去滔滔。夜来今日又明朝，蓦地青春过了。千古风流人物，一时多少英豪。龙争虎斗漫劬劳，落得一场谈笑。
+
+虽然从宏观上讲我们都是时空中一粒尘埃，但是从微观上讲我们每个人都是一个小宇宙，一切都在我们的脑海中，三界唯心，万法唯识，这就是人生的乐趣所在。 本文选取了夏商、战国、秦、隋唐、宋、明相关的历史小说书籍来推荐给读者，没有特别注明的朝代可以参考易中天中华史。
+推荐夏商 山海经密码
 
 
 
-      </div>
+内容简介 《山海经密码》是2011年凤凰出版社出版的图书，作者是阿菩。 这是一个历史记载的真实故事：4000年前，一个叫有莘不破的少年，独自游荡在如今已是繁华都市的大荒原上，他本是商王朝的王孙，王位的继承人，此时却是一个逃出王宫的叛逆少年。 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/01/2020/04/2020-04-01-zabbix-server%E7%AA%81%E7%84%B6down%E6%8E%89%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/index/" title="zabbix-server突然down掉处理过程">zabbix-server突然down掉处理过程</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-01T00:00:00.000Z" title="Created 2020-04-01 08:00:00">2020-04-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">参考文档
+12https://blog.51cto.com/seekerwolf/2357220https://www.centos.bz/2017/08/zabbix-zbx_mem_malloc-out-of-memory/
 
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
+环境
+12CentOS 7.5.1804Zabbix 3.4.15
 
+现象 zabbix web图形界面显示zabbix server is not running，进入zabbix服务器 systemctl status zabbix-server显示服务down掉
+排查 1.试着重新启动zabbix-server，启动不成功 2.查看日志&#x2F;var&#x2F;log&#x2F;zabbix&#x2F;zabbix_server.log
+首先发现如下错误
+123zabbix_server [7988]: cannot open log: cannot create semaphore set: [28] No space left on devicezabbix_server [8008]: cannot open log: cannot crea ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/04/01/2020/04/2020-04-01-%E5%BF%83%E7%BB%8F%E8%A7%A3%E8%AF%BB-%E6%AF%94%E5%B0%94%C2%B7%E6%B3%A2%E7%89%B9/index/" title="心经解读-比尔·波特">心经解读-比尔·波特</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-04-01T00:00:00.000Z" title="Created 2020-04-01 08:00:00">2020-04-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/zen/">zen</a></span></div><div class="content">般若波罗蜜多心经汉英梵唐三藏法师玄奘 译
+1234567891011121314151617181920212223242526272829303132333435361 观自在菩萨，行深般若波罗蜜多时，照见五蕴照见五蕴皆空[度一切苦厄]。5 舍利子，（色空，空是色；）色不异空，空不异色；色即是空，空即是色；受想行识，亦复如是。10 舍利子，是诸法空相，不生不灭，不垢不净，不增不减。是故（舍利子，）空中无色，无受想行识；无眼耳鼻舌身意；15 无色声香味触法；无眼界，乃至无意识界；无无明，亦无无明尽，乃至无老死，亦无老死尽；无苦集灭道；20 无智亦无得（亦无无得）。（舍利子，）以无所得故，菩提萨埵，依般若波罗蜜多，故心无挂碍。无挂碍故无有恐怖，25 远离颠倒梦想究竟涅槃。三世诸佛，依般若波罗蜜多，故得阿耨多罗三藐三菩提。故知般若波罗蜜多是大神咒，30 是大明咒，是无上咒，是无等等咒，能除一切苦，真实不虚。故说般若波罗蜜多咒，即说咒曰：35 揭帝揭帝，般罗揭帝，般罗僧揭帝，菩提僧莎诃。
 
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-</body>
-</html>
+The Heart Sutra translated by Red Pine （BillPorter） ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2020/03/25/2020/03/2020-03-25-%E7%A6%85%E9%97%AE%E7%AD%94/index/" title="禅问答">禅问答</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2020-03-25T00:00:00.000Z" title="Created 2020-03-25 08:00:00">2020-03-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/zen/">zen</a></span></div><div class="content">本文选取了精心达摩、弘忍、惠能、南岳怀让、百丈怀海、黄檗希运、临济义玄等著名禅师的禅问答，希望读者阅读后能有所悟。
+达摩与梁武帝许多佛教典籍对达摩大师与梁武帝具有历史意义的会面都有记载，据《景德传灯录》卷三记载： 帝问曰：“朕即位以来，造寺写经，度僧不可胜记，有何功德？”师曰：“并无功德。”帝曰：“何以无功德？”师曰：“此但人天小果有漏之因，如影随形，虽有非实。”帝曰：“如何是真功德？”师曰：“净智妙圆，体自空寂，如是功德，不以世求。”帝又问：“如何是圣谛第一义？”师曰：“廓然无圣。”帝曰：“对朕者谁？”师曰：“不识。”
+有马赖底译 梁武帝：“我自从当了皇帝后，为了兴隆佛法，写佛经、造佛寺，供养了无数僧人，不可胜记。同时还广结善缘、净身持戒，敢问有何功德？” 达摩：“没有功德。” 梁武帝：“为什么没有功德？” 达摩：“你大兴三宝、造寺写经、度僧礼佛、戒斋布施、念佛坐禅，着实令人敬佩。但是你奉行的种种善行都是人天小果，有漏因。外修诸事的有漏善只不过是世间的福德，福德与功德不同，倘若不能自身内证得自性即是无功德，终不可能出离生死苦海。所以你梁武帝引以为豪的一切，是影非形，是虚非实，做得再多 ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/6/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#content-inner">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#content-inner">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/#content-inner">26</a><a class="extend next" rel="next" href="/page/8/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jerry Min</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" title="运维能力要求">运维能力要求</a><time datetime="2022-12-27T00:00:00.000Z" title="Created 2022-12-27 08:00:00">2022-12-27</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/" title="浅谈基于 OpenStack 和 k8s 轻量研发私有云建设">浅谈基于 OpenStack 和 k8s 轻量研发私有云建设</a><time datetime="2022-11-01T00:00:00.000Z" title="Created 2022-11-01 08:00:00">2022-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" title="数学公式集锦">数学公式集锦</a><time datetime="2022-06-17T00:00:00.000Z" title="Created 2022-06-17 08:00:00">2022-06-17</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/" title="运维工作总结">运维工作总结</a><time datetime="2022-06-14T00:00:00.000Z" title="Created 2022-06-14 08:00:00">2022-06-14</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" title="明儒学案学习笔记">明儒学案学习笔记</a><time datetime="2022-06-11T00:00:00.000Z" title="Created 2022-06-11 08:00:00">2022-06-11</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>Categories</span>
+            <a class="card-more-btn" href="/categories/" title="More">
+    <i class="fas fa-angle-right"></i></a>
+            </div>
+            <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ai/"><span class="card-category-list-name">ai</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ashore/"><span class="card-category-list-name">ashore</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/bigdata/"><span class="card-category-list-name">bigdata</span><span class="card-category-list-count">16</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/bigdata/op/"><span class="card-category-list-name">op</span><span class="card-category-list-count">1</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/cloud/"><span class="card-category-list-name">cloud</span><span class="card-category-list-count">17</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/"><span class="card-category-list-name">confucian</span><span class="card-category-list-count">11</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/note/"><span class="card-category-list-name">note</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/talk/"><span class="card-category-list-name">talk</span><span class="card-category-list-count">1</span></a></li></ul></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/kafka/" style="font-size: 1.1em; color: #999">kafka</a> <a href="/tags/study/" style="font-size: 1.46em; color: #99a8bc">study</a> <a href="/tags/can/" style="font-size: 1.14em; color: #999a9c">can</a> <a href="/tags/jenkins/" style="font-size: 1.17em; color: #999ca0">jenkins</a> <a href="/tags/kibana/" style="font-size: 1.17em; color: #999ca0">kibana</a> <a href="/tags/gitlab/" style="font-size: 1.1em; color: #999">gitlab</a> <a href="/tags/financial/" style="font-size: 1.5em; color: #99a9bf">financial</a> <a href="/tags/hadoop/" style="font-size: 1.1em; color: #999">hadoop</a> <a href="/tags/postgresql/" style="font-size: 1.1em; color: #999">postgresql</a> <a href="/tags/zabbix/" style="font-size: 1.17em; color: #999ca0">zabbix</a> <a href="/tags/ambari/" style="font-size: 1.1em; color: #999">ambari</a> <a href="/tags/parenting/" style="font-size: 1.14em; color: #999a9c">parenting</a> <a href="/tags/method/" style="font-size: 1.32em; color: #99a2ae">method</a> <a href="/tags/hbase/" style="font-size: 1.1em; color: #999">hbase</a> <a href="/tags/pinpoint/" style="font-size: 1.17em; color: #999ca0">pinpoint</a> <a href="/tags/python/" style="font-size: 1.25em; color: #999fa7">python</a> <a href="/tags/saltstack/" style="font-size: 1.1em; color: #999">saltstack</a> <a href="/tags/communicate/" style="font-size: 1.1em; color: #999">communicate</a> <a href="/tags/etcd/" style="font-size: 1.1em; color: #999">etcd</a> <a href="/tags/devops/" style="font-size: 1.14em; color: #999a9c">devops</a> <a href="/tags/opencv/" style="font-size: 1.14em; color: #999a9c">opencv</a> <a href="/tags/walle/" style="font-size: 1.14em; color: #999a9c">walle</a> <a href="/tags/helm/" style="font-size: 1.17em; color: #999ca0">helm</a> <a href="/tags/confucian/" style="font-size: 1.28em; color: #99a0aa">confucian</a> <a href="/tags/nvidia/" style="font-size: 1.1em; color: #999">nvidia</a> <a href="/tags/tcpcopy/" style="font-size: 1.1em; color: #999">tcpcopy</a> <a href="/tags/life/" style="font-size: 1.28em; color: #99a0aa">life</a> <a href="/tags/hexo/" style="font-size: 1.1em; color: #999">hexo</a> <a href="/tags/sre/" style="font-size: 1.14em; color: #999a9c">sre</a> <a href="/tags/coredns/" style="font-size: 1.1em; color: #999">coredns</a> <a href="/tags/prometheus/" style="font-size: 1.21em; color: #999da3">prometheus</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 1.1em; color: #999">数据</a> <a href="/tags/nginx/" style="font-size: 1.35em; color: #99a3b1">nginx</a> <a href="/tags/zen/" style="font-size: 1.43em; color: #99a6b8">zen</a> <a href="/tags/poetry/" style="font-size: 1.25em; color: #999fa7">poetry</a> <a href="/tags/invest/" style="font-size: 1.21em; color: #999da3">invest</a> <a href="/tags/mongodb/" style="font-size: 1.1em; color: #999">mongodb</a> <a href="/tags/op/" style="font-size: 1.39em; color: #99a5b5">op</a> <a href="/tags/harbor/" style="font-size: 1.14em; color: #999a9c">harbor</a> <a href="/tags/shell/" style="font-size: 1.1em; color: #999">shell</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">December 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">November 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">June 2022</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">May 2022</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">April 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">March 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/02/"><span class="card-archive-list-date">February 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">January 2022</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">260</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2023-05-26T08:35:47.034Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Jerry Min</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

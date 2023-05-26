@@ -1,1958 +1,273 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.3.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
-
-  <meta property="og:type" content="website">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MinMinMsn</title><meta name="author" content="Jerry Min"><meta name="copyright" content="Jerry Min"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
 <meta property="og:title" content="MinMinMsn">
 <meta property="og:url" content="https://minminmsn.github.io/index.html">
 <meta property="og:site_name" content="MinMinMsn">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png">
 <meta property="article:author" content="Jerry Min">
 <meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="https://minminmsn.github.io/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'en'
-  };
-</script>
-
-  <title>MinMinMsn</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
+<meta name="twitter:image" content="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://minminmsn.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MinMinMsn',
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-05-26 16:35:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">MinMinMsn</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content index posts-expand">
-            
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" class="post-title-link" itemprop="url">运维能力要求</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-12-27 08:00:00" itemprop="dateCreated datePublished" datetime="2022-12-27T08:00:00+08:00">2022-12-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>百度百科对运维的解释为：企业 IT 部门采用相关的方法、手段、技术、制度、流程和文档等,对IT 软硬运行环境(软件环境、网络环境等)、IT 业务系统和 IT 运维人员进行的综合管理。从百度百科的解释看，运维岗位需要一个综合性的技术与管理能力，需要掌握大量的方法论与技术栈。</p>
-<p>运维狭义“运维技术与资源”可以定义为“监、管、控”，技术与资源主要是支撑运维&#x2F;运营的质量、效率、成本的平衡。</p>
-<p>以下简单摘录了运维的一些能力要求：<br><strong>运维规范的落地 ：</strong>以ITIL、ISO20000、ITSS.1等方法论，结合外部监管及内部规范的落地；<br><strong>监管机构的要求落地 ：</strong>理解、快速响应、落地监管机构的管理要求；<br><strong>基本保障 ：</strong>配置、监控、应用发布、资源扩容、事件、问题等；<br><strong>基础能力 ：</strong>网络、服务器、操作系统、数据库、中间件、JVM、应用等基本使用与调优；<br><strong>业务服务能力 ：</strong>SLA，服务台、业务咨询、维护、经验库、等支持能力；<br><strong>可用性管理能力 ：</strong>巡检、业务系统连续性、可用性，基础架构及应用系统的高可用、备件冗余资源；<br><strong>风险、安全管理能力 ：</strong>操作、审计、监管风险，漏洞、攻击管控；<br><strong>故障管理能力 ：</strong>事件、问题管理水平与能力；<br><strong>持续交付能力 ：</strong>应用变更、基础资源、办公服务交付能力；<br><strong>主动优化能力 ：</strong>架构优化、性能响应效率、客户体验等;<br><strong>应急演练 ：</strong>架构高可用、突发事件、业务故障的架构、方案、文档、人员熟练程度等;<br><strong>业务支撑 ：</strong>数据维护、数据提取、参数维护等；运行分析能力 ：容量、性能、可用性分析等；<br><strong>运营能力 ：</strong>促进业务痛点的发现与解决、客户及业务业务体验等；<br><strong>成本控制 ：</strong>更好的评估人力、硬件、带宽、软件，节省成本；<br><strong>运维开发 ：</strong>运维自动化工具的建设，运维开发能力的培养.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/" class="post-title-link" itemprop="url">浅谈基于 OpenStack 和 k8s 轻量研发私有云建设</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-11-01 08:00:00" itemprop="dateCreated datePublished" datetime="2022-11-01T08:00:00+08:00">2022-11-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="原文链接：https-bbs-huaweicloud-com-blogs-285546"><a href="#原文链接：https-bbs-huaweicloud-com-blogs-285546" class="headerlink" title="原文链接：https://bbs.huaweicloud.com/blogs/285546"></a>原文链接：<a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/285546">https://bbs.huaweicloud.com/blogs/285546</a></h2><p>【摘要】 在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性、更高的资源使用效率等都是关键问题；</p>
-<ol>
-<li>背景</li>
-<li>面临的挑战</li>
-<li>功能简介<ol>
-<li>核心优势</li>
-<li>核心设施平台（IaaS云）</li>
-<li>基础服务平台（PaaS云）</li>
-</ol>
-</li>
-<li>技术落地<ol>
-<li>整体架构</li>
-<li>技术选型<ol>
-<li>IaaS云技术</li>
-<li>PaaS云技术</li>
-</ol>
-</li>
-<li>实践的过程<ol>
-<li>OpenStack &amp; CloudStack</li>
-<li>KVM &amp; VMWare</li>
-<li>CentOS &amp; Ubuntu</li>
-<li>OpenStack &amp; k8s</li>
-<li>拥抱开源面临的困难</li>
-<li>云原生架构带来的挑战</li>
-<li>私有云建设路线</li>
-<li>私有云的容量评估</li>
-<li>全栈监控</li>
-<li>k8s集群规模</li>
-<li>k8s集群计算资源</li>
-<li>压力引擎</li>
-<li>其它</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>运行效果展示<ol>
-<li>基础服务平台（IaaS云）<ol>
-<li>登录认证</li>
-<li>高效管理物理资源（计算、网络、存储）</li>
-<li>1.2、轻松管理系统镜像</li>
-<li>web桌面</li>
-<li>集群管理 Web UI</li>
-</ol>
-</li>
-<li>基础服务平台（PaaS云）<ol>
-<li>DevOps流水线</li>
-<li>负载均衡</li>
-<li>代码仓库</li>
-<li>敏捷研发管理</li>
-<li>调用链监控</li>
-<li>服务注册</li>
-<li>服务监控</li>
-<li>日志聚合</li>
-<li>API文档</li>
-<li>配置管理</li>
-<li>制品仓库</li>
-<li>容器仓库</li>
-<li>静态代码扫描</li>
-<li>可视化微服务管理</li>
-<li>压力引擎</li>
-<li>资源监控</li>
-<li>服务可视化监控</li>
-<li>自定义告警</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>经验心得</li>
-<li>未来展望</li>
-</ol>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>建设公司研发私有云，为研发部门提供安全、可靠、高效的基础资源、数据存储服务、DevOps 流水线以及运维自动化服务等。</p>
-<h2 id="面临的挑战"><a href="#面临的挑战" class="headerlink" title="面临的挑战"></a>面临的挑战</h2><ul>
-<li>运维：高效管理基础设施资源、监控报警完善且易用；</li>
-<li>产品：弹性扩容、资源随时可用；</li>
-<li>研发整体：提升资源利用率、提高产品交付效能，降低成本。</li>
-</ul>
-<h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><h3 id="核心优势"><a href="#核心优势" class="headerlink" title="核心优势"></a>核心优势</h3><ul>
-<li>任务调度：为集群系统中的任务提供调度服务，自动将服务按资源需求分配到资源限制的计算节点;</li>
-<li>资源隔离：为产品提供管控与服务节点隔离能力，保证研发应用跟管控服务不互相产生影响;</li>
-<li>高可用能力：自动监控服务的运行，根据运行情况对失效的服务进行自动重启恢复;</li>
-<li>网络互联互通能力：提供统一的IP地址分配和网络互通能力;</li>
-<li>统一编排管理能力：结合 gitlab 和 k8s 对输出的产品进行统一的编排管理;</li>
-<li>公共产品组件为团队提供了统一部署、验证、授权、调度和管控能力，为私有云服务提供基础性的支撑。</li>
-</ul>
-<h3 id="核心设施平台（IaaS云）"><a href="#核心设施平台（IaaS云）" class="headerlink" title="核心设施平台（IaaS云）"></a>核心设施平台（IaaS云）</h3><ul>
-<li>提供计算、网络、存储等核心资源设备的虚拟化；<ul>
-<li>支持不同操作系统，包括主流的 win 和 Linux 系统；</li>
-<li>提供主要包括三种服务：云主机、云网络、云硬盘；</li>
-<li>提供可视化 Web UI。</li>
-</ul>
-</li>
-<li>提供 k8s 集群（容器云）规划、部署和运营；<ul>
-<li>支持多种计算、存储和网络方案；</li>
-<li>集成 Ansible 运维自动化工具；</li>
-<li>支持在线环境和离线环境部署；</li>
-<li>提供可视化 Web UI。</li>
-</ul>
-</li>
-</ul>
-<h3 id="基础服务平台（PaaS云）"><a href="#基础服务平台（PaaS云）" class="headerlink" title="基础服务平台（PaaS云）"></a>基础服务平台（PaaS云）</h3><ul>
-<li>提供数据存储、应用服务、DevOps、运维管理等服务；</li>
-<li>数据存储类：支持常见 NFS 、Ceph RBD、Local Volume 等；</li>
-<li>应用服务类：自愈和自动伸缩、调度和发布、负载均衡、消息队列、容器引擎、调用链监控、Metrics 监控、日志聚合、服务安全、API管理、弹性和容错、配置管理等；</li>
-<li>DevOps：敏捷研发管理、持续交付流水线、代码扫描、代码仓库、制品仓库、容器仓库、压测引擎等；</li>
-<li>运维管理：日志监控、资源监控、消息告警等。</li>
-</ul>
-<h2 id="技术落地"><a href="#技术落地" class="headerlink" title="技术落地"></a>技术落地</h2><h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><p><img src="https://img-blog.csdnimg.cn/20201106163724298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="整体架构"></p>
-<h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><h4 id="IaaS云技术"><a href="#IaaS云技术" class="headerlink" title="IaaS云技术"></a>IaaS云技术</h4><table>
-<thead>
-<tr>
-<th>技术</th>
-<th>说明</th>
-<th>官网</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>OpenStack Nova</td>
-<td>云主机</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/nova">https://www.openstack.org/software/releases/victoria/components/nova</a></td>
-</tr>
-<tr>
-<td>OpenStack keystone</td>
-<td>认证中心</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/keystone">https://www.openstack.org/software/releases/victoria/components/keystone</a></td>
-</tr>
-<tr>
-<td>OpenStack Glance</td>
-<td>磁盘镜像</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/glance">https://www.openstack.org/software/releases/victoria/components/glance</a></td>
-</tr>
-<tr>
-<td>OpenStack Neutron</td>
-<td>云网络</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/neutron">https://www.openstack.org/software/releases/victoria/components/neutron</a></td>
-</tr>
-<tr>
-<td>OpenStack Cinder</td>
-<td>云硬盘</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/cinder">https://www.openstack.org/software/releases/victoria/components/cinder</a></td>
-</tr>
-<tr>
-<td>OpenStack Horizon</td>
-<td>可视化UI</td>
-<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/horizon">https://www.openstack.org/software/releases/victoria/components/horizon</a></td>
-</tr>
-<tr>
-<td>KubeOperator</td>
-<td>规划、部署和运营 k8s 集群</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/KubeOperator/KubeOperator">https://github.com/KubeOperator/KubeOperator</a></td>
-</tr>
-<tr>
-<td>NFS</td>
-<td>网络存储</td>
-<td><a target="_blank" rel="noopener" href="http://nfs.sourceforge.net/">http://nfs.sourceforge.net</a></td>
-</tr>
-<tr>
-<td>Ceph</td>
-<td>分布式存储</td>
-<td><a target="_blank" rel="noopener" href="https://ceph.com/">https://ceph.com</a></td>
-</tr>
-</tbody></table>
-<h4 id="PaaS云技术"><a href="#PaaS云技术" class="headerlink" title="PaaS云技术"></a>PaaS云技术</h4><table>
-<thead>
-<tr>
-<th>技术</th>
-<th>说明</th>
-<th>官网</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>kubernetes(k8s)</td>
-<td>容器云</td>
-<td><a target="_blank" rel="noopener" href="https://kubernetes.io/">https://kubernetes.io</a></td>
-</tr>
-<tr>
-<td>helm</td>
-<td>k8s 包管理器</td>
-<td><a target="_blank" rel="noopener" href="https://helm.sh/">https://helm.sh</a></td>
-</tr>
-<tr>
-<td>Docker</td>
-<td>应用容器引擎</td>
-<td><a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com</a></td>
-</tr>
-<tr>
-<td>Weave Scope</td>
-<td>k8s 可视化监控工具</td>
-<td><a target="_blank" rel="noopener" href="https://www.weave.works/">https://www.weave.works</a></td>
-</tr>
-<tr>
-<td>Spring Cloud</td>
-<td>微服务框架</td>
-<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud">https://spring.io/projects/spring-cloud</a></td>
-</tr>
-<tr>
-<td>Spring Cloud Alibaba</td>
-<td>微服务框架</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/spring-cloud-alibaba">https://github.com/alibaba/spring-cloud-alibaba</a></td>
-</tr>
-<tr>
-<td>Spring Boot</td>
-<td>容器+ MVC 框架</td>
-<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-boot">https://spring.io/projects/spring-boot</a></td>
-</tr>
-<tr>
-<td>Knife4j</td>
-<td>文档生产工具</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/xiaoymin/swagger-bootstrap-ui">https://github.com/xiaoymin/swagger-bootstrap-ui</a></td>
-</tr>
-<tr>
-<td>Elasticsearch</td>
-<td>搜索引擎</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/elastic/elasticsearch">https://github.com/elastic/elasticsearch</a></td>
-</tr>
-<tr>
-<td>RabbitMq</td>
-<td>消息队列</td>
-<td><a target="_blank" rel="noopener" href="https://www.rabbitmq.com/">https://www.rabbitmq.com</a></td>
-</tr>
-<tr>
-<td>Redis</td>
-<td>分布式缓存</td>
-<td><a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io</a></td>
-</tr>
-<tr>
-<td>MongoDb</td>
-<td>NoSql数据库</td>
-<td><a target="_blank" rel="noopener" href="https://www.mongodb.com/">https://www.mongodb.com</a></td>
-</tr>
-<tr>
-<td>LogStash</td>
-<td>应用日志收集</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/logstash/logstash-logback-encoder">https://github.com/logstash/logstash-logback-encoder</a></td>
-</tr>
-<tr>
-<td>Jenkins</td>
-<td>DevOps 调度工具</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins">https://github.com/jenkinsci/jenkins</a></td>
-</tr>
-<tr>
-<td>Promethues</td>
-<td>资源监控系统</td>
-<td><a target="_blank" rel="noopener" href="https://prometheus.io/">https://prometheus.io</a></td>
-</tr>
-<tr>
-<td>Grafana</td>
-<td>监控可视化看板</td>
-<td><a target="_blank" rel="noopener" href="https://grafana.com/">https://grafana.com</a></td>
-</tr>
-<tr>
-<td>harbor</td>
-<td>Docker 镜像仓库</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/goharbor/harbor-helm">https://github.com/goharbor/harbor-helm</a></td>
-</tr>
-<tr>
-<td>SkyWalking</td>
-<td>分布式追踪、服务网格遥测分析、度量聚合和可视化一体化解决方案</td>
-<td><a target="_blank" rel="noopener" href="http://skywalking.apache.org/">http://skywalking.apache.org</a></td>
-</tr>
-<tr>
-<td>Kibana</td>
-<td>日志可视化看板</td>
-<td><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/kibana">https://www.elastic.co/cn/downloads/kibana</a></td>
-</tr>
-<tr>
-<td>Fluentd</td>
-<td>容器日志收集</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch">https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch</a></td>
-</tr>
-<tr>
-<td>Gitlab</td>
-<td>代码仓库</td>
-<td><a target="_blank" rel="noopener" href="https://about.gitlab.com/">https://about.gitlab.com</a></td>
-</tr>
-<tr>
-<td>Nexus3 OSS</td>
-<td>制品仓库</td>
-<td><a target="_blank" rel="noopener" href="https://www.sonatype.com/">https://www.sonatype.com</a></td>
-</tr>
-<tr>
-<td>SonarQube</td>
-<td>静态代码扫描</td>
-<td><a target="_blank" rel="noopener" href="https://www.sonarqube.org/">https://www.sonarqube.org</a></td>
-</tr>
-<tr>
-<td>YouTrack</td>
-<td>敏捷研发管理</td>
-<td><a target="_blank" rel="noopener" href="https://www.jetbrains.com/youtrack">https://www.jetbrains.com/youtrack</a></td>
-</tr>
-<tr>
-<td>Jmeter</td>
-<td>压测引擎</td>
-<td><a target="_blank" rel="noopener" href="https://jmeter.apache.org/">https://jmeter.apache.org</a></td>
-</tr>
-<tr>
-<td>Kuboard</td>
-<td>微服务管理工具</td>
-<td><a target="_blank" rel="noopener" href="https://github.com/eip-work/kuboard-press">https://github.com/eip-work/kuboard-press</a></td>
-</tr>
-</tbody></table>
-<h3 id="实践的过程"><a href="#实践的过程" class="headerlink" title="实践的过程"></a>实践的过程</h3><h4 id="OpenStack-amp-CloudStack"><a href="#OpenStack-amp-CloudStack" class="headerlink" title="OpenStack &amp; CloudStack"></a>OpenStack &amp; CloudStack</h4><p>作为两大主流开源云平台，OpenStack 和 CloudStack 各具优势。<br>CloudStack 是从 cloud.com 公司的产品转向开源，从产品化方面来说，本身是个比较成熟的产品，安装和部署都很方便，且提供了完整的升级流程，可以便于将来和社区保持同步。然而随着社区版本的不断更新和兼容各家产品，CloudStack 也逐渐变得庞大。以目前公司搭建私有云落地方案而言，很多功能无用且显得多余。<br>OpenStack 目前已经成为了大家选择云计算技术落地框架的事实标准，优势在于其插件化的框架，因为技术框架允许自由的选择可用插件，私有云落地方案中，可以只选择需要的组件进行安装。因为框架允许插入不同组件，所以 OpenStack 社区也获得了更多厂商的支持，社区活跃度也比较高。在企业实施落地方案的时候，可以有更多的选择余地，对遇到的问题，也有了更多更快的响应。<br>考虑到如果将来公司还需要进一步开发所需要的组件，并且需要对云平台进行针对性的调优，例如虚拟机的 IO、CPU 绑定等操作，而不只是依赖于开源社区的版本，OpenStack 的框架则是更好的选择。CloudStack 如果进行二次开发，代码未合并入社区版本的时候，升级则需要再次 merge 代码，重复工作比较多。OpenStack 则可以做成插件，在升级 OpenStack 版本的时候，保持插件的可用。<br>但是由于 OpenStack 的产品化复杂度较高，搭建落地到将来的升级，以及后续的二次开发，都需要进行不少的开发和测试人力投入。对于非互联网公司来说，咱们并没有比较成熟的运维团队和研发团队，开发和测试在人力资源成本方面计算都很紧张，所以对于有公有云需求还是直接购买大厂的云服务即可。<br>最终的在开源方案选择上，更倾向于 OpenStack。</p>
-<h4 id="KVM-amp-VMWare"><a href="#KVM-amp-VMWare" class="headerlink" title="KVM &amp; VMWare"></a>KVM &amp; VMWare</h4><p>OpenStack 原生对 KVM 支持更加完善。<br>KVM 也是比较成熟的虚拟化平台，于 2006 年写入 Linux 内核，且在 Redhat 6 以后，转向对 KVM 的支持而非之前大力推广 Xen 的虚拟化方案。<br>VMware 是商业软件，在虚拟化平台中，目前应该属于 IO 和稳定性都最优化的方案。OpenStack 中，因为 VMware 本身提供了相应的 driver，对 VMware 的支持也比较成熟。<br>最终放弃 VMware 的原因，是因为其授权比较昂贵。<br>目前选择的方案，以 KVM 为主。</p>
-<h4 id="CentOS-amp-Ubuntu"><a href="#CentOS-amp-Ubuntu" class="headerlink" title="CentOS &amp; Ubuntu"></a>CentOS &amp; Ubuntu</h4><p>OpenStack 社区 对 Ubuntu 支持比较完善，Ubuntu 更新速度快，内核版本比较新，可以支持更高版本的KVM，对OpenStack使用者来说，Ubuntu 可以提供更好的性能。<br>就系统的稳定性而言，CentOS 来自 Redhat 商业版本的重新编译，稳定性和系统优化以及兼容性方面，CentOS 有着比较完善的测试和发型流程。CentOS 7 以后，也换用了 Linux 3.x 内核版本。<br>鉴于系统可靠性的选择和之前公司的技术积累，还是选用 CentOS 系列，比 Ubuntu 管理更为方便。</p>
-<h4 id="OpenStack-amp-k8s"><a href="#OpenStack-amp-k8s" class="headerlink" title="OpenStack &amp; k8s"></a>OpenStack &amp; k8s</h4><p>OpenStack 主要是面向资源分配，虚拟机创出来了就基本没有责任了，至于服务高可用，自动伸缩，监控等这类的功能完全由应用方来处理，平台不提供支持，适合传统的部署模式，对应用而言和物理机时代没有区别；<br>而 k8s 容器云主要面向的是服务，强调服务能力，具有弹性与高可用保障，而不是简单地提供 IT 资源。对应的，应用服务也要使用云原生的理念来进行改造拆分，以更好地利用 k8s 提供的平台能力。<br><strong>就咱们公司而言目前还需要 OpenStack，因为很多老系统没有容器化，所以到了现实环境下就要妥协</strong>。</p>
-<p>但是无论是 OpenStack 还是 k8s 上手技术门槛较高，最痛苦的事情，莫过于看它的架构。</p>
-<p>不信？好，扔个 OpenStack 架构图给你看：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106163758762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt=" OpenStack 架构图"></p>
-<p>我还是用一个简单的图吧，看得更明白些。如下：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106163816789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="简单的图"></p>
-<p>k8s 架构图如下：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106163838236.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 架构图"></p>
-<p>看上去比 OpenStack 的架构图稍微好点，不过从技术上来说也是比较复杂的。</p>
-<h4 id="拥抱开源面临的困难"><a href="#拥抱开源面临的困难" class="headerlink" title="拥抱开源面临的困难"></a>拥抱开源面临的困难</h4><p>云计算发展到今天，无论是在技术、服务层面，还是在商业层面都已经相对比较成熟。当前绝大多数初创公司在基础设施上的策略一定是公有云，已经极少再有自建或托管 IDC 的情况，所以不会存在是否上云这样的纠结。<br>但是对于我们这样体量的公司，全部上云，就必须要考虑得更全面：考虑基础设施的变化，业务的平稳过度，运维模式的转变，成本管控的调整，以及众多的细节问题。</p>
-<p>虽然需要比较和考虑的因素非常多，主要从人员能力、技术掌控、未来发展等方面进行说明。<br>人的因素是放在第一位的，企业中一般是业务开发应用及基础架构运维人员（比如系统、网络管理等），采用开源的方案的话，如果仅仅是在开发、测试环境去试着安装、使用是没有问题的，但是当准备在生产上进行实施部署，并且后续为了进一步提升开源平台化的能力（比如生产遇到问题需要分析、内部系统集成、进行前端定制、跟随社区优化&#x2F;升级等），会发现这些均需要能力较强的既懂开发也懂基础架构的人员团队时候就寸步难行了。</p>
-<p>越是底层的技术，技术门槛就越高、越复杂，也越离不开高端人才的投入。比如硬件资源虚拟化，就需要有懂内核、懂网络、懂 OpenStack、懂 k8s、懂分布式存储如 Ceph 等等的专业人才。但是真正精通的人却不多，加上要搞定整套解决方案，还需要一个完整的团队，这就难上加难，在团队组建上面临更大的困难。人才紧缺，就意味着人力成本会很高，这个就是技术投入的隐性成本。而且因为技术门槛高，一旦发生人员流动，那么，对于原有技术平台来说，无人能把控的风险就会更高。这一点往往会是最大的隐性管理成本所在。</p>
-<p>当然，在人才招揽上，我们可以加大人力成本投入，招聘最优秀的人才。但是作为像咱们这样以更加聚焦于业务，以业务发展为生命线的公司，我们更期望能够在业务上取得创新和发展，而不是在技术上取得多么非凡的成就（这一点与公司的发展诉求是不一致的）。所以这就从根本上决定了，我们不会无限度地投入，或投入非常大的成本在这些基础技术的研究上。</p>
-<p>所以从未来发展来看，<strong>私有云（存量+测试&amp;开发）与公有云（生产+增量）方案是适合我们的方向</strong>，开源方案和商业方案会长时间存在，这是受每个公司的技术战略定位决定的。而对于大多数企业来说，以实现功能服务前端业务为主的技术战略，则选择上更应该倾向于选择商业方案。</p>
-<h4 id="云原生架构带来的挑战"><a href="#云原生架构带来的挑战" class="headerlink" title="云原生架构带来的挑战"></a>云原生架构带来的挑战</h4><p>大致来说，在部署应用程序的方式上，我们现在主要经历了三个时代：</p>
-<p><img src="https://img-blog.csdnimg.cn/2020091013482924.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
-<ul>
-<li>传统部署时代：早期企业直接将应用程序部署在物理机上。由于物理机上不能为应用程序定义资源使用边界，我们也就很难合理地分配计算资源。例如：如果多个应用程序运行在同一台物理机上，可能发生这样的情况：其中的一个应用程序消耗了大多数的计算资源，导致其他应用程序不能正常运行。应对此问题的一种解决办法是，将每一个应用程序运行在不同的物理机上。然而，这种做法无法大规模实施，因为资源利用率很低，且企业维护更多物理机的成本昂贵。</li>
-<li>虚拟化部署时代：针对上述问题，虚拟化技术应运而生。用户可以在单台物理机的CPU上运行多个虚拟机，虚拟化技术使得应用程序被虚拟机相互分隔开，限制了应用程序之间的非法访问，进而提供了一定程度的安全性。虚拟化技术提高了物理机的资源利用率，可以更容易地安装或更新应用程序，降低了硬件成本，因此可以更好地规模化实施。每一个虚拟机可以认为是被虚拟化的物理机之上的一台完整的机器，其中运行了一台机器的所有组件，包括虚拟机自身的操作系统。</li>
-<li>容器化部署时代：容器与虚拟机类似，但是降低了隔离层级，共享了操作系统。因此，容器可以认为是轻量级的。与虚拟机相似，每个容器拥有自己的文件系统、CPU、内存、进程空间等。运行应用程序所需要的资源都被容器包装，并和底层基础架构解耦。容器化的应用程序可以跨云服务商、跨Linux操作系统发行版进行部署。借助容器技术呈现了一个优雅的抽象场景：让开发所需要的灵活性、开放性和运维所关注的标准化、自动化达成相对平衡。容器镜像迅速成为了应用分发的 <strong>工业标准</strong>。</li>
-</ul>
-<p>前面我们说了，我们公司目前正处于 <strong>「虚拟化部署时代」 到 「容器化部署时代」的过渡阶段</strong>，那么它必然带来了更高的要求：</p>
-<ul>
-<li>敏捷地创建和部署应用程序：相较于创建虚拟机，创建容器更加容易和快速；</li>
-<li>高度自动化的软件交付：可以更快更频繁地构建、部署的、并且轻松地回滚；</li>
-<li>分离开发和运维的关注点：在开发构建阶段可以部署到多种基础设施上，将部署阶段需要关注的内容聚焦在如何提供基础设施以及如何使用的过程中。降低了开发和运维的耦合度；</li>
-<li>可监控性：不仅可以查看操作系统级别的资源监控信息，还可以查看应用程序健康状态以及 k8s 集群的监控信息;</li>
-<li>开发、测试、生产不同阶段的环境一致性：在开发环境的容器与测试、生产环境中运行的容器一致;</li>
-<li>跨云服务商、跨操作系统的可移植性：容器支持运行在 Ubuntu、RHEL、CentOS 等不同的操作系统发行版上，可以运行在私有云、也可以支持阿里云等不同的云供应商的环境中；</li>
-<li>以应用程序为中心的管理：虚拟机时代的考虑的问题是在虚拟硬件上运行一个操作系统，而容器化时代，问题的焦点则是在操作系统的逻辑资源上运行一个应用程序；</li>
-<li>松耦合、分布式、弹性、无约束的微服务：满足更小的、独立的微服务，可以动态部署和管理；</li>
-<li>资源隔离：支持多租户，确保应用程序性能不受干扰；</li>
-<li>资源利用：需要满足资源高效、高密度利用。</li>
-</ul>
-<p>针对上述更高诉求，我们在建设私有云的过程中需要重点考虑并逐一落地。</p>
-<h4 id="私有云建设路线"><a href="#私有云建设路线" class="headerlink" title="私有云建设路线"></a>私有云建设路线</h4><p>私有云建设很少有一步到位的，往往最开始的阶段是满足最基础的需求，例如计算虚拟化，存储虚拟化，然后网络虚拟化，然后容器，监控，大数据，编排，数据库，等等公共应用。<br>其实，这个和云计算的分层也是有很大关系的。从 IaaS 到 PaaS，再到 SaaS，层层递进。研发云的建设，往往也是遵循这个规律。在实践中，可能会有一些交集。<br>通常都是分几期的。第一期为试点项目，第二期根据一期结果形成规范，标准，成为新开发应用的标准平台。第三期逐渐将老应用迁移到私有云上。</p>
-<p>对于私有云实施：</p>
-<ul>
-<li>通常来讲私有云基础设施只被公司研发团队使用，支持单租户即可；</li>
-<li>一般使用 4 个网：管理网、业务网（vxlan）、带外网、存储网；</li>
-<li>使用不同子网</li>
-</ul>
-<h4 id="私有云的容量评估"><a href="#私有云的容量评估" class="headerlink" title="私有云的容量评估"></a>私有云的容量评估</h4><p>私有云的容量需要根据公司业务来评估，以一般行业来说，都有 web 区，有 app，有 db。需要根据运行在私有云上的业务的多少，来统计所需要的资源的多少。例如，web区需要 nginx，需要考虑 HA 和 LB，那么就需要 2 台以上；如果多个业务共享 nginx，那么就需要多个 nginx 集群来分担压力。</p>
-<p>OpenStack Celimeter 模块专门用来拥挤CPU，内存，网络的使用量，可以统计出使用云资源，相对传统环境节省了多少资源。<br>至于成本和效率的平衡，一般在私有云建设初期很难做到。设备的购置，部署，人员的配置等等都是一笔不小的开支；私有云真正的优势体现在后期的使用中。<br>容量如何评估，这个肯定是没有普适标准的了。容量通常从三方面考虑：计算能力、存储容量、网络带宽。这三方面可以说也是数据中心最基本的三大核心要素了，我们都知道，云计算是以规模取胜的，这个规模如何决定？究竟是 20 节点，50 节点，还是 100+ 节点，这个得根据你自己的业务需求来考虑了，在小规模情况下，为了高可用，如果可用容量评估是 N，那你就按 2N 来计算，私有云一般不会像达到公有云那种规模，所以通常也不可能达到很多大佬口中的虚机随便挂，真挂了你宿主机资源没有了，咋整？<br>至于成本，的看你的方案了，我们是采用开源自建，如果是与厂商合作共建，合作情况下如何分工，哪些外包出去，这个得仔细考虑。通常，如果人力资源有限，技术实力有限，那就由承包给厂商来实施吧，不然到后面也是个烂摊子。但是，全部外部给厂商的不足也是明显的，一不小心就被人家锁定，每年烧钱的跑不掉的了，尤其是项目上马后，停也停不下来了。</p>
-<h4 id="全栈监控"><a href="#全栈监控" class="headerlink" title="全栈监控"></a>全栈监控</h4><p>首先我们要了解监控的必要性，如果没有监控数据，运维侧无从谈起，没有数据，那么如何去度量一个指标呢？<br>所以，在建设研发私有云尽量搭建一套适合的监控体系是必要的。<br>而从监控分类来说，常见的是以下几种：</p>
-<table>
-<thead>
-<tr>
-<th>类别</th>
-<th>主要内容</th>
-<th>使用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Metrics监控</td>
-<td>计数器，时序数值</td>
-<td>监控告警</td>
-</tr>
-<tr>
-<td>日志监控</td>
-<td>离散事件，结构化&#x2F;非结构化</td>
-<td>调试发现</td>
-</tr>
-<tr>
-<td>调用链监控</td>
-<td>调用链</td>
-<td>调试发现</td>
-</tr>
-<tr>
-<td>健康检查</td>
-<td>探活</td>
-<td>监控告警</td>
-</tr>
-<tr>
-<td>告警系统</td>
-<td>监控告警</td>
-<td>监控告警</td>
-</tr>
-</tbody></table>
-<p>Metrics 监控主要包括核心业务指标监控和资源监控，核心业务指标监控主要方式还是埋点，目前这块我们基本是空白。至于资源监控，我们集成云原生的开源监控系统 Prometheus 可以 cover 大部分的需求。<br>日志监控这块包括应用日志和平台日志的聚合，这块目前的技术比较成熟，基本是集成成熟 ELK &amp; EFk 开源方案解决。<br>健康检查方面，在 k8s 容器云层提供存活和就绪探针，另外，在微服务框架也提供了应用监控中心，可以很方便进行监控。<br>告警系统是每个监控系统的必备功能，Prometheus 支持丰富的告警规则和方式，常见的邮件、钉钉、微信等都支持。<br>这里特别提一下调用链监控，这个在目前的微服务系统里面是必可少的组件，分布式追踪、服务网格遥测分析、度量聚合和可视化还是挺好用的，这里我们选择了 Skywalking，具体考量可以参考下表：</p>
-<table>
-<thead>
-<tr>
-<th>对比项</th>
-<th>CAT</th>
-<th>Zipkin</th>
-<th>Pinpoint</th>
-<th>Skywalking</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>调用链可视化</td>
-<td>有</td>
-<td>有</td>
-<td>有</td>
-<td>有</td>
-</tr>
-<tr>
-<td>报表</td>
-<td>非常丰富</td>
-<td>少</td>
-<td>中</td>
-<td>中</td>
-</tr>
-<tr>
-<td>ServerMap</td>
-<td>简单依赖图</td>
-<td>简单</td>
-<td>好</td>
-<td>好</td>
-</tr>
-<tr>
-<td>埋点方式</td>
-<td>侵入</td>
-<td>侵入</td>
-<td>不侵入字节码增强</td>
-<td>不侵入字节码增强</td>
-</tr>
-<tr>
-<td>性能损耗</td>
-<td>高</td>
-<td>高</td>
-<td>高</td>
-<td>低</td>
-</tr>
-<tr>
-<td>Hearbeat支持</td>
-<td>有</td>
-<td>无</td>
-<td>有</td>
-<td>有</td>
-</tr>
-<tr>
-<td>Metric支持</td>
-<td>有</td>
-<td>无</td>
-<td>无</td>
-<td>有</td>
-</tr>
-<tr>
-<td>Java&#x2F;.Net支持</td>
-<td>有</td>
-<td>有</td>
-<td>只有Java</td>
-<td>有</td>
-</tr>
-<tr>
-<td>Dashboard中文支持</td>
-<td>好</td>
-<td>无</td>
-<td>无</td>
-<td>好</td>
-</tr>
-<tr>
-<td>社区支持</td>
-<td>好，文档较丰富，作者在携程点评</td>
-<td>好，文档一般，暂无中文社区</td>
-<td>一般，文档缺，无中文社区</td>
-<td>好，文档丰富，中文社区活跃</td>
-</tr>
-<tr>
-<td>调国内案例</td>
-<td>携程、点评、陆金所</td>
-<td>京东、阿里不开源</td>
-<td>暂无</td>
-<td>很多</td>
-</tr>
-<tr>
-<td>源头祖先</td>
-<td>eBayCAL~Centralized Application Logging</td>
-<td>Google Dapper</td>
-<td>Google Dapper</td>
-<td>Google Dapper</td>
-</tr>
-</tbody></table>
-<p>综上所述，我们可以通过下图来简单概况全栈监控这块的设计：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106163916653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="全栈监控"></p>
-<h4 id="k8s集群规模"><a href="#k8s集群规模" class="headerlink" title="k8s集群规模"></a>k8s集群规模</h4><p>在实践中，大家经常问到的一个问题是我们公司应该选择一个还是多个 k8s 集群？</p>
-<ul>
-<li>一个大一统的的平台，支持多种应用负载、环境和多租户隔离；</li>
-<li>或者，一组以应用为中心的小集群，支持不同应用和环境的生命周期管理。</li>
-</ul>
-<p>我们可以比较一下这两种选择：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>单一大集群</th>
-<th>多个应用为中心集群</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>特点</td>
-<td>支持多种应用负载、环境和多租户隔离</td>
-<td>支持不同应用和环境的生命周期管理</td>
-<td></td>
-</tr>
-<tr>
-<td>硬多租（安全、资源强隔离）</td>
-<td>复杂</td>
-<td>简单</td>
-<td></td>
-</tr>
-<tr>
-<td>混合调度多种类型资源 (GPU等 )</td>
-<td>复杂</td>
-<td>简单</td>
-<td></td>
-</tr>
-<tr>
-<td>集群管理复杂性</td>
-<td>较低</td>
-<td>较高(自建)</td>
-<td></td>
-</tr>
-<tr>
-<td>节点管理开销</td>
-<td>较高</td>
-<td>较低</td>
-<td></td>
-</tr>
-<tr>
-<td>集群生命周期的灵活性</td>
-<td>困难</td>
-<td>简单（不同集群可以有不同的版本和伸缩策略）</td>
-<td></td>
-</tr>
-<tr>
-<td>规模化引入的复杂性</td>
-<td>复杂</td>
-<td>简单</td>
-<td></td>
-</tr>
-<tr>
-<td>节点管理开销</td>
-<td>较低</td>
-<td>较高</td>
-<td></td>
-</tr>
-<tr>
-<td>操作系统额外开销</td>
-<td>较低</td>
-<td>较高</td>
-<td></td>
-</tr>
-<tr>
-<td>节点调度复杂性（如 NUMA）</td>
-<td>较高</td>
-<td>较低</td>
-<td>部署密度增加之后，需要更加合理的资源调度来保障应用 SLA</td>
-</tr>
-<tr>
-<td>节点稳定性</td>
-<td>较低</td>
-<td>较高</td>
-<td>随着部署密度增加，节点自身的稳定性也会随之下降</td>
-</tr>
-<tr>
-<td>节点失效爆炸半径</td>
-<td>较大</td>
-<td>较小</td>
-<td>一个大规格实例失效，会影响更多的应用容器。也需要预留更多的资源进行宕机迁移</td>
-</tr>
-<tr>
-<td>Master 组件压力</td>
-<td>较小</td>
-<td>较大</td>
-<td>Worker 节点数量是影响 Master 节点容量规划和稳定性的因素之一。k8s 1.13 版本引入的 NodeLease 功能让节点数量对 Master 组件的压力降低很多</td>
-</tr>
-</tbody></table>
-<p>默认情况下，kubelet 使用 CFS 配额 来执行 pod 的 CPU 约束。当节点上运行了很多 CPU 密集的应用时，工作负载可能会迁移到不同的 CPU 核，工作负载的会受到 CPU 缓存亲和性以及调度延迟的影响。当使用大规格实例类型时，节点的 CPU 数量较多，现有的 Java，Golang 等应用在多 CPU 共享的场景，性能会出现明显下降。所有对于大规格实例，需要对CPU管理策略进行配置，利用 CPU set 进行资源分配。</p>
-<p>此外一个重要的考虑因素就是 NUMA 支持。在 NUMA 开启的物理机实例或者大规格实例上，如果处理不当，内存访问吞吐可能会比优化方式降低了30%。Topology 管理器可以开启 NUMA 感知 <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/">https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/</a> 。但是目前 k8s 对 NUMA 的支持比较简单，还无法充分发挥 NUMA 的性能。</p>
-<p>选择后者典型的场景是：</p>
-<ul>
-<li>开发、测试环境使用不同的集群；</li>
-<li>不同的部门使用不同的集群进行隔离；</li>
-<li>不同的应用使用不同的集群；</li>
-<li>不同版本的 k8s 集群。</li>
-</ul>
-<p>采用以多个小集群的主要原因在于爆炸半径比较小，可以有效提升系统的可用性。同时通过集群也可以比较好地进行资源隔离。管理、运维复杂性的增加是采用多个小集群的一个不足之处。</p>
-<p>值得一提的是源自 <code>Google Borg</code> 的理念，Kubernetes 的愿景是成为 Data Center Operating System，而且 Kubernetes 也提供了 RBAC、namespace 等管理能力，支持多用户共享一个集群，并实现资源限制。 但是这些更多是 “软多租” 能力，不能实现不同租户之间的强隔离。在多租户最佳实践中，我们可以有如下的一些建议：</p>
-<ul>
-<li>数据平面：可以通过 PSP (PodSecurityPolicy) 提升容器的隔离性；利用 Network Policy 提升应用之间网络隔离性；可以通过将 nodes 和 namespace 绑定在一起，来提升 namespace 之间资源的隔离。</li>
-<li>控制平面：Kubernetes 的控制平面包括 master 组件 API Server, Scheduler, etcd 等，系统 addon 如CoreDNS, Ingress Controller 等，以及用户的扩展，如第三方的CRD (Customer Resource Definition) controller。这些组件大多不具备良好的租户之间的安全、资源和故障隔离能力。一个错误的CRD contoller 实现有可能打挂一个集群的 API Server。</li>
-</ul>
-<p>目前而言，Kubernetes 对硬隔离的支持存在很多局限性，同时社区也在积极探索一些方向。</p>
-<p>另一个需要考虑的方案是 Kubernetes 自身的可扩展性，我们知道一个 Kubernetes 集群的规模在保障稳定性的前提下受限于多个维度，一般而言 Kubernetes 集群小于 5000 节点。云厂商 Kubernetes 规模化上有丰富的经验，但是对于绝大多数公司而言，是无法解决超大集群的运维和定制化复杂性的。</p>
-<p><img src="https://img-blog.csdnimg.cn/20201003155716750.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
-<p>另外值得一提的是可以利用 Istio 服务网格轻松实现对多个 k8s 集群的应用的统一路由管理。</p>
-<h4 id="k8s集群计算资源"><a href="#k8s集群计算资源" class="headerlink" title="k8s集群计算资源"></a>k8s集群计算资源</h4><p>k8s 集群计算资源考量可以参考下表：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>物理机</th>
-<th>云主机</th>
-<th>自行准备的虚机</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>I&#x2F;O损耗</td>
-<td>低</td>
-<td>稍微</td>
-<td>高</td>
-</tr>
-<tr>
-<td>成本</td>
-<td>中</td>
-<td>低</td>
-<td>高</td>
-</tr>
-<tr>
-<td>额外资源开销</td>
-<td>低</td>
-<td>中</td>
-<td>高</td>
-</tr>
-<tr>
-<td>灵活度</td>
-<td>高</td>
-<td>低</td>
-<td>低</td>
-</tr>
-</tbody></table>
-<ul>
-<li>传统虚拟化技术 I&#x2F;O 损耗较大；对于 I&#x2F;O 密集型应用，物理机相比传统虚拟机有更好的性能表现；</li>
-<li>在物理机上部署有更少的额外资源开销（如虚拟化管理、虚拟机操作系统等）；可以有更高的部署密度，从而降低基础设施成本；</li>
-<li>在物理机上可以更加灵活地选择网络、存储等设备和软件应用生态。</li>
-</ul>
-<p>一般而言建议：</p>
-<ul>
-<li>对性能极其敏感的应用，如高性能计算，物理机是较好的选择；</li>
-<li>云主机支持热迁移，可以有效降低运维成本；</li>
-<li>在工作实践，我们会为 k8s 集群划分静态资源池和弹性资源池。通常而言，固定资源池可以根据需要选择物理机或者云主机实例。弹性资源池建议根据应用负载使用合适规格的云主机实例来优化成本、避免浪费，提升弹性供给保障。</li>
-</ul>
-<h4 id="压力引擎"><a href="#压力引擎" class="headerlink" title="压力引擎"></a>压力引擎</h4><p>在压力引擎这块，目前还是倾向选择开源压测工具一哥：Jmeter。</p>
-<p>Jmeter 容器云的设计如下：<br><img src="https://img-blog.csdnimg.cn/2020110616420877.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="Jmeter 容器云"></p>
-<p>目前常规 Jmeter 存在的问题：</p>
-<ul>
-<li>并发数超过单节点承载能力时，多节点环境配置、维护复杂；</li>
-<li>默认配置下无法并行运行多个测试，需要更改配置启动额外进程；</li>
-<li>难以支持云环境下测试资源的弹性伸缩需求。</li>
-</ul>
-<p>Jmeter 容器云带来的改变：</p>
-<ul>
-<li>压测执行节点一键安装；</li>
-<li>多个项目、多个测试可并行使用同一个测试资源池（多租户），提高资源利用率；</li>
-<li>对接 k8s HPA 根据并发数自动启动、释放压测执行节点，可以做到自动伸缩容。</li>
-</ul>
-<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><p>这个过程中其实还有许许多多的技术细节可以拿来展开说，但是鉴于文章篇幅有限就不在本文一一列举了，有机会的话可以另开一篇详细阐述。</p>
-<h2 id="运行效果展示"><a href="#运行效果展示" class="headerlink" title="运行效果展示"></a>运行效果展示</h2><h3 id="基础服务平台（IaaS云）"><a href="#基础服务平台（IaaS云）" class="headerlink" title="基础服务平台（IaaS云）"></a>基础服务平台（IaaS云）</h3><h4 id="登录认证"><a href="#登录认证" class="headerlink" title="登录认证"></a>登录认证</h4><p>这里我们对默认的首页定制成了阿里云首页的风格：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164231710.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="登录认证"></p>
-<h4 id="高效管理物理资源（计算、网络、存储）"><a href="#高效管理物理资源（计算、网络、存储）" class="headerlink" title="高效管理物理资源（计算、网络、存储）"></a>高效管理物理资源（计算、网络、存储）</h4><p>可视化UI的方式一键创建云主机：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164332369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云主机"></p>
-<p>支持简单编辑云网络：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164402530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云网络"></p>
-<p>很容易的挂载云硬盘：</p>
-<p><img src="https://img-blog.csdnimg.cn/2020110616442229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云硬盘"></p>
-<h4 id="1-2、轻松管理系统镜像"><a href="#1-2、轻松管理系统镜像" class="headerlink" title="1.2、轻松管理系统镜像"></a>1.2、轻松管理系统镜像</h4><p>定制的操作系统可以轻松上传：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164447218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="系统镜像"></p>
-<h4 id="web桌面"><a href="#web桌面" class="headerlink" title="web桌面"></a>web桌面</h4><p>支持 web VNC 访问桌面：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164531538.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="web桌面"></p>
-<h4 id="集群管理-Web-UI"><a href="#集群管理-Web-UI" class="headerlink" title="集群管理 Web UI"></a>集群管理 Web UI</h4><p>傻瓜式的创建 k8s 集群，并支持集群扩展：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164608979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="集群管理 Web UI "></p>
-<h3 id="基础服务平台（PaaS云）-1"><a href="#基础服务平台（PaaS云）-1" class="headerlink" title="基础服务平台（PaaS云）"></a>基础服务平台（PaaS云）</h3><h4 id="DevOps流水线"><a href="#DevOps流水线" class="headerlink" title="DevOps流水线"></a>DevOps流水线</h4><p>基于 Kubernetes 的容器编排和管理能力，整合 DevOps 工具链、微服务和应用框架，来帮助研发团队实现敏捷化的应用交付和自动化的运营管理：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164634520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="DevOps流水线"></p>
-<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p>集成 Ingress 授权入站连接到达集群服务的规则集合，提供七层负载均衡能力，配置提供外部可访问的 URL、负载均衡、SSL、基于名称的虚拟主机等。作为集群流量接入层，提供高可靠性：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164654525.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="Ingress "></p>
-<h4 id="代码仓库"><a href="#代码仓库" class="headerlink" title="代码仓库"></a>代码仓库</h4><p>基于 Git 的项目管理平台。提供网页版和客户端版接口，提供给用户空间存储 git 仓储，保存用户的一些数据文档或者代码等数据。一个开源的分布式版本控制系统，用于处理项目中的版本迭代问题：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164710603.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="代码仓库"></p>
-<h4 id="敏捷研发管理"><a href="#敏捷研发管理" class="headerlink" title="敏捷研发管理"></a>敏捷研发管理</h4><p>实现缺陷和问题跟踪；提供高效方式规划、可视化和管理研发工作，同时为 Scrum 和 Kanban 流程提供支持；支持多个可共享的仪表板；支持任务时间管理：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164756895.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="敏捷研发管理"></p>
-<h4 id="调用链监控"><a href="#调用链监控" class="headerlink" title="调用链监控"></a>调用链监控</h4><p>提供微服务分布式追踪、服务网格遥测分析、度量聚合和可视化一体化解决方案：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164828782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="调用链监控"></p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164828769.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="调用链监控"></p>
-<h4 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h4><p>提供了一组简单易用的特性集，快速实现动态服务发现和服务监控检查。</p>
-<p><img src="https://img-blog.csdnimg.cn/2020110616490564.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务注册"></p>
-<h4 id="服务监控"><a href="#服务监控" class="headerlink" title="服务监控"></a>服务监控</h4><p>SpringBoot 服务应用可以通过 Actuator 来暴露应用运行过程中的各项指标，Spring Boot Admin 通过这些指标来监控 SpringBoot 应用，通过图形化界面呈现出来：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165001592.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务监控"></p>
-<h4 id="日志聚合"><a href="#日志聚合" class="headerlink" title="日志聚合"></a>日志聚合</h4><p>ELK 即 Elasticsearch、Logstash、Kibana，组合起来搭建日志聚合系统：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165027353.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="日志聚合"></p>
-<h4 id="API文档"><a href="#API文档" class="headerlink" title="API文档"></a>API文档</h4><p>微服务聚合 Swagger 文档，支持在线接口调试：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164946485.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="API文档"></p>
-<h4 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h4><p>动态配置服务可以让以中心化、外部化和动态化的方式管理所有环境的应用配置和服务配置：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106164851685.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="配置管理"></p>
-<h4 id="制品仓库"><a href="#制品仓库" class="headerlink" title="制品仓库"></a>制品仓库</h4><p>提供 maven 私服和二进制制品仓库：</p>
-<p><img src="https://img-blog.csdnimg.cn/2020110616505068.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="制品仓库"></p>
-<h4 id="容器仓库"><a href="#容器仓库" class="headerlink" title="容器仓库"></a>容器仓库</h4><p>提供存储、管理和分发 Docker 镜像的企业级仓库：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165103997.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="容器仓库"></p>
-<h4 id="静态代码扫描"><a href="#静态代码扫描" class="headerlink" title="静态代码扫描"></a>静态代码扫描</h4><p>代码质量分析平台，便于管理代码的质量，可检查出项目代码的漏洞和潜在的逻辑问题。同时提供了丰富的插件，支持多种语言的检测：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165123426.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="静态代码扫描"></p>
-<h4 id="可视化微服务管理"><a href="#可视化微服务管理" class="headerlink" title="可视化微服务管理"></a>可视化微服务管理</h4><p>可视化UI的方式管理应用和组件，降低了 k8s 容器云使用门槛：<br><img src="https://img-blog.csdnimg.cn/20201106165150114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="可视化微服务管理"></p>
-<p>web 在线编辑容器应用：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165208840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="web 在线编辑容器应用："></p>
-<p>方便查看应用日志：<br><img src="https://img-blog.csdnimg.cn/20201106165223150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="方便查看应用日志"></p>
-<p>在线编辑配置文件：<br><img src="https://img-blog.csdnimg.cn/2020110616524286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在线编辑配置文件"></p>
-<h4 id="压力引擎-1"><a href="#压力引擎-1" class="headerlink" title="压力引擎"></a>压力引擎</h4><p>通过可视化看板收集压测结果：</p>
-<p><img src="https://img-blog.csdnimg.cn/20201106165306616.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="压测结果"></p>
-<h4 id="资源监控"><a href="#资源监控" class="headerlink" title="资源监控"></a>资源监控</h4><p>k8s 集群资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165328633.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群资源监控"></p>
-<p>服务器资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165347427.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务器资源监控"></p>
-<p>关系型数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165409806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="关系型数据库资源"></p>
-<p>消息队列资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165422972.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="消息队列资源监控"></p>
-<p>NoSQL 数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/2020110616543539.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="NoSQL 数据库资源"></p>
-<p>k8s 集群数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165448886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群数据库资源"></p>
-<p>k8s 集群核心组件资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165459180.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群核心组件资源"></p>
-<h4 id="服务可视化监控"><a href="#服务可视化监控" class="headerlink" title="服务可视化监控"></a>服务可视化监控</h4><p>应用服务拓扑展示：<br><img src="https://img-blog.csdnimg.cn/20201106165508702.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务可视化监控"></p>
-<h4 id="自定义告警"><a href="#自定义告警" class="headerlink" title="自定义告警"></a>自定义告警</h4><p>钉钉实时告警：<br><img src="https://img-blog.csdnimg.cn/20201106165528572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="自定义告警"></p>
-<h2 id="经验心得"><a href="#经验心得" class="headerlink" title="经验心得"></a>经验心得</h2><ul>
-<li>基于开源，拥抱开源；</li>
-<li>尽量使用成熟的第三方平台；</li>
-<li>不重复造轮子；</li>
-<li>技术栈和组件要适合研发团队技术能力及主流技术方向；</li>
-<li>KISS 原则(Keep It Simple and Stupid)；</li>
-<li>尽量考虑 ROI（投入产出比）；</li>
-<li>不断演进迎合公司业务发展、大公司方案不一定是适合的、避免为技术而技术；</li>
-<li>任何方案不必最求大而全和完美，实践中不断完善和演进；</li>
-<li>需求导向，借力开源，科学选型，快速集成，重视扩展，演进改善。</li>
-</ul>
-<h2 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a>未来展望</h2><ul>
-<li>在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性、更高的资源使用效率等都是关键问题；</li>
-<li>云原生应用管理：当前，我们已有项目云原生应用管理在生产环境落地，未来我们需进一步扩大云原生应用的覆盖面，不断提升研发效率；</li>
-<li>云原生架构落地：推进各个中间件、存储系统、大数据以及核心业务合作落地各个领域的云原生系统。</li>
-</ul>
-<p>参考资料：</p>
-<ul>
-<li>[1]：阿里云原生架构白皮书</li>
-<li>[2]：基于OpenStack搭建公司私有云平台</li>
-<li>[3]：Kubernetes如何改变美团的云基础设施</li>
-<li>[4]：关于Kubernetes规划的灵魂n问</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" class="post-title-link" itemprop="url">数学公式集锦</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-06-17 08:00:00" itemprop="dateCreated datePublished" datetime="2022-06-17T08:00:00+08:00">2022-06-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ashore/" itemprop="url" rel="index"><span itemprop="name">ashore</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="管理类数学联考公式宝典"><a href="#管理类数学联考公式宝典" class="headerlink" title="管理类数学联考公式宝典"></a>管理类数学联考公式宝典</h2><p>适用于：MBA、MEB、MPA、EMPa、MPAcc等。</p>
-<p><img src="/images/math.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/" class="post-title-link" itemprop="url">运维工作总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-06-14 08:00:00" itemprop="dateCreated datePublished" datetime="2022-06-14T08:00:00+08:00">2022-06-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>负责安装、调试、维护业务系统，保障各业务系统稳定、高效、持续运行的管理人员。</p>
-<h2 id="运维总监的工作内容"><a href="#运维总监的工作内容" class="headerlink" title="运维总监的工作内容"></a>运维总监的工作内容</h2><ul>
-<li>负责整个运维部门的管理和建设工作，对运维的质量、效率、成本及安全负责</li>
-<li>全面管理运维工作，包括网络和硬件规划管理、系统运维、数据库运维、应用运维、自动化运维等，针对各级业务系统的架构，对部署、监控、治理、优化、容灾、安全等进行规划和指导</li>
-<li>不断优化各项工作流程、管理规范和系统架构，及时响应和处理故障，提升系统服务效率及稳定性</li>
-<li>负责自动部署、监控、报警、安全等内部运维自动化系统的研发、运营和优化工作</li>
-<li>不断探索和研究新的运维技术方向和运维工具，提升运维管理能力</li>
-</ul>
-<h2 id="运维总监实力展示举例"><a href="#运维总监实力展示举例" class="headerlink" title="运维总监实力展示举例"></a>运维总监实力展示举例</h2><p>案例一</p>
-<p>十多年的运维经历，互联网业务运维、基础运维、SRE专家<br>善于团结团队、培养团队阶梯组成和完成上下级工作衔接<br>精通产线监控、故障复盘、风评、预案、演练、容灾、容量及弹性伸缩等保障 SLA的实践措施<br>精通运维自动化体系建设，通过分层、拆模块等方式，实现运维标准化、自动化建设的实施及落地。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" class="post-title-link" itemprop="url">明儒学案学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-06-11 08:00:00" itemprop="dateCreated datePublished" datetime="2022-06-11T08:00:00+08:00">2022-06-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/confucian/" itemprop="url" rel="index"><span itemprop="name">confucian</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="跋"><a href="#跋" class="headerlink" title="跋"></a>跋</h2><hr>
-<blockquote>
-<p>第1章 郑性序</p>
-<p>道并行而不相悖，此天地之所以为大也。三教既兴，孰能存其一，去其二。并为儒而不相容，隘矣。后之观者，毋师己意，毋主先入，虚心体察，孰纯孰驳，孰浅孰深，自呈自露，惟以有裨於为己之学，而合乎天地之所以为大，其於道也，斯得之矣。</p>
-</blockquote>
-<h3 id="点评：道道道，你有你的道，我有我的道。天地之大，无所不包、无所不容；勿狭隘不容、好为人师、先入为主；要虚心体察、增益己学、合乎天地，这样才能对道有所得。"><a href="#点评：道道道，你有你的道，我有我的道。天地之大，无所不包、无所不容；勿狭隘不容、好为人师、先入为主；要虚心体察、增益己学、合乎天地，这样才能对道有所得。" class="headerlink" title="点评：道道道，你有你的道，我有我的道。天地之大，无所不包、无所不容；勿狭隘不容、好为人师、先入为主；要虚心体察、增益己学、合乎天地，这样才能对道有所得。"></a>点评：道道道，你有你的道，我有我的道。天地之大，无所不包、无所不容；勿狭隘不容、好为人师、先入为主；要虚心体察、增益己学、合乎天地，这样才能对道有所得。</h3><blockquote>
-<p>第3章 冯全垓跋</p>
-<p>垓谓学术必原心术，但使存心克正，兢兢以慎独为念，从此存养省察，虽议论或有偏驳，亦不愧为圣人之徒。倘功利之见未忘，借先正之名目以自树其门户，则矫诬虚伪，势必色厉内荏，背道而驰。先生是书，殆欲以正心术者正学术欤！</p>
-</blockquote>
-<p>第5章 仇兆鳌序</p>
-<p>这篇序是黄宗羲弟子所写，主要捋了明儒渊源：吴与弼—陈白沙—湛若水—许孚远—刘宗周—黄宗羲；吴与弼—娄谅—王阳明—王畿。</p>
-<blockquote>
-<p>第6章 明儒学案序</p>
-<p>盈天地间皆心也，人与天地万物为一体，故穷天地万物之理，即在吾心之中。夫道犹海也，江、淮、河、汉以至泾、渭蹄涔，莫不昼夜曲折以趋之，其各自为水者，至於海而为一水矣。</p>
-</blockquote>
-<blockquote>
-<p>第7章 黄梨洲原序</p>
-<p>盈天地皆心也，变化不测，不能不万殊。心无本体，工夫[7]所至，即其本体，故穷理者，穷此心之万殊，非穷万物之万殊也。</p>
-</blockquote>
-<blockquote>
-<p>第9章 贾朴跋</p>
-<p>孔、孟之学，自秦、汉以来，穿凿支离，汩没於章句训诂之间，赖有大儒辈出，求之於心性之际，而证其所为独得者，在宋则有周、程、张、朱五君子，在明则有敬轩、康斋、白沙、姚江诸儒。</p>
-</blockquote>
-<h3 id="点评：读书不是背文章讲道理，要磨练心性，变知识为智慧。"><a href="#点评：读书不是背文章讲道理，要磨练心性，变知识为智慧。" class="headerlink" title="点评：读书不是背文章讲道理，要磨练心性，变知识为智慧。"></a>点评：读书不是背文章讲道理，要磨练心性，变知识为智慧。</h3><blockquote>
-<p>第10章 贾念组跋</p>
-<p>先王父若水公精研理学，於宋、元、明诸儒之书，无不泝委穷源，彻其底蕴。</p>
-</blockquote>
-<h3 id="点评：感觉叫若水的都不简单，比如明朝大名鼎鼎的湛若水先生，这位先生的祖父泝委穷源、彻其底蕴的精神至今任然值得我们学习，特别是哪些想在各行各业上有所建树的人！"><a href="#点评：感觉叫若水的都不简单，比如明朝大名鼎鼎的湛若水先生，这位先生的祖父泝委穷源、彻其底蕴的精神至今任然值得我们学习，特别是哪些想在各行各业上有所建树的人！" class="headerlink" title="点评：感觉叫若水的都不简单，比如明朝大名鼎鼎的湛若水先生，这位先生的祖父泝委穷源、彻其底蕴的精神至今任然值得我们学习，特别是哪些想在各行各业上有所建树的人！"></a>点评：感觉叫若水的都不简单，比如明朝大名鼎鼎的湛若水先生，这位先生的祖父泝委穷源、彻其底蕴的精神至今任然值得我们学习，特别是哪些想在各行各业上有所建树的人！</h3><blockquote>
-<p>第11章 莫晋序</p>
-<p>孔子称“善人不践迹”，孟子谓“君子欲其自得”，《系辞》云“天下同归而殊涂，一致而百虑”。此三言者，千古道学之指南也。夫道无定体，学无定法，见每歧於仁智，克互用乎刚柔，钧是问仁，而克复敬恕工夫顿渐；同此一贯，而忠恕学识义别知行，各得其性之所近而已。自阳明倡良知之说，即心是理，即知是行，即工夫是本体，直探圣学本原。即甘泉体认，见罗止修，亦足互相表里。迨蕺山提清诚意，约归慎独，而良知之学，益臻实地，不落虚空矣。古人因病立方，原无成局，通其变，使人不倦，故教法日新，理虽一而言不得不殊，入手虽殊，而要归未尝不一。读是书者，诚能不泥其迹，务求自得之真，向身心性命上作印证，不向语言文字上生葛藤，则东西相反而不可相无，百川学海而皆可至於海。</p>
-</blockquote>
-<h3 id="点评：简单讲，支持原创，虽然殊途同归，但也要走别人没走过的路，这样你才梦自己得道。"><a href="#点评：简单讲，支持原创，虽然殊途同归，但也要走别人没走过的路，这样你才梦自己得道。" class="headerlink" title="点评：简单讲，支持原创，虽然殊途同归，但也要走别人没走过的路，这样你才梦自己得道。"></a>点评：简单讲，支持原创，虽然殊途同归，但也要走别人没走过的路，这样你才梦自己得道。</h3><blockquote>
-<p>第12章 发凡</p>
-<p>是编分别宗旨，如灯取影，杜牧之曰：“丸之走盘，横斜圆直，不可尽知。其必可知者，是知丸不能出於盘也。学问之道，以各人自用得着者为真。朱子之解《大学》也，先格致，而後授之以诚意。先生之解《大学》也，即格致为诚意。其於工夫似有分合之不同，然详二先生所最吃紧处，皆不越慎独一关，则所谓因明至诚，以进於圣人之道，一也。夫《大学》之教，一先一後，阶级较然，而实无先後之可言，故八目总是一事。东廓以独知为良知，以戒惧谨独为致良知之功，此是师门本旨，而学焉者失之浸，流入猖狂一路。《大学》一书，程、朱说“诚正”，阳明说“致知”，心斋说“格物”，盱江说“明明德”，钊江说“修身”，至此其无馀蕴乎！</p>
-</blockquote>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><hr>
-<blockquote>
-<p>第13章 崇仁学案一</p>
-<p>遂弃去举子业，谢人事，独处小楼，玩《四书》《五经》、诸儒《语录》，体贴於身心，不下楼者二年。</p>
-</blockquote>
-<h3 id="点评：主人公是吴与弼，玩字用得好，能把四书五经、诸儒语录拿来把玩，心境确实不一般，多少有所悟！"><a href="#点评：主人公是吴与弼，玩字用得好，能把四书五经、诸儒语录拿来把玩，心境确实不一般，多少有所悟！" class="headerlink" title="点评：主人公是吴与弼，玩字用得好，能把四书五经、诸儒语录拿来把玩，心境确实不一般，多少有所悟！"></a>点评：主人公是吴与弼，玩字用得好，能把四书五经、诸儒语录拿来把玩，心境确实不一般，多少有所悟！</h3><blockquote>
-<p>第14章 崇仁学案二</p>
-<p>胡九韶字凤仪，金溪人，自少从学康斋。家甚贫，课儿力耕，仅给衣食。每日晡，焚香谢天一日清福，其妻笑之曰：“齑粥三厨，何名清福！”先生曰：“幸生太平之世，无兵祸；又幸一家乐业，无饥寒；又幸榻无病人，狱无囚人，非清福而何？”</p>
-</blockquote>
-<h3 id="点评：虽然只能温饱但是还要焚香谢拜，可见清福与贫苦无关与内心相连！"><a href="#点评：虽然只能温饱但是还要焚香谢拜，可见清福与贫苦无关与内心相连！" class="headerlink" title="点评：虽然只能温饱但是还要焚香谢拜，可见清福与贫苦无关与内心相连！"></a>点评：虽然只能温饱但是还要焚香谢拜，可见清福与贫苦无关与内心相连！</h3>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/" class="post-title-link" itemprop="url">一次非典型网络流量分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-06-03 08:00:00" itemprop="dateCreated datePublished" datetime="2022-06-03T08:00:00+08:00">2022-06-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>本来我在吃着花生，听着老师唱王心凌男孩，突然群里有人@我了，不过这也是之前让你有问题找我，怪不得别人，都是工作，车端流量使用非常大，基本是1天几十个G，而且最近才发生</p>
-<p><img src="/images/image-1024x768.jpg"></p>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>主要怀疑几个方向，都和业务场景有关</p>
-<ul>
-<li>Pad端流量分析：APP流量、数据收集、地图</li>
-<li>云端流量分析：日志收集、直播、场景</li>
-<li>域控制器流量分析：外联业务</li>
-</ul>
-<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>首先联系端和云上同事一起看看他们这边是否有异常流量，经过分析并没发现特别大的流程，期间也对流量使用及业务场景加深了了解。</p>
-<p>其次运维方主要别精力放在域控制流量分析上，首先看Iftop流量过滤出外网的，发现了几个流量比较大的IP，分别是日志收集、业务场景，还有一个流量比较大的IP没有记录在案。通过查询发现是武汉的IP，还以为是域控制供应商留下的后门呢（有点儿乱想了），此时已经有了突破点儿，通过ss、netstat等命令发现，本地和该IP有10来个链接，而且端口一直在变，然后看流量每秒有50Mbps，开始还以为是恶意程序。最好安装了tcpdump，让同事抓包分析，最后才知道是测试网速的站点。</p>
-<p>最后复盘，是同事之前测试网速后网络关闭了，让他开机启动一直运行了，可能是对这个测试原理不清楚，给人的教训就是发现了问题要及时分析，另外还得加强评审（最近一直在培养突破同事技能，难免有试错成本，还得加强把控）。</p>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>1、iftop找到外网异常流量ip</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@titan-ubuntu1:~# iftop -F  59.175.206.86/32 -P </span><br><span class="line">59.175.206.86:http-alt             =&gt; rosmaster:54604                   8.97Mb  6.83Mb  6.83M</span><br><span class="line">                                  &lt;=                                               99.5Kb  77.4Kb  77.4Kb</span><br><span class="line">59.175.206.86:http-alt             =&gt; rosmaster:54650                   8.31Mb  6.20Mb  6.20Mb</span><br><span class="line">                                  &lt;=                                               92.6Kb  69.4Kb  69.4Kb</span><br><span class="line">59.175.206.86:http-alt              =&gt; rosmaster:54532                  1.65Mb  5.85Mb  5.85Mb</span><br><span class="line">                                    &lt;=                                              17.0Kb  66.0Kb  66.0Kb</span><br><span class="line">59.175.206.86:http-alt              =&gt; rosmaster:54528                   4.85Mb  5.85Mb  5.85Mb</span><br><span class="line">                                    &lt;=                                               49.9Kb  62.8Kb  62.8Kb</span><br><span class="line">59.175.206.86:http-alt               =&gt; rosmaster:54530                  7.00Mb  5.79Mb  5.79Mb</span><br><span class="line">                                     &lt;=                                               73.1Kb  63.0Kb  63.0Kb                                                                             0b    677b    677b</span><br></pre></td></tr></table></figure>
-
-<p>2、ss查看建立的链接</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@titan-ubuntu1:~# ss -an |grep 59.175.206.86</span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39204                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:38576                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39654                                        59.175.206.86:8080                 </span><br><span class="line">tcp              FIN-WAIT-1             0                   31365                                                                                 192.168.1.102:40112                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39652                                        59.175.206.86:8080                 </span><br><span class="line">tcp              FIN-WAIT-1             0                   28357                                                                                 192.168.1.102:40074                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39650                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:38838                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39656                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39198                                        59.175.206.86:8080                 </span><br></pre></td></tr></table></figure>
-
-<p>3、tcp分析得出结论</p>
-<p><img src="/images/5CD352C0-958E-42C6-826D-B53BA30D296A-1024x267.png"></p>
-<p>发现一个可疑链接 <a target="_blank" rel="noopener" href="http://59.175.206.86:8080/speedtest/latency.txt?x=1654228563731">http://59.175.206.86:8080/speedtest/latency.txt?x=1654228563731</a>，再一核对原来是之前测试流量脚本里面的带宽，由于车端上5G网络，测一次网速就得100Mb流量消化。</p>
-<p><img src="/images/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_16542294481943.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/05/29/2022/05/2022-05-29-%E6%9B%BE%E5%9B%BD%E8%97%A9%E9%A2%86%E5%AF%BC%E5%8A%9B%E5%8D%81%E4%BA%8C%E5%AD%97/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/29/2022/05/2022-05-29-%E6%9B%BE%E5%9B%BD%E8%97%A9%E9%A2%86%E5%AF%BC%E5%8A%9B%E5%8D%81%E4%BA%8C%E5%AD%97/index/" class="post-title-link" itemprop="url">曾国藩领导力十二讲</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-05-29 08:00:00" itemprop="dateCreated datePublished" datetime="2022-05-29T08:00:00+08:00">2022-05-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/mba/" itemprop="url" rel="index"><span itemprop="name">mba</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/WechatIMG108-208x300.jpeg"></p>
-<p>“重”，厚重、稳重。“耐”，耐烦、耐心。“浑”，浑含、浑厚。“明”，明白、清醒。“辣”，泼辣、果断。“慎”，谨慎、自制。“勤”，勤奋、勤恳。“实”，扎实、朴实。“暇”，空闲、从容。“裕”，宽裕、坦荡。“恕”，恕道、宽容。“强”，倔强、刚强。</p>
-<h2 id="重"><a href="#重" class="headerlink" title="重"></a>重</h2><p>稳当从容，可当大事。</p>
-<p>心欲其定，气欲其定，神欲其定，体欲其定。</p>
-<p>不轻进人，即异日不轻退人之本；不妄亲人，即异日不妄疏人之本。</p>
-<p>端庄厚重是贵相，谦卑含容是贵相。事有归着是富相，心存济物是富相。</p>
-<h2 id="耐"><a href="#耐" class="headerlink" title="耐"></a>耐</h2><p>曾国藩说过一句话：“做官以耐烦为第一要义。”（你既然做了一个领导者，那么耐得住烦躁、控制好情绪、调整好心态，是首要的原则。）他还说过：“若遇棘手之际，须从耐烦二字痛下工夫。”（越是遇到事情不顺的时候，反而越要在“耐烦”两个字上痛下功夫。）</p>
-<p>牢骚太甚者，其后必多抑塞。盖无故而怨天，则天必不许；无故而尤人，则人必不服。</p>
-<p>天下断无易处之境遇，人间哪有空闲的光阴。</p>
-<p>观古今来成大功享全名者，非必才盖一世。大抵能下人，斯能上人；能忍人，斯能胜人。</p>
-<p>一经焦躁，则心绪少佳，办事必不能妥善。</p>
-<h2 id="浑"><a href="#浑" class="headerlink" title="浑"></a>浑</h2><p>精明也要十分，只须藏在浑厚里作用。古人得祸，精明人十居其九，未有浑厚而得祸者。今之人惟恐精明不至，所以为愚也。</p>
-<p>自家有好处，要掩藏几分，这是涵育以养深；别人不好处，要掩藏几分，这是浑厚以养大。</p>
-<p>才智英敏者，宜加浑厚学问。</p>
-<p>举止轻浮，聪明太露，多谋多改。恐日久亦难惬人意。</p>
-<p>以才自足，以能自矜，则为小人所忌，亦为君子所薄。</p>
-<p>“浑”则无往不宜。大约与人忿争，不可自求万全处；白人是非，不可过于武断。此“浑”字之最切于实用者耳。</p>
-<p>大抵天下无完全无间之人才，亦无完全无隙之交情。大者得正，而小者包荒，斯可耳。</p>
-<h2 id="明"><a href="#明" class="headerlink" title="明"></a>明</h2><p>担当大事，全在“明”、“强”二字。</p>
-<p>凡办大事，以识为主，以才为辅。</p>
-<p>处人、处事，所以不当者，以其知之不明也。若巨细周知，表里洞彻，则处之自有方术矣。</p>
-<p>明有二端：人见其近，吾见其远，曰高明；人见其粗，吾见其细，曰精明。高明者，譬如室中所见有限，登楼则所见远矣，登山则所见更远矣。精明者，譬如至微之物，以显微镜照之，则加大一倍、十倍、百倍矣。又如粗糙之米，再舂则粗糠全去，三舂、四舂，则精白绝伦矣。</p>
-<p>古之成大事者，规模远大与综理密微二者缺一不可。</p>
-<p>天下事：当局则迷，旁观则醒；事前易暗，事后易明。</p>
-<h2 id="辣"><a href="#辣" class="headerlink" title="辣"></a>辣</h2><p>近来见得天地之道，刚柔互用，不可偏废。太柔则靡，太刚则折。</p>
-<p>爱禾者必去稗，爱贤者必去邪，爱民必去害民之吏，治军必去蠹军之将，一定之理也。</p>
-<p>记入元戎幕，吴西又皖东。<br>追随忧患日，生死笑谈中。<br>末路时多故，前期我负公。<br>雷霆与雨露，一例是春风。</p>
-<h2 id="慎"><a href="#慎" class="headerlink" title="慎"></a>慎</h2><p>古来言凶德致败者约有二端：曰长傲，曰多言。……历观名公巨卿，多以此二端败家丧生。</p>
-<p>天下古今之庸人，皆以一“惰”字致败；天下古今之才人，皆以一“傲”字致败。</p>
-<p>古来多少英雄，功高名重，其后非败于骄，即败于贪。</p>
-<p>常存敬畏之心，才是惜福之道。</p>
-<p>圣贤成大事者，皆从战战兢兢之心而来。</p>
-<p>大抵人常怀愧对之意，便是载福之器、入德之门。如觉天之待我过厚，我愧对天；君之待我过优，我愧对君；父母之待我过慈，我愧对父母；兄弟之待我过爱，我愧对兄弟；朋友之待我过重，我愧对朋友，便觉处处皆有善气相逢。</p>
-<p>有福不可享尽，有势不可使尽。盛时常做衰时想，上场当念下场时。</p>
-<h2 id="勤"><a href="#勤" class="headerlink" title="勤"></a>勤</h2><p>练勇之道，必须营官昼夜从事，乃可渐几于熟，如鸡伏卵，如炉炼丹，未宜须臾稍离。</p>
-<p>治军以勤字为先，由阅历而知其不可易。未有平日不早起，而临敌忽能早起者；未有平日不习劳，而临敌忽能习劳者；未有平日不能忍饥耐寒，而临敌忽能忍饥耐寒者。</p>
-<p>百处弊端，皆由懒生。懒则弛缓，弛缓则治人不严，而趋功不敏。一处弛，则百处懒矣。</p>
-<p>办事之法，以五到为要。五到者，身到、心到、眼到、手到、口到也。身到者，如做吏则亲验命盗案、亲巡乡里。治军则亲巡营垒、亲探贼地是也。心到者，凡事苦心剖晰，大条理、小条理，始条理、终条理，理其绪而分之，又比其类而合之也。眼到者，着意看人，认真看公牍也。手到者，于人之长短，事之关键，随笔写记，以备遗忘也。口到者，使人之事，既有公文，又苦口叮嘱也。</p>
-<p>天下事未有不由艰苦得来，而可大可久者也。</p>
-<h2 id="实"><a href="#实" class="headerlink" title="实"></a>实</h2><p>大抵观人之道，以朴实廉介为质。以其质而更傅以他长，斯为可贵。无其质则长处亦不足恃。</p>
-<p>近年军中阅历有年，益知天下事当于大处着眼，小处下手。陆氏但称先立乎其大者，若不辅以朱子铢积寸累工夫，则下梢全无把握。故国藩治军，摒弃一切高深神奇之说，专就粗浅纤细处致力。</p>
-<p>实者，不说大话，不好虚名，不行架空之事，不谈过高之理。</p>
-<p>惟天下之至诚，能胜天下之至伪；惟天下之至拙，能胜天下之至巧。</p>
-<p>真心实肠，是第一义。凡正话实话，多说几句，久之人自能共亮其心。</p>
-<p>人以伪来，我以诚往，久之则伪者亦共趋于诚矣。</p>
-<p>凡道理不可说得太高，太高则近于矫，近于伪。吾与僚友相勉，但求其不晏起、不撒谎二事，虽最浅近，而已大有益于身心矣。</p>
-<h2 id="暇"><a href="#暇" class="headerlink" title="暇"></a>暇</h2><p>定、静、安、虑、得，此五字时时有，事事有。离了此五字，便是孟浪做。</p>
-<p>好人半自苦中来，莫图便益；世事多因忙里错，且更从容。</p>
-<p>近日之失，由于心太弦紧，无舒和之意。以后作人，当得一“松”字意味。</p>
-<p>凡遇事须安详和缓以处之，若一慌忙，便恐有错。盖天下何事不从忙中错了。故从容安详，为处事第一法。</p>
-<p>处事贵熟思缓处。熟思则得其情，缓处则得其当。</p>
-<p>静字工夫最要紧。若不静，省心也不密，见理也不明，总是浮的。</p>
-<p>应事接物，常觉得心中有从容闲暇时，才见涵养。</p>
-<p>凡天下事，虑之贵详，行之贵力，谋之贵众，断之贵独。</p>
-<p>天下无易境，天下无难境。终身有乐处，终身有忧处。</p>
-<h2 id="裕"><a href="#裕" class="headerlink" title="裕"></a>裕</h2><p>富贵功名，皆人世浮荣；惟胸次浩大，是真正受用。</p>
-<p>尽其在我，听其在天。</p>
-<p>尽人事，听天命。</p>
-<p>莫问收获，但问耕耘。</p>
-<p>左列钟铭右谤书，人间随处有乘除。<br>低头一拜屠羊说，万事浮云过太虚。</p>
-<p>战战兢兢，即生时不忘地狱；坦坦荡荡，虽逆境亦畅天怀。</p>
-<h2 id="恕"><a href="#恕" class="headerlink" title="恕"></a>恕</h2><p>舍己从人，大贤之量；推心置腹，群彦所归。</p>
-<p>与人共事，论功则推以让人，任劳则引为己责；盛德所感，始而部曲化之，继而同僚谅之，终则各省从而慕效之。所以转移风气者在此，所以宏济艰难者亦在此。</p>
-<p>功不独居，过不推诿。</p>
-<p>诿罪掠功，此小人事；掩罪夸功，此众人事；让美归功，此君子事；分怨共过，此盛德事。</p>
-<p>凡利之所在，当与人共分之；名之所在，当与人共享之。</p>
-<h2 id="强"><a href="#强" class="headerlink" title="强"></a>强</h2><p>倔强二字，却不可少。功业文章，皆须有此二字贯注其中，否则柔靡不能成一事。孟子所谓“至刚”，孔子所谓“贞固”，皆从倔强二字做出。</p>
-<p>好汉打脱牙，和血吞。</p>
-<p>强毅之气，决不可无，然强毅与刚愎有别。古语云：自胜之谓强。曰“强制”，曰“强恕”，曰“强为善”，皆自胜之义也。如不惯早起，而强之未明即起；不惯庄敬，而强之坐尸立斋；不惯劳苦，而强之与士卒同甘苦，强之勤劳不倦，是即强也。不惯有恒，而强之有恒，即毅也。舍此而求以客气胜人，是刚愎而已矣。二者相似，而其流相去霄壤，不可不察，不可不谨。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/05/18/2022/05/2022-05-18-%E6%B5%81%E9%87%8F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/18/2022/05/2022-05-18-%E6%B5%81%E9%87%8F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/index/" class="post-title-link" itemprop="url">流量监控工具</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-05-18 08:00:00" itemprop="dateCreated datePublished" datetime="2022-05-18T08:00:00+08:00">2022-05-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="查看网络流量Iftop"><a href="#查看网络流量Iftop" class="headerlink" title="查看网络流量Iftop"></a>查看网络流量Iftop</h2><p>Iftop可以用来监控网卡的实时流量（可以指定网段）、反向解析IP、显示端口信息等，多用于分析服务器内外网IP间流量带宽使用情况。如果要按主机的网络带宽使用情况，通常可以使用iftop。iftop在指定网卡，如果未指定该接口，则显示所有网络流量，并按主机对显示当前带宽使用情况表。</p>
-<p><img src="/images/0-1024x256.png"></p>
-<h2 id="查看进程流量Nethogs"><a href="#查看进程流量Nethogs" class="headerlink" title="查看进程流量Nethogs"></a>查看进程流量Nethogs</h2><p>NetHogs是一个开源的命令行工具（类似于Linux的top命令），用来按进程或程序实时统计网络带宽使用率。可以根据进程PID来统计网络流量，因为它按进程对带宽进行分组，而不是像大多数工具一样按协议或子网来统计。同时支持IPv4和IPv6，当要统计Linux主机带宽占用信息时，它是最好的实用程序。</p>
-<p><img src="/images/1-1024x370.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/05/03/2022/05/2022-05-03-%E6%95%99%E7%88%B6%E7%BB%8F%E5%85%B8%E8%AF%AD%E5%8F%A5/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/03/2022/05/2022-05-03-%E6%95%99%E7%88%B6%E7%BB%8F%E5%85%B8%E8%AF%AD%E5%8F%A5/index/" class="post-title-link" itemprop="url">教父经典语句</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-05-03 08:00:00" itemprop="dateCreated datePublished" datetime="2022-05-03T08:00:00+08:00">2022-05-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/talk/" itemprop="url" rel="index"><span itemprop="name">talk</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="第三次读教父终于想着把经典的句子摘抄下来了。"><a href="#第三次读教父终于想着把经典的句子摘抄下来了。" class="headerlink" title="第三次读教父终于想着把经典的句子摘抄下来了。"></a>第三次读教父终于想着把经典的句子摘抄下来了。</h2><h3 id="第一部"><a href="#第一部" class="headerlink" title="第一部"></a>第一部</h3><p>财富背后，总有犯罪。——巴尔扎克 唐·柯里昂本人并不生气。有个道理他早就弄清楚了，那就是你必须承受社会强加的侮辱，因为他明白，连最卑微的人，只要时刻擦亮眼睛，就迟早能抓住机会，报复最有权势的人。正是明白这个道理，唐才从不放弃他的谦逊风度，所有朋友都对此敬佩有加。 黑根的谈判技巧是唐亲自传授的。“永远不要动怒，”唐这么教导他，“绝不要威胁，要讲道理。”用意大利语说“讲道理”听上去像“应对” 打破这种规章制度说明他闲不住，就仿佛好赛马永远想挣脱缰绳。 时间对谢意的侵蚀比对美的侵蚀还要更快。</p>
-<h3 id="第二部"><a href="#第二部" class="headerlink" title="第二部"></a>第二部</h3><h3 id="第三部"><a href="#第三部" class="headerlink" title="第三部"></a>第三部</h3><h3 id="第四部"><a href="#第四部" class="headerlink" title="第四部"></a>第四部</h3><p>他的朋友、家人和邻居当然不会开这种玩笑。一个人靠汗水挣面包钱，做什么职业都值得尊敬。 时间能治好创伤。痛苦和恐惧不是死亡，还有挽回的余地，这一点他知道得很清楚。他的职业让他乐观处世。 唉，人生又不完全是甜美的音乐，你要是愿意在医院里走一圈，就会看见什么是真正的苦难，就会给肉赘唱一首小情歌了</p>
-<h3 id="第五部"><a href="#第五部" class="headerlink" title="第五部"></a>第五部</h3><p>女人和孩子能够承担粗心大意的后果，男人却不行。</p>
-<h3 id="第六部"><a href="#第六部" class="headerlink" title="第六部"></a>第六部</h3><h3 id="第七部"><a href="#第七部" class="headerlink" title="第七部"></a>第七部</h3><p>我经常这么和别人说，‘肉别吃那么多，否则你会死；烟别抽那么多，否则你会死；工作别那么卖力，否则你会死；酒别喝那么凶，否则你会死。’谁也不听我的。知道为什么吗？因为我说的不是‘明天你就会死’。 我已经讲和了，请记住，我不能食言。 你不能对你爱的人说不，至少不能经常说。这就是秘诀。要是非说不可，也得听起来像是肯定。或者想办法让他们自己说。你得耐心，不怕麻烦。 复仇这盘菜，凉了最好吃。</p>
-<h3 id="第八部"><a href="#第八部" class="headerlink" title="第八部"></a>第八部</h3><p>小心，要小心。 生活如此美丽。</p>
-<h3 id="第九部"><a href="#第九部" class="headerlink" title="第九部"></a>第九部</h3>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/04/24/2022/04/2022-04-24-%E5%AD%94%E5%AD%90%E9%97%AE%E9%81%93%E4%BA%8E%E8%80%81%E5%AD%90/index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Jerry Min">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="MinMinMsn">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/24/2022/04/2022-04-24-%E5%AD%94%E5%AD%90%E9%97%AE%E9%81%93%E4%BA%8E%E8%80%81%E5%AD%90/index/" class="post-title-link" itemprop="url">孔子问道于老子</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-04-24 08:00:00" itemprop="dateCreated datePublished" datetime="2022-04-24T08:00:00+08:00">2022-04-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/confucian/" itemprop="url" rel="index"><span itemprop="name">confucian</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>实在找不到这些话出自哪儿，《道德经》、《孔子家语》、《史记·老子韩非列传》、《史记·孔子世家》中有只言片语。查遍了全网李蓉著作《与哲人一起思考哲学》中孔子求教与老子有所记载。不过两千多年过去了，至今影响任然在。所以名言不问出处，管他是后代杜撰的还是想象的，受用就行。</p>
-</blockquote>
-<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>孔子曾拜见老子，问了几个问题，孔子十分佩服。回到鲁国，众弟子问道：“先生拜访老子，可得见乎？”孔子道：“见之！”弟子问：“老子何样？”</p>
-<p>孔子道：“鸟，我知它能飞；鱼，吾知它能游；兽，我知它能走。走者可用网缚之，游者可用钩钓之，飞者可用箭取之，至于龙，吾不知其何以？龙乘风云而上九天也！吾所见老子也，其犹龙乎？学识渊深而莫测，志趣高邈而难知；如蛇之随时屈伸，如龙之应时变化。老聃，真吾师也！”</p>
-<h3 id="第一段话"><a href="#第一段话" class="headerlink" title="第一段话"></a>第一段话</h3><p><strong>老子送别孔子，赠言道：</strong>“吾闻之，富贵者送人以财，仁义者送人以言。吾不富不贵，无财以送汝，愿以数言相送。当今之世，聪明而深察者，其所以遇难而几至于死，在于好讥人之非也；善辩而通达者，其所以招祸而屡至于身，在于好扬人之恶也。为人之子，勿以己为高；为人之臣，勿以己为上，望汝切记。”</p>
-<p><strong>孔子顿首道：</strong>“弟子一定谨记在心！”</p>
-<h3 id="第二段话"><a href="#第二段话" class="headerlink" title="第二段话"></a>第二段话</h3><p>行至黄河之滨，见河水滔滔，浊浪翻滚。</p>
-<p><strong>孔丘叹曰：</strong>“逝者如斯夫，不舍昼夜！黄河之水奔腾不息，人之年华流逝不止，河水不知何处去，人生不知何处归？”</p>
-<p><strong>老子道：</strong>“人生天地之间，乃与天地一体也。天地，自然之物也；人生，亦自然之物；人有幼、少、壮、老之变化，犹如天地有春、夏、秋、冬之交替，有何悲乎？生于自然，死于自然，任其自然，则本性不乱；不任自然，奔忙于仁义之间，则本性羁绊。<strong>功名存于心，则焦虑之情生；利欲留于心，则烦恼之情增</strong>。”</p>
-<p><strong>孔丘解释道：</strong>“吾乃忧大道不行，仁义不施，战乱不止，国乱不治也，故有人生短暂，不能有功于世、不能有为于民之感叹矣”</p>
-<p><strong>老子道：</strong>“天地无人推而自行，日月无人燃而自明，星辰无人列而自序，禽兽无人造而自生，此乃自然为之也，何劳人为乎？人之所以生、所以无、所以荣、所以辱，皆有自然之理、自然之道也。顺自然之理而趋，遵自然之道而行，国则自治，人则自正，何须津津于礼乐而倡仁义哉？津津于礼乐而倡仁义，则违人之本性远矣！犹如人击鼓寻求逃跑之人，击之愈响，则人逃跑得愈远矣！”</p>
-<h3 id="第三段话"><a href="#第三段话" class="headerlink" title="第三段话"></a>第三段话</h3><p><strong>老子手指浩浩黄河，对孔丘说：</strong>“汝何不学水之大德？”</p>
-<p><strong>孔丘曰：</strong>“水有何德？”</p>
-<p><strong>老子道：</strong>“上善若水：水善利万物而不争，处众人之所恶，此乃谦下之德也；故江海所以能为百谷王者，以其善下之，则能为百谷王。天下莫柔弱于水，而攻坚强者莫之能胜，此乃柔德也；故柔之胜刚，弱之胜强坚。因其无有，故能入于无间，由此可知不言之教、无为之益也。”</p>
-<p><strong>孔丘闻言，恍然大悟道：</strong>“先生此言，使我顿开茅塞也：众人处上，水独处下；众人处易，水独处险；众人处洁，水独处秽。所处尽人之所恶，夫谁与之争乎？此所以为上善也。”</p>
-<p><strong>老子点头说：</strong>“与世无争，则天下无人能与之争，此乃效法水德也。水几於道：道无所不在，水无所不利，避高趋下，未尝有所逆，善处地也；空处湛静，深不可测。善为渊也；损而不竭，施不求报，善为仁也；圜必旋，方必折，塞必止，决必流，善守信也；洗涤群秽，平准高下，善治物也；以载则浮，以鉴则清，以攻则坚强莫能敌，善用能也；不舍昼夜，盈科后进，善待时也。故圣者随时而行，贤者应事而变；智者无为而治，达者顺天而生。”</p>
-<p>“汝此去后，应去骄气于言表，除志欲于容貌。否则，人未至而声已闻，体未至而风已动，张张扬扬，如虎行于大街，谁敢用你？”</p>
-<p><strong>老子曰：</strong>“欲观大道，须先游心于物之初。天地之内，环宇之外。天地人物，日月山河，形性不同。所同者，皆顺自然而生灭也，皆随自然而行止也。知其不同，是见其表也；知其皆同，是知其本也。舍不同而观其同，则可游心于物之初也。物之初，混而为一，无形无性，无异也。”</p>
-<p><strong>孔子问：</strong>“观其同，有何乐哉？”</p>
-<p><strong>老子道：</strong>“观其同，则齐万物也。齐物我也，齐是非也。故可视生死为昼夜，祸与福同，吉与凶等，无贵无贱，无荣无辱，心如古井，我行我素，自得其乐，何处而不乐哉？”</p>
-<p><strong>孔丘道：</strong>“先生之言，出自肺腑而入弟子之心脾，弟子受益匪浅，终生难忘。弟子将遵奉不怠，以谢先生之恩。”说完，依依不舍地告别老子。</p>
-<h3 id="第四段话"><a href="#第四段话" class="headerlink" title="第四段话"></a>第四段话</h3><p><strong>老子曰：</strong>“欲观大道，须先游心于物之初。天地之内，环宇之外。天地人物，日月山河，形性不同。所同者，皆顺自然而生灭也，皆随自然而行止也。知其不同，是见其表也；知其皆同，是知其本也。舍不同而观其同，则可游心于物之初也。物之初，混而为一，无形无性，无异也。”</p>
-<p><strong>孔子问：</strong>“观其同，有何乐哉？”</p>
-<p><strong>老子道：</strong>“观其同，则齐万物也。齐物我也，齐是非也。故可视生死为昼夜，祸与福同，吉与凶等，无贵无贱，无荣无辱，心如古井，我行我素，自得其乐，何处而不乐哉？”</p>
-<p><strong>孔丘道：</strong>“先生之言，出自肺腑而入弟子之心脾，弟子受益匪浅，终生难忘。弟子将遵奉不怠，以谢先生之恩。”说完，依依不舍地告别老子。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
-  </nav>
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
       }
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Jerry Min</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <span class="site-state-item-count">260</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">34</span>
-        <span class="site-state-item-name">categories</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">61</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><hr/></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="MinMinMsn"><span class="site-name">MinMinMsn</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">MinMinMsn</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" title="运维能力要求">运维能力要求</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-12-27T00:00:00.000Z" title="Created 2022-12-27 08:00:00">2022-12-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">百度百科对运维的解释为：企业 IT 部门采用相关的方法、手段、技术、制度、流程和文档等,对IT 软硬运行环境(软件环境、网络环境等)、IT 业务系统和 IT 运维人员进行的综合管理。从百度百科的解释看，运维岗位需要一个综合性的技术与管理能力，需要掌握大量的方法论与技术栈。
+运维狭义“运维技术与资源”可以定义为“监、管、控”，技术与资源主要是支撑运维&#x2F;运营的质量、效率、成本的平衡。
+以下简单摘录了运维的一些能力要求：运维规范的落地 ：以ITIL、ISO20000、ITSS.1等方法论，结合外部监管及内部规范的落地；监管机构的要求落地 ：理解、快速响应、落地监管机构的管理要求；基本保障 ：配置、监控、应用发布、资源扩容、事件、问题等；基础能力 ：网络、服务器、操作系统、数据库、中间件、JVM、应用等基本使用与调优；业务服务能力 ：SLA，服务台、业务咨询、维护、经验库、等支持能力；可用性管理能力 ：巡检、业务系统连续性、可用性，基础架构及应用系统的高可用、备件冗余资源；风险、安全管理能力 ：操作、审计、监管风险，漏洞、攻击管控；故障管理能力 ：事件、问题管理水平与能力；持续交付能 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/" title="浅谈基于 OpenStack 和 k8s 轻量研发私有云建设">浅谈基于 OpenStack 和 k8s 轻量研发私有云建设</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-11-01T00:00:00.000Z" title="Created 2022-11-01 08:00:00">2022-11-01</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">原文链接：https://bbs.huaweicloud.com/blogs/285546【摘要】 在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性、更高的资源使用效率等都是关键问题；
+
+背景
+面临的挑战
+功能简介
+核心优势
+核心设施平台（IaaS云）
+基础服务平台（PaaS云）
 
 
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
-  </div>
-
-        
+技术落地
+整体架构
+技术选型
+IaaS云技术
+PaaS云技术
 
 
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
+实践的过程
+OpenStack &amp; CloudStack
+KVM &amp; VMWare
+CentOS &amp; Ubuntu
+OpenStack &amp; k8s
+拥抱开源面临的困难
+云原生架构带来的挑战
+私有云建设路线
+私有云的容量评估
+全栈监控
+k8s集群规模
+k8s集群计算资源
+压力引擎
+其它
 
 
 
 
-  
+运行效果展示
+基础服务平台（IaaS云）
+登录认证
+高效管理物理资源（ ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" title="数学公式集锦">数学公式集锦</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-06-17T00:00:00.000Z" title="Created 2022-06-17 08:00:00">2022-06-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/ashore/">ashore</a></span></div><div class="content">管理类数学联考公式宝典适用于：MBA、MEB、MPA、EMPa、MPAcc等。
+
+</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/" title="运维工作总结">运维工作总结</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-06-14T00:00:00.000Z" title="Created 2022-06-14 08:00:00">2022-06-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">定义负责安装、调试、维护业务系统，保障各业务系统稳定、高效、持续运行的管理人员。
+运维总监的工作内容
+负责整个运维部门的管理和建设工作，对运维的质量、效率、成本及安全负责
+全面管理运维工作，包括网络和硬件规划管理、系统运维、数据库运维、应用运维、自动化运维等，针对各级业务系统的架构，对部署、监控、治理、优化、容灾、安全等进行规划和指导
+不断优化各项工作流程、管理规范和系统架构，及时响应和处理故障，提升系统服务效率及稳定性
+负责自动部署、监控、报警、安全等内部运维自动化系统的研发、运营和优化工作
+不断探索和研究新的运维技术方向和运维工具，提升运维管理能力
+
+运维总监实力展示举例案例一
+十多年的运维经历，互联网业务运维、基础运维、SRE专家善于团结团队、培养团队阶梯组成和完成上下级工作衔接精通产线监控、故障复盘、风评、预案、演练、容灾、容量及弹性伸缩等保障 SLA的实践措施精通运维自动化体系建设，通过分层、拆模块等方式，实现运维标准化、自动化建设的实施及落地。
+</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" title="明儒学案学习笔记">明儒学案学习笔记</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-06-11T00:00:00.000Z" title="Created 2022-06-11 08:00:00">2022-06-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/confucian/">confucian</a></span></div><div class="content">跋
+
+第1章 郑性序
+道并行而不相悖，此天地之所以为大也。三教既兴，孰能存其一，去其二。并为儒而不相容，隘矣。后之观者，毋师己意，毋主先入，虚心体察，孰纯孰驳，孰浅孰深，自呈自露，惟以有裨於为己之学，而合乎天地之所以为大，其於道也，斯得之矣。
+
+点评：道道道，你有你的道，我有我的道。天地之大，无所不包、无所不容；勿狭隘不容、好为人师、先入为主；要虚心体察、增益己学、合乎天地，这样才能对道有所得。
+第3章 冯全垓跋
+垓谓学术必原心术，但使存心克正，兢兢以慎独为念，从此存养省察，虽议论或有偏驳，亦不愧为圣人之徒。倘功利之见未忘，借先正之名目以自树其门户，则矫诬虚伪，势必色厉内荏，背道而驰。先生是书，殆欲以正心术者正学术欤！
+
+第5章 仇兆鳌序
+这篇序是黄宗羲弟子所写，主要捋了明儒渊源：吴与弼—陈白沙—湛若水—许孚远—刘宗周—黄宗羲；吴与弼—娄谅—王阳明—王畿。
+
+第6章 明儒学案序
+盈天地间皆心也，人与天地万物为一体，故穷天地万物之理，即在吾心之中。夫道犹海也，江、淮、河、汉以至泾、渭蹄涔，莫不昼夜曲折以趋之，其各自为水者，至於海而为一水矣。
 
 
+第7章 黄梨洲原序
+盈天地皆心也，变化不测 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/" title="一次非典型网络流量分析">一次非典型网络流量分析</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-06-03T00:00:00.000Z" title="Created 2022-06-03 08:00:00">2022-06-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">背景本来我在吃着花生，听着老师唱王心凌男孩，突然群里有人@我了，不过这也是之前让你有问题找我，怪不得别人，都是工作，车端流量使用非常大，基本是1天几十个G，而且最近才发生
 
+分析主要怀疑几个方向，都和业务场景有关
 
+Pad端流量分析：APP流量、数据收集、地图
+云端流量分析：日志收集、直播、场景
+域控制器流量分析：外联业务
 
+过程首先联系端和云上同事一起看看他们这边是否有异常流量，经过分析并没发现特别大的流程，期间也对流量使用及业务场景加深了了解。
+其次运维方主要别精力放在域控制流量分析上，首先看Iftop流量过滤出外网的，发现了几个流量比较大的IP，分别是日志收集、业务场景，还有一个流量比较大的IP没有记录在案。通过查询发现是武汉的IP，还以为是域控制供应商留下的后门呢（有点儿乱想了），此时已经有了突破点儿，通过ss、netstat等命令发现，本地和该IP有10来个链接，而且端口一直在变，然后看流量每秒有50Mbps，开始还以为是恶意程序。最好安装了tcpdump，让同事抓包分析，最后才知道是测试网速的站点。
+最后复盘，是同事之前测试网速后网络关闭了，让他开机启动一直运行了，可能是对 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/05/29/2022/05/2022-05-29-%E6%9B%BE%E5%9B%BD%E8%97%A9%E9%A2%86%E5%AF%BC%E5%8A%9B%E5%8D%81%E4%BA%8C%E5%AD%97/index/" title="曾国藩领导力十二讲">曾国藩领导力十二讲</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-05-29T00:00:00.000Z" title="Created 2022-05-29 08:00:00">2022-05-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/mba/">mba</a></span></div><div class="content">
+“重”，厚重、稳重。“耐”，耐烦、耐心。“浑”，浑含、浑厚。“明”，明白、清醒。“辣”，泼辣、果断。“慎”，谨慎、自制。“勤”，勤奋、勤恳。“实”，扎实、朴实。“暇”，空闲、从容。“裕”，宽裕、坦荡。“恕”，恕道、宽容。“强”，倔强、刚强。
+重稳当从容，可当大事。
+心欲其定，气欲其定，神欲其定，体欲其定。
+不轻进人，即异日不轻退人之本；不妄亲人，即异日不妄疏人之本。
+端庄厚重是贵相，谦卑含容是贵相。事有归着是富相，心存济物是富相。
+耐曾国藩说过一句话：“做官以耐烦为第一要义。”（你既然做了一个领导者，那么耐得住烦躁、控制好情绪、调整好心态，是首要的原则。）他还说过：“若遇棘手之际，须从耐烦二字痛下工夫。”（越是遇到事情不顺的时候，反而越要在“耐烦”两个字上痛下功夫。）
+牢骚太甚者，其后必多抑塞。盖无故而怨天，则天必不许；无故而尤人，则人必不服。
+天下断无易处之境遇，人间哪有空闲的光阴。
+观古今来成大功享全名者，非必才盖一世。大抵能下人，斯能上人；能忍人，斯能胜人。
+一经焦躁，则心绪少佳，办事必不能妥善。
+浑精明也要十分，只须藏在浑厚里作用。古人得祸，精明人十居其九，未有浑厚而得祸者。 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/05/18/2022/05/2022-05-18-%E6%B5%81%E9%87%8F%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/index/" title="流量监控工具">流量监控工具</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-05-18T00:00:00.000Z" title="Created 2022-05-18 08:00:00">2022-05-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/op/">op</a></span></div><div class="content">查看网络流量IftopIftop可以用来监控网卡的实时流量（可以指定网段）、反向解析IP、显示端口信息等，多用于分析服务器内外网IP间流量带宽使用情况。如果要按主机的网络带宽使用情况，通常可以使用iftop。iftop在指定网卡，如果未指定该接口，则显示所有网络流量，并按主机对显示当前带宽使用情况表。
 
+查看进程流量NethogsNetHogs是一个开源的命令行工具（类似于Linux的top命令），用来按进程或程序实时统计网络带宽使用率。可以根据进程PID来统计网络流量，因为它按进程对带宽进行分组，而不是像大多数工具一样按协议或子网来统计。同时支持IPv4和IPv6，当要统计Linux主机带宽占用信息时，它是最好的实用程序。
 
+</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/05/03/2022/05/2022-05-03-%E6%95%99%E7%88%B6%E7%BB%8F%E5%85%B8%E8%AF%AD%E5%8F%A5/index/" title="教父经典语句">教父经典语句</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-05-03T00:00:00.000Z" title="Created 2022-05-03 08:00:00">2022-05-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/talk/">talk</a></span></div><div class="content">第三次读教父终于想着把经典的句子摘抄下来了。第一部财富背后，总有犯罪。——巴尔扎克 唐·柯里昂本人并不生气。有个道理他早就弄清楚了，那就是你必须承受社会强加的侮辱，因为他明白，连最卑微的人，只要时刻擦亮眼睛，就迟早能抓住机会，报复最有权势的人。正是明白这个道理，唐才从不放弃他的谦逊风度，所有朋友都对此敬佩有加。 黑根的谈判技巧是唐亲自传授的。“永远不要动怒，”唐这么教导他，“绝不要威胁，要讲道理。”用意大利语说“讲道理”听上去像“应对” 打破这种规章制度说明他闲不住，就仿佛好赛马永远想挣脱缰绳。 时间对谢意的侵蚀比对美的侵蚀还要更快。
+第二部第三部第四部他的朋友、家人和邻居当然不会开这种玩笑。一个人靠汗水挣面包钱，做什么职业都值得尊敬。 时间能治好创伤。痛苦和恐惧不是死亡，还有挽回的余地，这一点他知道得很清楚。他的职业让他乐观处世。 唉，人生又不完全是甜美的音乐，你要是愿意在医院里走一圈，就会看见什么是真正的苦难，就会给肉赘唱一首小情歌了
+第五部女人和孩子能够承担粗心大意的后果，男人却不行。
+第六部第七部我经常这么和别人说，‘肉别吃那么多，否则你会死；烟别抽那么多，否则你会死；工作别那 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info"><a class="article-title" href="/2022/04/24/2022/04/2022-04-24-%E5%AD%94%E5%AD%90%E9%97%AE%E9%81%93%E4%BA%8E%E8%80%81%E5%AD%90/index/" title="孔子问道于老子">孔子问道于老子</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2022-04-24T00:00:00.000Z" title="Created 2022-04-24 08:00:00">2022-04-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/confucian/">confucian</a></span></div><div class="content">
+实在找不到这些话出自哪儿，《道德经》、《孔子家语》、《史记·老子韩非列传》、《史记·孔子世家》中有只言片语。查遍了全网李蓉著作《与哲人一起思考哲学》中孔子求教与老子有所记载。不过两千多年过去了，至今影响任然在。所以名言不问出处，管他是后代杜撰的还是想象的，受用就行。
 
-
-
-
-
-
-
-
-  
-
-  
-
-</body>
-</html>
+背景孔子曾拜见老子，问了几个问题，孔子十分佩服。回到鲁国，众弟子问道：“先生拜访老子，可得见乎？”孔子道：“见之！”弟子问：“老子何样？”
+孔子道：“鸟，我知它能飞；鱼，吾知它能游；兽，我知它能走。走者可用网缚之，游者可用钩钓之，飞者可用箭取之，至于龙，吾不知其何以？龙乘风云而上九天也！吾所见老子也，其犹龙乎？学识渊深而莫测，志趣高邈而难知；如蛇之随时屈伸，如龙之应时变化。老聃，真吾师也！”
+第一段话老子送别孔子，赠言道：“吾闻之，富贵者送人以财，仁义者送人以言。吾不富不贵，无财以送汝，愿以数言相送。当今之世，聪明而深察者，其所以遇难而几至于死，在于好讥人之非也；善辩而通达者，其所以招祸而屡至于身，在于好扬人之恶也。为人之子，勿以己为高；为人之臣，勿以己为上，望汝切记。”
+孔子顿首道：“弟子一定谨记在心！”
+第二段话行 ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/#content-inner">26</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jerry Min</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">260</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">61</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">34</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" title="运维能力要求">运维能力要求</a><time datetime="2022-12-27T00:00:00.000Z" title="Created 2022-12-27 08:00:00">2022-12-27</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/" title="浅谈基于 OpenStack 和 k8s 轻量研发私有云建设">浅谈基于 OpenStack 和 k8s 轻量研发私有云建设</a><time datetime="2022-11-01T00:00:00.000Z" title="Created 2022-11-01 08:00:00">2022-11-01</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" title="数学公式集锦">数学公式集锦</a><time datetime="2022-06-17T00:00:00.000Z" title="Created 2022-06-17 08:00:00">2022-06-17</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/14/2022/06/2022-06-14-%E8%BF%90%E7%BB%B4%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/index/" title="运维工作总结">运维工作总结</a><time datetime="2022-06-14T00:00:00.000Z" title="Created 2022-06-14 08:00:00">2022-06-14</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" title="明儒学案学习笔记">明儒学案学习笔记</a><time datetime="2022-06-11T00:00:00.000Z" title="Created 2022-06-11 08:00:00">2022-06-11</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>Categories</span>
+            <a class="card-more-btn" href="/categories/" title="More">
+    <i class="fas fa-angle-right"></i></a>
+            </div>
+            <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ai/"><span class="card-category-list-name">ai</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ashore/"><span class="card-category-list-name">ashore</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/bigdata/"><span class="card-category-list-name">bigdata</span><span class="card-category-list-count">16</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/bigdata/op/"><span class="card-category-list-name">op</span><span class="card-category-list-count">1</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/cloud/"><span class="card-category-list-name">cloud</span><span class="card-category-list-count">17</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/"><span class="card-category-list-name">confucian</span><span class="card-category-list-count">11</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/note/"><span class="card-category-list-name">note</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/confucian/talk/"><span class="card-category-list-name">talk</span><span class="card-category-list-count">1</span></a></li></ul></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/kafka/" style="font-size: 1.1em; color: #999">kafka</a> <a href="/tags/study/" style="font-size: 1.46em; color: #99a8bc">study</a> <a href="/tags/can/" style="font-size: 1.14em; color: #999a9c">can</a> <a href="/tags/jenkins/" style="font-size: 1.17em; color: #999ca0">jenkins</a> <a href="/tags/kibana/" style="font-size: 1.17em; color: #999ca0">kibana</a> <a href="/tags/gitlab/" style="font-size: 1.1em; color: #999">gitlab</a> <a href="/tags/financial/" style="font-size: 1.5em; color: #99a9bf">financial</a> <a href="/tags/hadoop/" style="font-size: 1.1em; color: #999">hadoop</a> <a href="/tags/postgresql/" style="font-size: 1.1em; color: #999">postgresql</a> <a href="/tags/zabbix/" style="font-size: 1.17em; color: #999ca0">zabbix</a> <a href="/tags/ambari/" style="font-size: 1.1em; color: #999">ambari</a> <a href="/tags/parenting/" style="font-size: 1.14em; color: #999a9c">parenting</a> <a href="/tags/method/" style="font-size: 1.32em; color: #99a2ae">method</a> <a href="/tags/hbase/" style="font-size: 1.1em; color: #999">hbase</a> <a href="/tags/pinpoint/" style="font-size: 1.17em; color: #999ca0">pinpoint</a> <a href="/tags/python/" style="font-size: 1.25em; color: #999fa7">python</a> <a href="/tags/saltstack/" style="font-size: 1.1em; color: #999">saltstack</a> <a href="/tags/communicate/" style="font-size: 1.1em; color: #999">communicate</a> <a href="/tags/etcd/" style="font-size: 1.1em; color: #999">etcd</a> <a href="/tags/devops/" style="font-size: 1.14em; color: #999a9c">devops</a> <a href="/tags/opencv/" style="font-size: 1.14em; color: #999a9c">opencv</a> <a href="/tags/walle/" style="font-size: 1.14em; color: #999a9c">walle</a> <a href="/tags/helm/" style="font-size: 1.17em; color: #999ca0">helm</a> <a href="/tags/confucian/" style="font-size: 1.28em; color: #99a0aa">confucian</a> <a href="/tags/nvidia/" style="font-size: 1.1em; color: #999">nvidia</a> <a href="/tags/tcpcopy/" style="font-size: 1.1em; color: #999">tcpcopy</a> <a href="/tags/life/" style="font-size: 1.28em; color: #99a0aa">life</a> <a href="/tags/hexo/" style="font-size: 1.1em; color: #999">hexo</a> <a href="/tags/sre/" style="font-size: 1.14em; color: #999a9c">sre</a> <a href="/tags/coredns/" style="font-size: 1.1em; color: #999">coredns</a> <a href="/tags/prometheus/" style="font-size: 1.21em; color: #999da3">prometheus</a> <a href="/tags/%E6%95%B0%E6%8D%AE/" style="font-size: 1.1em; color: #999">数据</a> <a href="/tags/nginx/" style="font-size: 1.35em; color: #99a3b1">nginx</a> <a href="/tags/zen/" style="font-size: 1.43em; color: #99a6b8">zen</a> <a href="/tags/poetry/" style="font-size: 1.25em; color: #999fa7">poetry</a> <a href="/tags/invest/" style="font-size: 1.21em; color: #999da3">invest</a> <a href="/tags/mongodb/" style="font-size: 1.1em; color: #999">mongodb</a> <a href="/tags/op/" style="font-size: 1.39em; color: #99a5b5">op</a> <a href="/tags/harbor/" style="font-size: 1.14em; color: #999a9c">harbor</a> <a href="/tags/shell/" style="font-size: 1.1em; color: #999">shell</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span><a class="card-more-btn" href="/archives/" title="More">
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">December 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">November 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">June 2022</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">May 2022</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">April 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">March 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/02/"><span class="card-archive-list-date">February 2022</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">January 2022</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">260</div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2023-05-26T08:35:47.034Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Jerry Min</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
