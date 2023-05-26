@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="作者简介吉恩·金(Gene Kim) 信息技术流程研究所联合创始人、研究总监，Tripwire公司创始人，担任公司CTO长达13年之久，一直热衷于研究如何提高IT组织的效能。 凯文·贝尔（Kevin Behr) PraxisFlow咨询公司首席科学官，信息技术流程研究所联合创始人，拥有25年以上的IT管理经验，常为CEO、CIO、CTO等提供指导和建议。 乔治·斯帕福德(George Spaffo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凤凰项目：一个IT运维的传奇故事读书笔记">
+<meta property="og:url" content="https://minminmsn.github.io/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="作者简介吉恩·金(Gene Kim) 信息技术流程研究所联合创始人、研究总监，Tripwire公司创始人，担任公司CTO长达13年之久，一直热衷于研究如何提高IT组织的效能。 凯文·贝尔（Kevin Behr) PraxisFlow咨询公司首席科学官，信息技术流程研究所联合创始人，拥有25年以上的IT管理经验，常为CEO、CIO、CTO等提供指导和建议。 乔治·斯帕福德(George Spaffo">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/first-way2-400x191.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/second-way1-400x211.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/third-way-400x224.png">
+<meta property="article:published_time" content="2020-04-27T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:34.303Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="devops">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/first-way2-400x191.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>凤凰项目：一个IT运维的传奇故事读书笔记 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/04/27/2020/04/2020-04-27-%E5%87%A4%E5%87%B0%E9%A1%B9%E7%9B%AE%EF%BC%9A%E4%B8%80%E4%B8%AAit%E8%BF%90%E7%BB%B4%E7%9A%84%E4%BC%A0%E5%A5%87%E6%95%85%E4%BA%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          凤凰项目：一个IT运维的传奇故事读书笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-27 08:00:00" itemprop="dateCreated datePublished" datetime="2020-04-27T08:00:00+08:00">2020-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="作者简介"><a href="#作者简介" class="headerlink" title="作者简介"></a><strong>作者简介</strong></h3><p><strong>吉恩·金(Gene Kim)</strong> 信息技术流程研究所联合创始人、研究总监，Tripwire公司创始人，担任公司CTO长达13年之久，一直热衷于研究如何提高IT组织的效能。 <strong>凯文·贝尔（Kevin Behr)</strong> PraxisFlow咨询公司首席科学官，信息技术流程研究所联合创始人，拥有25年以上的IT管理经验，常为CEO、CIO、CTO等提供指导和建议。 <strong>乔治·斯帕福德(George Spafford)</strong> 高德纳公司高级研究总监，行业分析师，在IT运维方面拥有丰富经验，曾在多个国家提供过信息技术治理和流程改进等方面的咨询和培训。 <strong>简·思西尔特(JanSchilt)</strong> GamingWorks创始人，国际最佳实践管理联盟资深专家。IT管理类全球知名沙盘创作者，如IT服务管理类“阿波罗13号”、项目管理类“挑战埃及”和DevOps沙盘“凤凰项目”等。</p>
+<h3 id="译者介绍"><a href="#译者介绍" class="headerlink" title="译者介绍"></a><strong>译者介绍</strong></h3><p><strong>成小留</strong> 上班族，朝九晚六；好读书，不求甚解。用闲云野鹤的态度度过按部就班的人生。 <strong>刘征</strong> Nutanix路坦力资深架构师，EXIN首批国内DevOps Master禾DDevOpsProfessional认证讲师，持有红帽RHCA认证和AWS高级架构师认证，谙熟企业数据中心的IT服务管理。目前致力于推广DevOps相关的理念和实践，在DevOps社区中积极地参与培训和研讨会等活动，是DevOpsDays大会社区在中国的核心组织者和志愿工作者。 <strong>沙盘章节翻译：国际最佳实践管联盟</strong> 国际最佳实践管理联盟承担GamingWorks全部沙盘演练产品在中国的知识产权管理和保护工作，参加凤凰沙盘演练后将有机会获得由国际最佳实践管理联盟颁发的凤凰项目沙盘证书。追求卓越，最佳实践！</p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><strong>前言</strong></h3><p>第一次见到这本书还是三年前，那时候看到领导座位旁边放着一本。我看这名字挺好奇的，于是拿起来看了一会，心里想这是什么玩意儿，后来就放下了。 昨天早上我看微信读书有好友在读这本书，点进去看评分竟然高达9.3分（今天变成了9.4），一般8.0以上就算是好书了，9.0以上肯定是精品了。 所谓精品我理解一般是创始人或者行业泰斗等著的书。我这次没有错失良机，于是继续读了下去，一发不可收拾，越读越心潮澎湃，今天就读完了。可见同一本书，不同的时间去读，感觉完全是不一样的。总之这是一本非常适合CEO、CFO、CIO、各种部门VP、审计、安全、开发、运维等角色读的书。能让你高屋建瓴，从全局来考虑问题，让你认识到什么才是真正的工作。 话说回来，读完遍后就算设想声临其境中也很难领略其中真谛之万一，虽然现在DevOps已经普遍流行了，但是真正难得的是开创人怎样思考经历了怎样的心路历程才得出这个成果的，这才是我们最值得思考的！ 其实读书并不是在读书，只是在看别人经历过什么，如果自己不去经历，基本上可以不用去读，因为就算当时获取了一些认知也是会反复、回转、可逆的，总归还是不测底的。所以需要去实践，然后总结，获得自己的一套知识体系，最后再去验证，如此反复锻炼去粗取精，这样才能得出自己的一点点成果。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p>本书讲的是主人公比尔在公司股价大跌、IT运维VP与CIO被裁时，经过CEO忽悠后临危受命成为了IT运维的副总裁。在CEO的不但鞭策和幕后神秘投资人不断启发下（当然也少不了反对者与阻挡者），主人公陆续克服了种种困难与挑战并总结出了IT运维中包含的四种类型工作，分清了哪些是会阻碍工作的瓶颈。通过对工厂运维的苦思冥想，最终与团队伙伴一起创造了新的IT运维工作法则：三步工作法，并由此衍生出了DevOps的行为和模式（想继续深入学习的同学可以读《DevOps实践指南》）。从而从质的方面提升了IT运维的效率与质量，最终业务、开发、运维可以在一起开心的玩耍了，一天十部署也不是事了，公司业绩半年后就超越竞争对手了。结局可想而知，主人公成了CEO的重点培养对象，从IPVP到COO到CEO都不是梦了。</p>
+<h3 id="感兴趣的备注"><a href="#感兴趣的备注" class="headerlink" title="感兴趣的备注"></a><strong>感兴趣的备注</strong></h3><p><strong>何为变更</strong> 变更就是对应用程序、数据库、操作系统、网络或硬件进行的物理、逻辑或虚拟操作，并且这样的操作可能对相关服务产生影响。</p>
+<p><strong>生产运维与IT运维</strong> “如果你认为IT运维部没有什么可向生产运维部学习的，那你就错了。大错特错。”他说，“作为IT运维部的副总裁，你的工作是确保形成一条迅速、可预测、持续不断的计划内工作流，从而向业务部门交付工作价值，同时尽可能降低计划外工作的影响和破坏，那样你才能提供稳定的、可预期的、安全的IT服务。”</p>
+<p><strong>三步工作法：流通，反馈，持续学习与实验。</strong> “年轻人，一旦明白了这些，你就能踏上理解‘三步工作法’的征途了。”他说，“第一步帮助我们理解在工作从开发部移向IT运维部时该如何建立快速工作流，因为那就是业务部门与客户之间的衔接。第二步告诉我们如何缩短及放大反馈环路，从而在源头上解决质量问题，避免返工。第三步告诉我们如何建立一种文化，既能鼓励探索、从失败中吸取教训，又能理解反复实践是精通工作的先决条件。”</p>
+<blockquote>
+<p><img src="/images/first-way2-400x191.png"> <img src="/images/second-way1-400x211.png"> <img src="/images/third-way-400x224.png"> 三步工作法（来源：吉恩·金在IT Revolution Press博客上发布的“三步工作法：DevOps的基础原则”，访问于2016年8月9日，<a target="_blank" rel="noopener" href="http://itrevolution.com/the-three-ways-principles-underpinning-devops/%EF%BC%89">http://itrevolution.com/the-three-ways-principles-underpinning-devops/）</a></p>
+</blockquote>
+<p><strong>高德拉特在《目标》五个聚焦步骤</strong></p>
+<ul>
+<li>识别系统的约束点</li>
+<li>决定如何利用这个系统约束点；</li>
+<li>基于上述决定，考虑全局工作；</li>
+<li>改善系统的约束点；</li>
+<li>如果约束点已经突破了，请回到第一步，但要杜绝惯性导致的系统约束。</li>
+</ul>
+<p><strong>开发除了关注功能还应该关注什么</strong> 你在开发部的同僚切斯特，把他所有的工作周期都花在了功能开发上，而没有用在稳定性、安全性、可扩展性、可维护性、可操作性、持续性以及其他诸如此类的美好性能上。</p>
+<p><strong>四种类型工作</strong> 比尔提到了四种类型的工作：业务项目、IT运维项目、变更以及计划外工作。如果不加控制，技术债务必将导致公司里唯一能够完成的工作就是计划外工作！</p>
+<p><strong>IT运维工作和工厂工作非常类似</strong> 既然我已经在自己的部门里亲眼见证了埃瑞克的那套成果，我明白了，IT运维工作和工厂工作非常类似。 （我在干IT运维工作之前也在工厂干过，可惜从来没有想过他们之间的联系，看来以后得把自己做过的事情连接起来看看能不能成为一个体系。）</p>
+<h3 id="书中提到的影视作品"><a href="#书中提到的影视作品" class="headerlink" title="书中提到的影视作品"></a><strong>书中提到的影视作品</strong></h3><ul>
+<li>《IT狂人》</li>
+<li>《功夫熊猫》</li>
+<li>《老板度假去》</li>
+<li>《四眼田鸡》</li>
+<li>《星际迷航》</li>
+<li>《苍白骑士》</li>
+<li>《二维世界》</li>
+<li>《狂犬惊魂》</li>
+</ul>
+<h3 id="书中提到的书籍"><a href="#书中提到的书籍" class="headerlink" title="书中提到的书籍"></a><strong>书中提到的书籍</strong></h3><ul>
+<li>《目标：简单而有效的常识管理》</li>
+<li>《目标之外》</li>
+<li>《DevOps实践指南》</li>
+<li>《团队发展的五大障碍》</li>
+<li>《持续交付》</li>
+<li>《精益创业》</li>
+<li>《直觉》</li>
+<li>《精益思想》</li>
+<li>《第五项修炼：学习型组织的艺术与实践》</li>
+<li>《探索吧！深入理解探索式软件测试》</li>
+<li>《丰田套路》</li>
+<li>《走动管理》</li>
+<li>《财富》</li>
+<li>《名利场》</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/devops/" rel="tag"># devops</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/19/2020/04/2020-04-19-testdisk%E6%81%A2%E5%A4%8D%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98%E6%95%B0%E6%8D%AE/index/" rel="prev" title="testdisk恢复格式化磁盘数据">
+      <i class="fa fa-chevron-left"></i> testdisk恢复格式化磁盘数据
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/30/2020/04/2020-04-30-sre%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97mikey%E9%87%91%E5%AD%97%E5%A1%94/index/" rel="next" title="SRE生存指南Mikey金字塔">
+      SRE生存指南Mikey金字塔 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E8%80%85%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">作者简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%91%E8%80%85%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">译者介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">3.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">4.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%9F%E5%85%B4%E8%B6%A3%E7%9A%84%E5%A4%87%E6%B3%A8"><span class="nav-number">5.</span> <span class="nav-text">感兴趣的备注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E4%B8%AD%E6%8F%90%E5%88%B0%E7%9A%84%E5%BD%B1%E8%A7%86%E4%BD%9C%E5%93%81"><span class="nav-number">6.</span> <span class="nav-text">书中提到的影视作品</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E4%B8%AD%E6%8F%90%E5%88%B0%E7%9A%84%E4%B9%A6%E7%B1%8D"><span class="nav-number">7.</span> <span class="nav-text">书中提到的书籍</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

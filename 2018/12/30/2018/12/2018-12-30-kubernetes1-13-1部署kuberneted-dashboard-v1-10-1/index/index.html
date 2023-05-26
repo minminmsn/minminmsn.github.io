@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档12345https:&#x2F;&#x2F;kubernetes.io&#x2F;docs&#x2F;tasks&#x2F;access-application-cluster&#x2F;web-ui-dashboard&#x2F;#deploying-the-dashboard-uihttps:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;tree&#x2F;7f23a743e8c23ac6489340bbb34fa6f1d392db9d&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes1.13.1部署Kuberneted-dashboard v1.10.1">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/30/2018/12/2018-12-30-kubernetes1-13-1%E9%83%A8%E7%BD%B2kuberneted-dashboard-v1-10-1/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档12345https:&#x2F;&#x2F;kubernetes.io&#x2F;docs&#x2F;tasks&#x2F;access-application-cluster&#x2F;web-ui-dashboard&#x2F;#deploying-the-dashboard-uihttps:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;kubernetes&#x2F;tree&#x2F;7f23a743e8c23ac6489340bbb34fa6f1d392db9d&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c2c7ce87af87.png">
+<meta property="article:published_time" content="2018-12-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.852Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/5c2c7ce87af87.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/30/2018/12/2018-12-30-kubernetes1-13-1%E9%83%A8%E7%BD%B2kuberneted-dashboard-v1-10-1/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Kubernetes1.13.1部署Kuberneted-dashboard v1.10.1 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/30/2018/12/2018-12-30-kubernetes1-13-1%E9%83%A8%E7%BD%B2kuberneted-dashboard-v1-10-1/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes1.13.1部署Kuberneted-dashboard v1.10.1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-30 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-30T08:00:00+08:00">2018-12-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui</span><br><span class="line">https://github.com/kubernetes/kubernetes/tree/7f23a743e8c23ac6489340bbb34fa6f1d392db9d/cluster/addons/dashboard</span><br><span class="line">https://github.com/kubernetes/dashboard</span><br><span class="line">https://blog.csdn.net/nklinsirui/article/details/80581286</span><br><span class="line">https://github.com/kubernetes/dashboard/issues/3472</span><br></pre></td></tr></table></figure>
+
+<h3 id="文档目录"><a href="#文档目录" class="headerlink" title="文档目录"></a><strong>文档目录</strong></h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/kubernetes/kubernetes1.13.1%2Betcd3.3.10%2Bflanneld0.10%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2.md">kubernetes1.13.1+etcd3.3.10+flanneld0.10集群部署</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/kubernetes-dashboard-amd64/Kubernetes1.13.1%E9%83%A8%E7%BD%B2Kuberneted-dashboard%20v1.10.1.md">kubernetes1.13.1部署kuberneted-dashboard v1.10.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/coredns/kubernetes1.13.1%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2coredns.md">kubernetes1.13.1部署coredns</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/ingress-nginx/kubernetes1.13.1%E9%83%A8%E7%BD%B2ingress-nginx%E5%B9%B6%E9%85%8D%E7%BD%AEhttps%E8%BD%AC%E5%8F%91dashboard.md">kubernetes1.13.1部署ingress-nginx并配置https转发dashboard</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/metrics-server/kubernetes1.13.1%E9%83%A8%E7%BD%B2metrics-server0.3.1.md">kubernetes1.13.1部署metrics-server0.3.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/volumes/rbd/k8s%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph%20rbd%E5%9D%97%E5%AD%98%E5%82%A8.md">kubernetes1.13.1集群使用ceph rbd存储块</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/jenkins/k8s1.13.1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph%20rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins.md">kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins</a></li>
+</ul>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p><strong>Web UI (Dashboard)</strong> Dashboard is a web-based Kubernetes user interface. You can use Dashboard to deploy containerized applications to a Kubernetes cluster, troubleshoot your containerized application, and manage the cluster resources. You can use Dashboard to get an overview of applications running on your cluster, as well as for creating or modifying individual Kubernetes resources (such as Deployments, Jobs, DaemonSets, etc). For example, you can scale a Deployment, initiate a rolling update, restart a pod or deploy new applications using a deploy wizard. Dashboard also provides information on the state of Kubernetes resources in your cluster and on any errors that may have occurred.</p>
+<h3 id="一、填坑"><a href="#一、填坑" class="headerlink" title="一、填坑"></a><strong>一、填坑</strong></h3><p>按照官网文档一条命令即可，但是国内显然不是这样，首先要填许多坑才行</p>
+<h4 id="坑一：Docker镜像"><a href="#坑一：Docker镜像" class="headerlink" title="坑一：Docker镜像"></a>坑一：Docker镜像</h4><h5 id="1、注册阿里云账户构建自己的镜像"><a href="#1、注册阿里云账户构建自己的镜像" class="headerlink" title="1、注册阿里云账户构建自己的镜像"></a>1、注册阿里云账户构建自己的镜像</h5><p>可以关联github构建，这样就可以把国外镜像生成为阿里云镜像 <a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/tree/master/kubernetes-dashboard-amd64/Dockerfile">https://github.com/minminmsn/k8s1.13/tree/master/kubernetes-dashboard-amd64/Dockerfile</a></p>
+<h5 id="2、下载docker镜像"><a href="#2、下载docker镜像" class="headerlink" title="2、下载docker镜像"></a>2、下载docker镜像</h5><p>docker pull registry.cn-beijing.aliyuncs.com&#x2F;minminmsn&#x2F;kubernetes-dashboard:v1.10.1</p>
+<h4 id="坑二：SSL证书"><a href="#坑二：SSL证书" class="headerlink" title="坑二：SSL证书"></a>坑二：SSL证书</h4><p>证书不对或者用auto创建的证书会报错，报错见<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/issues/3472">https://github.com/kubernetes/dashboard/issues/3472</a></p>
+<h5 id="1、如果购买有的证书的话，把证书文件放在certs-x2F-目录下创建secret即可"><a href="#1、如果购买有的证书的话，把证书文件放在certs-x2F-目录下创建secret即可" class="headerlink" title="1、如果购买有的证书的话，把证书文件放在certs&#x2F;目录下创建secret即可"></a>1、如果购买有的证书的话，把证书文件放在certs&#x2F;目录下创建secret即可</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 /]# ls certs/</span><br><span class="line">minminmsn.crt  minminmsn.csr  minminmsn.key</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 /]# kubectl create secret generic kubernetes-dashboard-certs --from-file=certs -n kube-system</span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、如果没有购买的话需要自定义生成证书，步骤如下"><a href="#2、如果没有购买的话需要自定义生成证书，步骤如下" class="headerlink" title="2、如果没有购买的话需要自定义生成证书，步骤如下"></a>2、如果没有购买的话需要自定义生成证书，步骤如下</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 /]# mkdir /certs</span><br><span class="line">[root@elasticsearch01 /]# openssl req -nodes -newkey rsa:2048 -keyout certs/dashboard.key -out certs/dashboard.csr -subj &quot;/C=/ST=/L=/O=/OU=/CN=kubernetes-dashboard&quot;</span><br><span class="line">Generating a 2048 bit RSA private key</span><br><span class="line">................+++</span><br><span class="line">..............................................+++</span><br><span class="line">writing new private key to &#x27;certs/dashboard.key&#x27;</span><br><span class="line">-----</span><br><span class="line">No value provided for Subject Attribute C, skipped</span><br><span class="line">No value provided for Subject Attribute ST, skipped</span><br><span class="line">No value provided for Subject Attribute L, skipped</span><br><span class="line">No value provided for Subject Attribute O, skipped</span><br><span class="line">No value provided for Subject Attribute OU, skipped</span><br><span class="line">[root@elasticsearch01 /]# ls /certs</span><br><span class="line">dashboard.csr  dashboard.key</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 /]# openssl x509 -req -sha256 -days 365 -in certs/dashboard.csr -signkey certs/dashboard.key -out certs/dashboard.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/CN=kubernetes-dashboard</span><br><span class="line">Getting Private key</span><br><span class="line">[root@elasticsearch01 /]# ls certs/</span><br><span class="line">dashboard.crt  dashboard.csr  dashboard.key</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 /]# kubectl create secret generic kubernetes-dashboard-certs --from-file=certs -n kube-system</span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br></pre></td></tr></table></figure>
+
+<h4 id="坑三：修改service配置，将type-ClusterIP改成NodePort-便于通过Node端口访问"><a href="#坑三：修改service配置，将type-ClusterIP改成NodePort-便于通过Node端口访问" class="headerlink" title="坑三：修改service配置，将type: ClusterIP改成NodePort,便于通过Node端口访问"></a>坑三：修改service配置，将type: ClusterIP改成NodePort,便于通过Node端口访问</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 /]# wget https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml</span><br><span class="line">[root@elasticsearch01 /]# vim /k8s/yaml/kubernetes-dashboard.yaml </span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: 443</span><br><span class="line">      targetPort: 8443</span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、部署Kubernetes-dashboard"><a href="#二、部署Kubernetes-dashboard" class="headerlink" title="二、部署Kubernetes-dashboard"></a><strong>二、部署Kubernetes-dashboard</strong></h3><p>修改镜像地址为registry.cn-beijing.aliyuncs.com&#x2F;minminmsn&#x2F;kubernetes-dashboard:v1.10.1即可部署</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 /]# vim /k8s/yaml/kubernetes-dashboard.yaml </span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: kubernetes-dashboard</span><br><span class="line">        image: registry.cn-beijing.aliyuncs.com/minminmsn/kubernetes-dashboard:v1.10.1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 /]# kubectl create -f /k8s/yaml/kubernetes-dashboard.yaml </span><br><span class="line">serviceaccount/kubernetes-dashboard created</span><br><span class="line">role.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">deployment.apps/kubernetes-dashboard created</span><br><span class="line">service/kubernetes-dashboard created</span><br><span class="line">Error from server (AlreadyExists): error when creating &quot;/k8s/yaml/kubernetes-dashboard.yaml&quot;: secrets &quot;kubernetes-dashboard-certs&quot; already exists</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 /]# kubectl get pods -n kube-system</span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">kubernetes-dashboard-cb55bd5bd-4jsh7   1/1     Running   0          21s</span><br><span class="line">[root@elasticsearch01 /]# kubectl get svc -n kube-system</span><br><span class="line">NAME                   TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE</span><br><span class="line">kubernetes-dashboard   NodePort   10.254.140.115   &lt;none&gt;        443:41579/TCP   31s</span><br><span class="line">[root@elasticsearch01 /]# kubectl get pods -n kube-system -o wide</span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE   IP            NODE        NOMINATED NODE   READINESS GATES</span><br><span class="line">kubernetes-dashboard-cb55bd5bd-4jsh7   1/1     Running   0          40s   10.254.73.2   10.2.8.34   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、访问dashboard"><a href="#三、访问dashboard" class="headerlink" title="三、访问dashboard"></a><strong>三、访问dashboard</strong></h3><h5 id="1、注意有证书需要域名访问，如果有DNS可以配置域名解析，没有Host绑定即可"><a href="#1、注意有证书需要域名访问，如果有DNS可以配置域名解析，没有Host绑定即可" class="headerlink" title="1、注意有证书需要域名访问，如果有DNS可以配置域名解析，没有Host绑定即可"></a>1、注意有证书需要域名访问，如果有DNS可以配置域名解析，没有Host绑定即可</h5><h5 id="2、选择token访问，token获取方法如下"><a href="#2、选择token访问，token获取方法如下" class="headerlink" title="2、选择token访问，token获取方法如下"></a>2、选择token访问，token获取方法如下</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ~]# cat /k8s/yaml/admin-token.yaml </span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: admin</span><br><span class="line">  annotations:</span><br><span class="line">    rbac.authorization.kubernetes.io/autoupdate: &quot;true&quot;</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: admin</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: admin</span><br><span class="line">  namespace: kube-system</span><br><span class="line">  labels:</span><br><span class="line">    kubernetes.io/cluster-service: &quot;true&quot;</span><br><span class="line">    addonmanager.kubernetes.io/mode: Reconcile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# kubectl create -f admin-token.yaml </span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/admin created</span><br><span class="line">serviceaccount/admin created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 yaml]#  kubectl describe secret/$(kubectl get secret -nkube-system |grep admin|awk &#x27;&#123;print $1&#125;&#x27;) -nkube-system</span><br><span class="line">Name:         admin-token-5j2vf</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name: admin</span><br><span class="line">              kubernetes.io/service-account.uid: 6b0b0c00-0b45-11e9-85fe-52540089b2b6</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1359 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:</span><br><span class="line">获取tocken值</span><br></pre></td></tr></table></figure>
+
+<p>3、效果如下 <a target="_blank" rel="noopener" href="https://k8s.minminmsn.com/">https://k8s.minminmsn.com</a> 输入token访问 上面获取的tocken值</p>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/02/5c2c7ce87af87.png"><img src="/images/5c2c7ce87af87.png"></a></p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a><strong>补充</strong></h3><blockquote>
+<p>Apiserver hosts绑定ip错误10.0.0.1应该是10.254.0.1，默认pods网端是10.254.0.0&#x2F;16，其中10.254.0.1会用来kubenetes的clusterip [root@elasticsearch01 ~]# kubectl get svc –all-namespaces&#x3D;true NAMESPACE NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE default kubernetes ClusterIP 10.254.0.1 443&#x2F;TCP 6d1h</p>
+</blockquote>
+<p>解决方法 ×××文件重启apiserver服务即可（配置前多检查，否则后面会增加很多排错过程）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# kubectl logs kubernetes-dashboard-865b64d96f-g5f9t --namespace=kube-system</span><br><span class="line">2018/12/29 07:49:44 Starting overwatch</span><br><span class="line">2018/12/29 07:49:44 Using in-cluster config to connect to apiserver</span><br><span class="line">2018/12/29 07:49:44 Using service account token for csrf signing</span><br><span class="line">2018/12/29 07:49:44 Error while initializing connection to Kubernetes apiserver. This most likely means that the cluster is misconfigured (e.g., it has invalid apiserver certificates or service account&#x27;s configuration) or the --apiserver-host param points to a server that does not exist. Reason: Get https://10.254.0.1:443/version: x509: certificate is valid for 10.0.0.1, 127.0.0.1, 10.2.8.44, 10.2.8.65, 10.2.8.34, not 10.254.0.1</span><br><span class="line">Refer to our FAQ and wiki pages for more information: https://github.com/kubernetes/dashboard/wiki/FAQ</span><br></pre></td></tr></table></figure>
+
+<p>修改Hosts里10.0.0.1为10.254.0.1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ssl]# cat server-csr.json </span><br><span class="line">&#123;</span><br><span class="line">    &quot;CN&quot;: &quot;kubernetes&quot;,</span><br><span class="line">    &quot;hosts&quot;: [</span><br><span class="line">      &quot;10.254.0.1&quot;,</span><br><span class="line">      &quot;127.0.0.1&quot;,</span><br><span class="line">      &quot;10.2.8.44&quot;,</span><br><span class="line">      &quot;10.2.8.65&quot;,</span><br><span class="line">      &quot;10.2.8.34&quot;,</span><br><span class="line">      &quot;kubernetes&quot;,</span><br><span class="line">      &quot;kubernetes.default&quot;,</span><br><span class="line">      &quot;kubernetes.default.svc&quot;,</span><br><span class="line">      &quot;kubernetes.default.svc.cluster&quot;,</span><br><span class="line">      &quot;kubernetes.default.svc.cluster.local&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;key&quot;: &#123;</span><br><span class="line">        &quot;algo&quot;: &quot;rsa&quot;,</span><br><span class="line">        &quot;size&quot;: 2048</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;names&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;C&quot;: &quot;CN&quot;,</span><br><span class="line">            &quot;L&quot;: &quot;Beijing&quot;,</span><br><span class="line">            &quot;ST&quot;: &quot;Beijing&quot;,</span><br><span class="line">            &quot;O&quot;: &quot;k8s&quot;,</span><br><span class="line">            &quot;OU&quot;: &quot;System&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同步证书并重启服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ssl]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes server-csr.json | cfssljson -bare server</span><br><span class="line">2018/12/29 15:57:02 [INFO] generate received request</span><br><span class="line">2018/12/29 15:57:02 [INFO] received CSR</span><br><span class="line">2018/12/29 15:57:02 [INFO] generating key: rsa-2048</span><br><span class="line">2018/12/29 15:57:03 [INFO] encoded CSR</span><br><span class="line">2018/12/29 15:57:03 [INFO] signed certificate with serial number 57756035754570455349189088480535470836534926573</span><br><span class="line">2018/12/29 15:57:03 [WARNING] This certificate lacks a &quot;hosts&quot; field. This makes it unsuitable for</span><br><span class="line">websites. For more information see the Baseline Requirements for the Issuance and Management</span><br><span class="line">of Publicly-Trusted Certificates, v.1.1.6, from the CA/Browser Forum (https://cabforum.org);</span><br><span class="line">specifically, section 10.2.3 (&quot;Information Requirements&quot;).</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 ssl]# scp server-csr.json server.csr server-key.pem server.pem 10.2.8.65:$PWD</span><br><span class="line">[root@elasticsearch01 ssl]# scp server-csr.json server.csr server-key.pem server.pem 10.2.8.34:$PWD</span><br><span class="line">[root@elasticsearch01 ssl]# systemctl restart kube-apiserver</span><br><span class="line">[root@elasticsearch01 ssl]# systemctl restart kube-scheduler</span><br><span class="line">[root@elasticsearch01 ssl]# systemctl restart kube-controller-manager</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/27/2018/12/2018-12-27-kubernetes13-1etcd3-3-10flannel0-10%E9%83%A8%E7%BD%B2/index/" rel="prev" title="kubernetes13.1+etcd3.3.10+flanneld0.10部署">
+      <i class="fa fa-chevron-left"></i> kubernetes13.1+etcd3.3.10+flanneld0.10部署
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/03/2019/01/2019-01-03-kubenetes1-13-1-%E9%83%A8%E7%BD%B2coredns/index/" rel="next" title="kubenetes1.13.1 部署coredns">
+      kubenetes1.13.1 部署coredns <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E7%9B%AE%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">文档目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">3.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%A1%AB%E5%9D%91"><span class="nav-number">4.</span> <span class="nav-text">一、填坑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%91%E4%B8%80%EF%BC%9ADocker%E9%95%9C%E5%83%8F"><span class="nav-number">4.1.</span> <span class="nav-text">坑一：Docker镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%B3%A8%E5%86%8C%E9%98%BF%E9%87%8C%E4%BA%91%E8%B4%A6%E6%88%B7%E6%9E%84%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E9%95%9C%E5%83%8F"><span class="nav-number">4.1.1.</span> <span class="nav-text">1、注册阿里云账户构建自己的镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%B8%8B%E8%BD%BDdocker%E9%95%9C%E5%83%8F"><span class="nav-number">4.1.2.</span> <span class="nav-text">2、下载docker镜像</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%91%E4%BA%8C%EF%BC%9ASSL%E8%AF%81%E4%B9%A6"><span class="nav-number">4.2.</span> <span class="nav-text">坑二：SSL证书</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%A6%82%E6%9E%9C%E8%B4%AD%E4%B9%B0%E6%9C%89%E7%9A%84%E8%AF%81%E4%B9%A6%E7%9A%84%E8%AF%9D%EF%BC%8C%E6%8A%8A%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6%E6%94%BE%E5%9C%A8certs-x2F-%E7%9B%AE%E5%BD%95%E4%B8%8B%E5%88%9B%E5%BB%BAsecret%E5%8D%B3%E5%8F%AF"><span class="nav-number">4.2.1.</span> <span class="nav-text">1、如果购买有的证书的话，把证书文件放在certs&#x2F;目录下创建secret即可</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89%E8%B4%AD%E4%B9%B0%E7%9A%84%E8%AF%9D%E9%9C%80%E8%A6%81%E8%87%AA%E5%AE%9A%E4%B9%89%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6%EF%BC%8C%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B"><span class="nav-number">4.2.2.</span> <span class="nav-text">2、如果没有购买的话需要自定义生成证书，步骤如下</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%91%E4%B8%89%EF%BC%9A%E4%BF%AE%E6%94%B9service%E9%85%8D%E7%BD%AE%EF%BC%8C%E5%B0%86type-ClusterIP%E6%94%B9%E6%88%90NodePort-%E4%BE%BF%E4%BA%8E%E9%80%9A%E8%BF%87Node%E7%AB%AF%E5%8F%A3%E8%AE%BF%E9%97%AE"><span class="nav-number">4.3.</span> <span class="nav-text">坑三：修改service配置，将type: ClusterIP改成NodePort,便于通过Node端口访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2Kubernetes-dashboard"><span class="nav-number">5.</span> <span class="nav-text">二、部署Kubernetes-dashboard</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%AE%BF%E9%97%AEdashboard"><span class="nav-number">6.</span> <span class="nav-text">三、访问dashboard</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%B3%A8%E6%84%8F%E6%9C%89%E8%AF%81%E4%B9%A6%E9%9C%80%E8%A6%81%E5%9F%9F%E5%90%8D%E8%AE%BF%E9%97%AE%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%9C%89DNS%E5%8F%AF%E4%BB%A5%E9%85%8D%E7%BD%AE%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%EF%BC%8C%E6%B2%A1%E6%9C%89Host%E7%BB%91%E5%AE%9A%E5%8D%B3%E5%8F%AF"><span class="nav-number">6.0.1.</span> <span class="nav-text">1、注意有证书需要域名访问，如果有DNS可以配置域名解析，没有Host绑定即可</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%80%89%E6%8B%A9token%E8%AE%BF%E9%97%AE%EF%BC%8Ctoken%E8%8E%B7%E5%8F%96%E6%96%B9%E6%B3%95%E5%A6%82%E4%B8%8B"><span class="nav-number">6.0.2.</span> <span class="nav-text">2、选择token访问，token获取方法如下</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">7.</span> <span class="nav-text">补充</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

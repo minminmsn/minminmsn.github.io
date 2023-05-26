@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;en&#x2F;elasticsearch&#x2F;reference&#x2F;5.0&#x2F;modules-snapshots.html https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;en&#x2F;elasticsearch&#x2F;guide&#x2F;current&#x2F;\_rolling\_restarts.html https:&#x2F;&#x2F;blog.csdn.net&#x2F;u0144318">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch集群数据迁移">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-elasticsearch%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;en&#x2F;elasticsearch&#x2F;reference&#x2F;5.0&#x2F;modules-snapshots.html https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;en&#x2F;elasticsearch&#x2F;guide&#x2F;current&#x2F;\_rolling\_restarts.html https:&#x2F;&#x2F;blog.csdn.net&#x2F;u0144318">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:29.546Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="elasticsearch">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-elasticsearch%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Elasticsearch集群数据迁移 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-elasticsearch%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Elasticsearch集群数据迁移
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-09 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-09T08:00:00+08:00">2018-11-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:29" itemprop="dateModified" datetime="2023-05-26T15:06:29+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bigdata/" itemprop="url" rel="index"><span itemprop="name">bigdata</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h3><p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-snapshots.html">https://www.elastic.co/guide/en/elasticsearch/reference/5.0/modules-snapshots.html</a> <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current//_rolling/_restarts.html">https://www.elastic.co/guide/en/elasticsearch/guide/current/\_rolling\_restarts.html</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/u014431852/article/details/52905821">https://blog.csdn.net/u014431852/article/details/52905821</a></p>
+<h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a><strong>环境</strong></h3><p>阿里云elasticsearch集群5.0版本 微软云elasticsearch集群5.6版本</p>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a><strong>需求</strong></h3><p>需要把阿里云elasticsearch集群新老数据迁移到微软云elasticsearch集群</p>
+<h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a><strong>解决</strong></h3><p>新数据比较好弄数据源输出到新的微软云kafka集群然后微软云logstash消费新数据到新elasticsearch集群即可，关于老数据迁移比较麻烦，但官网也给了成熟的解决方案既是快照备份与还原，下面实施过程既是对实施过程的记录</p>
+<h3 id="实施"><a href="#实施" class="headerlink" title="实施"></a><strong>实施</strong></h3><h4 id="阿里云elasticsearch集群操作"><a href="#阿里云elasticsearch集群操作" class="headerlink" title="阿里云elasticsearch集群操作"></a>阿里云elasticsearch集群操作</h4><h4 id="一，先关闭数据平衡，注意一个一个的来，关一个节点的进程none-all循环一次，否则最后集群切片变动，恢复时间很长"><a href="#一，先关闭数据平衡，注意一个一个的来，关一个节点的进程none-all循环一次，否则最后集群切片变动，恢复时间很长" class="headerlink" title="一，先关闭数据平衡，注意一个一个的来，关一个节点的进程none,all循环一次，否则最后集群切片变动，恢复时间很长"></a>一，先关闭数据平衡，注意一个一个的来，关一个节点的进程none,all循环一次，否则最后集群切片变动，恢复时间很长</h4><p>1、修改elasticsearch.yml配置，添加如下 path.repo: &#x2F;storage&#x2F;esdata 设置索引备份快照路径 注意所有的master节点与data节点都需要配置</p>
+<p>2、关闭自动平衡</p>
+<blockquote>
+<p>curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_cluster/settings">http://10.10.88.86:9200/\_cluster/settings</a> -d’ { “transient” : { “cluster.routing.allocation.enable” : “none” } }’ elasticsearch日志 [root@elk-es01 storage]# tail -f es-cluster.log [2018-05-11T15:24:15,605][INFO ][o.e.c.s.ClusterSettings ] [elk-es01] updating [cluster.routing.allocation.enable] from [ALL] to [none]</p>
+</blockquote>
+<p>3、重启elasticseach</p>
+<p>4、启动自动平衡</p>
+<blockquote>
+<p>curl -XPUT http:&#x2F;&#x2F;&#x2F;10.10.88.86:9200&#x2F;_cluster&#x2F;settings -d’ { “transient” : { “cluster.routing.allocation.enable” : “all” } }’</p>
+</blockquote>
+<p>5、重复循环1、2、3、4操作在剩下几个节点，最好通过&#x2F;_cat&#x2F;health查看集群恢复100%后操作下一次，如果不关闭allocation重启elasticsearch集群恢复时间很长会从0%开始，关闭后从节点数减一除以总节点数比例开始恢复会块很多</p>
+<h4 id="二、设置快照基本配置"><a href="#二、设置快照基本配置" class="headerlink" title="二、设置快照基本配置"></a>二、设置快照基本配置</h4><blockquote>
+<p>curl -XPUT http:&#x2F;&#x2F;&#x2F;10.10.88.86:9200&#x2F;_snapshot&#x2F;client_statistics -d’ { “type”: “fs”, “settings”: { “location”: “&#x2F;storage&#x2F;esdata”, “compress”: true, “max_snapshot_bytes_per_sec” : “50mb”, “max_restore_bytes_per_sec” : “50mb” } }’</p>
+</blockquote>
+<p>注意错误 报错没有权限</p>
+<blockquote>
+<p>store location [&#x2F;storage&#x2F;esdata] is not accessible on the node [{elk-es04} {“error”:{“root_cause”:[{“type”:”repository_verification_exception”,”reason”:”[client_statistics] [[TgGhv7V1QGagb_PNDyXM-w, ‘RemoteTransportException[[elk-es04][&#x2F;10.10.88.89:9300][internal:admin&#x2F;repository&#x2F;verify]]; nested: RepositoryVerificationException[[client_statistics] store location [&#x2F;storage&#x2F;esdata] is not accessible on the node [{elk-es04}{TgGhv7V1QGagb_PNDyXM-w}{7dxKWcF3QreKMZOKhTFgeg}{&#x2F;10.10.88.89}{&#x2F;10.10.88.89:9300}]]; nested: AccessDeniedException[&#x2F;storage&#x2F;esdata&#x2F;tests-_u6h8XrJQ32dYPaC7zFC_w&#x2F;data-TgGhv7V1QGagb_PNDyXM-w.dat];’]]“}],”type”:”repository_verification_exception”,”reason”:”[client_statistics] [[TgGhv7V1QGagb_PNDyXM-w, ‘RemoteTransportException[[elk-es04][10.51.57.54:9300][internal:admin&#x2F;repository&#x2F;verify]]; nested: RepositoryVerificationException[[client_statistics] store location [&#x2F;storage&#x2F;esdata] is not accessible on the node [{elk-es04}{TgGhv7V1QGagb_PNDyXM-w}{7dxKWcF3QreKMZOKhTFgeg}{&#x2F;10.10.88.89}{&#x2F;10.10.88.89:9300}]]; nested: AccessDeniedException[&#x2F;storage&#x2F;esdata&#x2F;tests-_u6h8XrJQ32dYPaC7zFC_w&#x2F;data-TgGhv7V1QGagb_PNDyXM-w.dat];’]]“},”status”:500}</p>
+</blockquote>
+<p>解决方法: 发现node1,node2,node3的es权限是500，node4的权限是501，最近比较背，感觉任何一个小问题都会遇到很多意想不到的地方，这不google了下<a target="_blank" rel="noopener" href="https://discuss.elastic.co/t/why-does-creating-a-repository-fail/22697/16%E6%98%BE%E7%84%B6%E6%98%AF%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98%EF%BC%8Cnfs%E8%BF%99%E8%BE%B9%E6%9C%89%E4%BA%9B%E7%AD%96%E7%95%A5%EF%BC%8C%E6%9D%83%E8%A1%A1%E5%88%A9%E5%BC%8A%E6%83%B3%E7%9F%AD%E6%97%B6%E9%97%B4%E5%86%85%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">https://discuss.elastic.co/t/why-does-creating-a-repository-fail/22697/16显然是权限问题，nfs这边有些策略，权衡利弊想短时间内解决问题</a> 打算修改node4的es的uid和gid都为500，使其与前三个节点保持一致 <a target="_blank" rel="noopener" href="https://blog.csdn.net/train006l/article/details/79007483">https://blog.csdn.net/train006l/article/details/79007483</a> usermod -u 500 es groupmod -g 500 es 注意usermod时需要es用户没有进程在活动，就是说elasticsearch进程需要关闭，重复上面的node,all操作，另外如果有其他用户占用了500 id，相应的修改且注意相关进程。 如果不放心也可手动修改，主要是&#x2F;home&#x2F;es下的权限及es数据权限 find &#x2F; -user 501 -exec chown -h es {} \; find &#x2F; -group 501 -exec chown -h es {} \;</p>
+<p>再次执行就不报错了： [root@elk-es01 ~]# curl -XPUT http:&#x2F;&#x2F;&#x2F;10.10.88.86:9200&#x2F;_snapshot&#x2F;client_statistics -d’</p>
+<blockquote>
+<p>{ “type”: “fs”, “settings”: { “location”: “&#x2F;storage&#x2F;esdata”, “compress” : “true”, “max_snapshot_bytes_per_sec” : “50mb”, “max_restore_bytes_per_sec” : “50mb” } }’ {“acknowledged”:true}[root@elk-es01 ~]#</p>
+</blockquote>
+<p>查看配置</p>
+<blockquote>
+<p>[root@elk-es01 ~]# curl -XGET http:&#x2F;&#x2F;&#x2F;10.10.88.86:9200&#x2F;_snapshot&#x2F;client_statistics?pretty { “client_statistics” : { “type” : “fs”, “settings” : { “location” : “&#x2F;storage&#x2F;esdata”, “max_restore_bytes_per_sec” : “50mb”, “compress” : “true”, “max_snapshot_bytes_per_sec” : “50mb” } } }</p>
+</blockquote>
+<h4 id="三、给需要迁移的索引做快照"><a href="#三、给需要迁移的索引做快照" class="headerlink" title="三、给需要迁移的索引做快照"></a>三、给需要迁移的索引做快照</h4><p>注意索引数量多但是数据量不大时可以统配多一些index，保证每次迁移的数据量不至于太大，比如每次100G以内，防止网络等其他原因导致传输中断等 [root@elk-es01 ~]# curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.05.11">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.05.11</a> -d’</p>
+<blockquote>
+<p>{ “indices”: “logstash-nginx-accesslog-2018.05.11” }’ {“accepted”:true}[root@elk-es01 ~]#</p>
+</blockquote>
+<p>2018年5月份只是前10天</p>
+<blockquote>
+<p>curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.05">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.05</a> -d’ { “indices”: “logstash-nginx-accesslog-2018.05.0*“ }’ curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.04">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.04</a> -d’ { “indices”: “logstash-nginx-accesslog-2018.04*“ }’ curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.03">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.03</a> -d’ { “indices”: “logstash-nginx-accesslog-2018.03*“ }’curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.02">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.02</a> -d’ { “indices”: “logstash-nginx-accesslog-2018.02*“ }’ curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.01">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.01</a> -d’ { “indices”: “logstash-nginx-accesslog-2018.01*“ }’ curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.12">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.12</a> -d’ { “indices”: “logstash-nginx-accesslog-2017.12*“ }’ curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.11">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.11</a> -d’ { “indices”: “logstash-nginx-accesslog-2017.11*“ }’</p>
+</blockquote>
+<p>例子</p>
+<blockquote>
+<p>[root@elk-es01 ~]# curl -XPUT <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.11">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.11</a> -d’ { “indices”: “logstash-nginx-accesslog-2017.11*“ }’ {“accepted”:true}[root@elk-es01 ~]# [root@elk-es01 ~]# curl -XGET <a target="_blank" rel="noopener" href="http://10.10.88.86:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.11?pretty">http://10.10.88.86:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.11?pretty</a> { “snapshots” : [ { “snapshot” : “logstash-nginx-accesslog-2017.11”, “uuid” : “PwPlyCbQQliZY3saog45LA”, “version_id” : 5000299, “version” : “5.0.2”, “indices” : [ “logstash-nginx-accesslog-2017.11.20”, “logstash-nginx-accesslog-2017.11.17”, “logstash-nginx-accesslog-2017.11.24”, “logstash-nginx-accesslog-2017.11.30”, “logstash-nginx-accesslog-2017.11.22”, “logstash-nginx-accesslog-2017.11.18”, “logstash-nginx-accesslog-2017.11.15”, “logstash-nginx-accesslog-2017.11.16”, “logstash-nginx-accesslog-2017.11.27”, “logstash-nginx-accesslog-2017.11.26”, “logstash-nginx-accesslog-2017.11.19”, “logstash-nginx-accesslog-2017.11.21”, “logstash-nginx-accesslog-2017.11.28”, “logstash-nginx-accesslog-2017.11.23”, “logstash-nginx-accesslog-2017.11.25”, “logstash-nginx-accesslog-2017.11.29” ], “state” : “IN_PROGRESS”, “start_time” : “2018-05-14T02:31:58.900Z”, “start_time_in_millis” : 1526265118900, “failures” : [ ], “shards” : { “total” : 0, “failed” : 0, “successful” : 0 } } ] }</p>
+</blockquote>
+<p>注意state 在IN_PROGERESS,变成SUCCESS时快照完成，注意SUCCESS时再执行下一次快照，如果index比较少时也可以一次性执行，不分开。</p>
+<h3 id="在微软云elasticsearch集群上操作"><a href="#在微软云elasticsearch集群上操作" class="headerlink" title="在微软云elasticsearch集群上操作"></a><strong>在微软云elasticsearch集群上操作</strong></h3><h4 id="四、迁移数据到微软云elasticsearch集群"><a href="#四、迁移数据到微软云elasticsearch集群" class="headerlink" title="四、迁移数据到微软云elasticsearch集群"></a>四、迁移数据到微软云elasticsearch集群</h4><h5 id="1、挂载nfs服务端"><a href="#1、挂载nfs服务端" class="headerlink" title="1、挂载nfs服务端"></a>1、挂载nfs服务端</h5><p>yum -y install nfs-utils mkdir -p &#x2F;storage&#x2F;esdata mount -t nfs 192.168.88.20:&#x2F;data&#x2F;es-data01&#x2F;backup &#x2F;storage&#x2F;esdata&#x2F; df -h 所有master节点与node节点都需要挂载nfs scp阿里云的数据包到微软云nfs服务端，注意需要先tar包，后解压缩，scp前需要openvpn打通 scp <a href="mailto:&#x74;&#x65;&#x73;&#116;&#x40;&#49;&#48;&#46;&#x31;&#x30;&#x2e;&#x38;&#56;&#46;&#x38;&#x39;">&#x74;&#x65;&#x73;&#116;&#x40;&#49;&#48;&#46;&#x31;&#x30;&#x2e;&#x38;&#56;&#46;&#x38;&#x39;</a>:&#x2F;storage&#x2F;esdata&#x2F;es20180514.tar.gz .&#x2F; scp <a href="mailto:&#116;&#101;&#x73;&#116;&#x40;&#49;&#x30;&#46;&#49;&#x30;&#46;&#x38;&#56;&#46;&#x38;&#57;">&#116;&#101;&#x73;&#116;&#x40;&#49;&#x30;&#46;&#49;&#x30;&#46;&#x38;&#56;&#46;&#x38;&#57;</a>:&#x2F;storage&#x2F;esdata&#x2F;indices20180514.tar.gz .&#x2F;</p>
+<h5 id="2、修改新集群配置"><a href="#2、修改新集群配置" class="headerlink" title="2、修改新集群配置"></a>2、修改新集群配置</h5><p>1）、修改elasticsearch.yml配置，添加如下 path.repo: &#x2F;storage&#x2F;esdata #设置索引备份快照路径 注意所有的master节点与data节点都需要配置 2）、关闭自动平衡操作同上</p>
+<blockquote>
+<p>curl -XPUT <a target="_blank" rel="noopener" href="http://192.168.88.24:9200//_cluster/settings">http://192.168.88.24:9200/\_cluster/settings</a> -d’ { “transient” : { “cluster.routing.allocation.enable” : “none” } }’ sleep 3 &#x2F;etc&#x2F;init.d&#x2F;elasticsearch restart curl -XPUT <a target="_blank" rel="noopener" href="http://192.168.88.24:9200//_cluster/settings">http://192.168.88.24:9200/\_cluster/settings</a> -d’ { “transient” : { “cluster.routing.allocation.enable” : “all” } }’ curl <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_cluster/health?pretty">http://192.168.88.20:9200/\_cluster/health?pretty</a></p>
+</blockquote>
+<h5 id="3、恢复快照"><a href="#3、恢复快照" class="headerlink" title="3、恢复快照"></a>3、恢复快照</h5><p>1）、先建数据仓库</p>
+<blockquote>
+<p>curl -XPUT <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics">http://192.168.88.20:9200/\_snapshot/client\_statistics</a> -d’ { “type”: “fs”, “settings”: { “location”: “&#x2F;storage&#x2F;esdata”, “compress” : “true”, “max_snapshot_bytes_per_sec” : “50mb”, “max_restore_bytes_per_sec” : “50mb” } }’</p>
+</blockquote>
+<p>2）、再恢复index</p>
+<blockquote>
+<p>root@prod-elasticsearch-master-01 es]# curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.05//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.05/\_restore</a> {“accepted”:true}</p>
+</blockquote>
+<p>依次执行：注意只有当前任务执行完了，才能正确执行下一个任务，开始index状态是yellow，等都变成green就正常了</p>
+<blockquote>
+<p>curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.04//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.04/\_restore</a> curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.03//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.03/\_restore</a> curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.02//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.02/\_restore</a> curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.01//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.01/\_restore</a> curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.12//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.12/\_restore</a> curl -XPOST <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2017.11//_restore">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2017.11/\_restore</a></p>
+</blockquote>
+<p>3）、最后检查状态</p>
+<blockquote>
+<p>[root@prod-elasticsearch-master-01 es]# curl -XGET <a target="_blank" rel="noopener" href="http://192.168.88.20:9200//_snapshot/client/_statistics/logstash-nginx-accesslog-2018.05//_status?pretty">http://192.168.88.20:9200/\_snapshot/client\_statistics/logstash-nginx-accesslog-2018.05/\_status?pretty</a> { “snapshots” : [ { “snapshot” : “logstash-nginx-accesslog-2018.05”, “repository” : “client_statistics”, “uuid” : “VL9LHHUKTNCHx-xsVJD_eA”, “state” : “SUCCESS”, “shards_stats” : { “initializing” : 0, “started” : 0, “finalizing” : 0, “done” : 45, “failed” : 0, “total” : 45 }, “stats” : { “number_of_files” : 4278, “processed_files” : 4278, “total_size_in_bytes” : 22892376668, “processed_size_in_bytes” : 22892376668, “start_time_in_millis” : 1526280514416, “time_in_millis” : 505655 }, “indices” : { “logstash-nginx-accesslog-2018.05.08” : { “shards_stats” : { “initializing” : 0, “started” : 0, “finalizing” : 0, “done” : 5, “failed” : 0, “total” : 5 }, “stats” : { “number_of_files” : 524, “processed_files” : 524, “total_size_in_bytes” : 2617117488, “processed_size_in_bytes” : 2617117488, “start_time_in_millis” : 1526280514420, “time_in_millis” : 260276 }, “shards” : { “0” : { “stage” : “DONE”, “stats” : { “number_of_files” : 67, “processed_files” : 67, “total_size_in_bytes” : 569057817, “processed_size_in_bytes” : 569057817, “start_time_in_millis” : 1526280514420, “time_in_millis” : 68086 } }, “1” : { “stage” : “DONE”, “stats” : { “number_of_files” : 124, “processed_files” : 124, “total_size_in_bytes” : 499182013, “processed_size_in_bytes” : 499182013, “start_time_in_millis” : 1526280514446, “time_in_millis” : 62925 } }, “2” : { “stage” : “DONE”, “stats” : { “number_of_files” : 109, “processed_files” : 109, “total_size_in_bytes” : 478469125, “processed_size_in_bytes” : 478469125, “start_time_in_millis” : 1526280698072, “time_in_millis” : 76624 } }, “3” : { “stage” : “DONE”, “stats” : { “number_of_files” : 124, “processed_files” : 124, “total_size_in_bytes” : 546347244, “processed_size_in_bytes” : 546347244, “start_time_in_millis” : 1526280653094, “time_in_millis” : 103590 } }, “4” : { “stage” : “DONE”, “stats” : { “number_of_files” : 100, “processed_files” : 100, “total_size_in_bytes” : 524061289, “processed_size_in_bytes” : 524061289, “start_time_in_millis” : 1526280514456, “time_in_millis” : 69113 } } } }, “logstash-nginx-accesslog-2018.05.09” : { “shards_stats” : { “initializing” : 0, “started” : 0, “finalizing” : 0, “done” : 5, “failed” : 0, “total” : 5 }, “stats” : { “number_of_files” : 425, “processed_files” : 425, “total_size_in_bytes” : 2436583034, “processed_size_in_bytes” : 2436583034, “start_time_in_millis” : 1526280514425, “time_in_millis” : 505646 }, “shards” : { “0” : { “stage” : “DONE”, “stats” : { “number_of_files” : 94, “processed_files” : 94, “total_size_in_bytes” : 462380313, “processed_size_in_bytes” : 462380313, “start_time_in_millis” : 1526280971948, “time_in_millis” : 48123 } }, “1” : { “stage” : “DONE”, “stats” : { “number_of_files” : 103, “processed_files” : 103, “total_size_in_bytes” : 506505727, “processed_size_in_bytes” : 506505727, “start_time_in_millis” : 1526280851761, “time_in_millis” : 69562 } }, “2” : { “stage” : “DONE”, “stats” : { “number_of_files” : 73, “processed_files” : 73, “total_size_in_bytes” : 506830214, “processed_size_in_bytes” : 506830214, “start_time_in_millis” : 1526280514425, “time_in_millis” : 60508 } }, “3” : { “stage” : “DONE”, “stats” : { “number_of_files” : 52, “processed_files” : 52, “total_size_in_bytes” : 494390868, “processed_size_in_bytes” : 494390868, “start_time_in_millis” : 1526280593311, “time_in_millis” : 52673 } }, “4” : { “stage” : “DONE”, “stats” : { “number_of_files” : 103, “processed_files” : 103, “total_size_in_bytes” : 466475912, “processed_size_in_bytes” : 466475912, “start_time_in_millis” : 1526280583835, “time_in_millis” : 64169 } } } } } } ] }</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/elasticsearch/" rel="tag"># elasticsearch</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/09/2018/11/2018-11-09-nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE%E6%A2%B3%E7%90%86%E5%A4%A7%E5%85%A8/index/" rel="prev" title="Nginx反向代理负载均衡配置梳理大全">
+      <i class="fa fa-chevron-left"></i> Nginx反向代理负载均衡配置梳理大全
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/12/2018/11/2018-11-12-%E8%BF%BD%E5%AF%BB%E7%9F%A5%E8%AF%86%E6%BA%90%E5%A4%B4/index/" rel="next" title="追寻知识源头">
+      追寻知识源头 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82"><span class="nav-number">3.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3"><span class="nav-number">4.</span> <span class="nav-text">解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%96%BD"><span class="nav-number">5.</span> <span class="nav-text">实施</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%BF%E9%87%8C%E4%BA%91elasticsearch%E9%9B%86%E7%BE%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">5.1.</span> <span class="nav-text">阿里云elasticsearch集群操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%EF%BC%8C%E5%85%88%E5%85%B3%E9%97%AD%E6%95%B0%E6%8D%AE%E5%B9%B3%E8%A1%A1%EF%BC%8C%E6%B3%A8%E6%84%8F%E4%B8%80%E4%B8%AA%E4%B8%80%E4%B8%AA%E7%9A%84%E6%9D%A5%EF%BC%8C%E5%85%B3%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9%E7%9A%84%E8%BF%9B%E7%A8%8Bnone-all%E5%BE%AA%E7%8E%AF%E4%B8%80%E6%AC%A1%EF%BC%8C%E5%90%A6%E5%88%99%E6%9C%80%E5%90%8E%E9%9B%86%E7%BE%A4%E5%88%87%E7%89%87%E5%8F%98%E5%8A%A8%EF%BC%8C%E6%81%A2%E5%A4%8D%E6%97%B6%E9%97%B4%E5%BE%88%E9%95%BF"><span class="nav-number">5.2.</span> <span class="nav-text">一，先关闭数据平衡，注意一个一个的来，关一个节点的进程none,all循环一次，否则最后集群切片变动，恢复时间很长</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AE%BE%E7%BD%AE%E5%BF%AB%E7%85%A7%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">5.3.</span> <span class="nav-text">二、设置快照基本配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%99%E9%9C%80%E8%A6%81%E8%BF%81%E7%A7%BB%E7%9A%84%E7%B4%A2%E5%BC%95%E5%81%9A%E5%BF%AB%E7%85%A7"><span class="nav-number">5.4.</span> <span class="nav-text">三、给需要迁移的索引做快照</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%BE%AE%E8%BD%AF%E4%BA%91elasticsearch%E9%9B%86%E7%BE%A4%E4%B8%8A%E6%93%8D%E4%BD%9C"><span class="nav-number">6.</span> <span class="nav-text">在微软云elasticsearch集群上操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%81%E7%A7%BB%E6%95%B0%E6%8D%AE%E5%88%B0%E5%BE%AE%E8%BD%AF%E4%BA%91elasticsearch%E9%9B%86%E7%BE%A4"><span class="nav-number">6.1.</span> <span class="nav-text">四、迁移数据到微软云elasticsearch集群</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%8C%82%E8%BD%BDnfs%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">6.1.1.</span> <span class="nav-text">1、挂载nfs服务端</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BF%AE%E6%94%B9%E6%96%B0%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">6.1.2.</span> <span class="nav-text">2、修改新集群配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%81%A2%E5%A4%8D%E5%BF%AB%E7%85%A7"><span class="nav-number">6.1.3.</span> <span class="nav-text">3、恢复快照</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

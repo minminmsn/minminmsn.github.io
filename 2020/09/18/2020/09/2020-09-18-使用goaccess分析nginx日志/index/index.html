@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="GoAccess简介GoAccess 是一款开源(MIT许可证)的且具有交互视图界面的实时 Web 日志分析工具，通过你的 Web 浏览器或者 *nix 系统下的终端程序即可访问。 能为系统管理员提供快速且有价值的 HTTP 统计，并以在线可视化服务器的方式呈现。 GoAccess 解析指定的 Web 日志文件并将统计结果输出到 X 终端。功能如下：  通用统计: 此面板展示了几个主要指标，比如：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用goaccess分析nginx日志">
+<meta property="og:url" content="https://minminmsn.github.io/2020/09/18/2020/09/2020-09-18-%E4%BD%BF%E7%94%A8goaccess%E5%88%86%E6%9E%90nginx%E6%97%A5%E5%BF%97/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="GoAccess简介GoAccess 是一款开源(MIT许可证)的且具有交互视图界面的实时 Web 日志分析工具，通过你的 Web 浏览器或者 *nix 系统下的终端程序即可访问。 能为系统管理员提供快速且有价值的 HTTP 统计，并以在线可视化服务器的方式呈现。 GoAccess 解析指定的 Web 日志文件并将统计结果输出到 X 终端。功能如下：  通用统计: 此面板展示了几个主要指标，比如：">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-1816cb6f1611eb07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2020-09-18T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:34.803Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/7535971-1816cb6f1611eb07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="https://minminmsn.github.io/2020/09/18/2020/09/2020-09-18-%E4%BD%BF%E7%94%A8goaccess%E5%88%86%E6%9E%90nginx%E6%97%A5%E5%BF%97/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>使用goaccess分析nginx日志 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/09/18/2020/09/2020-09-18-%E4%BD%BF%E7%94%A8goaccess%E5%88%86%E6%9E%90nginx%E6%97%A5%E5%BF%97/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用goaccess分析nginx日志
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-18 08:00:00" itemprop="dateCreated datePublished" datetime="2020-09-18T08:00:00+08:00">2020-09-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="GoAccess简介"><a href="#GoAccess简介" class="headerlink" title="GoAccess简介"></a><strong>GoAccess简介</strong></h3><p>GoAccess 是一款开源(MIT许可证)的且具有交互视图界面的实时 Web 日志分析工具，通过你的 Web 浏览器或者 *nix 系统下的终端程序即可访问。</p>
+<p>能为系统管理员提供快速且有价值的 HTTP 统计，并以在线可视化服务器的方式呈现。 GoAccess 解析指定的 Web 日志文件并将统计结果输出到 X 终端。功能如下：</p>
+<ul>
+<li><strong>通用统计</strong>: 此面板展示了几个主要指标，比如：有效和无效请求的数量，分析这些数据所花费的时间，独立访客的情况，请求的文件，静态文件(CSS, ICO, JPG 等)的完整URL，404错误，被解析的日志文件的大小以及消耗的带宽。</li>
+<li><strong>独立访客</strong>: 此面板按照日期展示了访问次数，独立访客数，以及累计消耗的带宽等指标。具有相同IP，相同访问时间，相同的 UserAgent 的 HTTP 请求将会被识别为独立访客。默认情况下包含了网络爬虫。 您也可以选择使用 –date-spec&#x3D;hr 参数将按照日期分析修改为按照小时，例如：05&#x2F;Jun&#x2F;2016:16 。这对于希望在小时级别去跟踪每日流量非常有帮助。</li>
+<li><strong>请求的文件</strong>: 此面板展示您服务器上被请求次数最多的文件。包含访问次数，独立访客数，百分比，累计消耗带宽，使用的协议，请求方式。</li>
+<li><strong>请求的静态文件</strong>: 列出请求频率最高的静态文件类型，例如： JPG, CSS, SWF, JS, GIF, 和 PNG , 以及和上一个面板一样的其他指标。 另外静态文件可以被添加到配置文件中。</li>
+<li><strong>404 或者文件未找到</strong>: 展示内容与之前的面板类似，但是其数据包含了所有未找到的页面，以及俗称的 404 状态码。</li>
+<li><strong>主机</strong>: 此面板展示主机自身的详细信息。能够很好的发现不怀好意的爬虫以及识别出是谁吃掉了你的带宽。 扩展面板将向您展示更多信息，比如主机的反向DNS解析结果，主机所在国家和城市。如果开启了 参数，选择想查看的 IP 地址并按回车，将会显示 UserAgent 列表。</li>
+<li><strong>操作系统</strong>: 此面板将显示主机使用的操作系统的信息。GoAccess 将尽可能尝试为每一款操作系统提供详细的信息。</li>
+<li><strong>浏览器</strong>: 此面板将显示来访主机使用的浏览器信息。GoAccess 将尽可能尝试为每一款浏览器提供详细的信息。</li>
+<li><strong>访问次数</strong>: 此面板按小时报告。因此将显示24个数据点，每一个均对应每一天的某一个小时。 使用 –hour-spec&#x3D;min 参数可以设定为按每十分钟报告，并将以 16:4 的格式显示时间。这对发现服务器的峰值访问时段很有帮助。</li>
+<li><strong>虚拟主机</strong>: 此面板将显示从访问日志中解析出来的不同的虚拟主机的情况。此面板仅在日志格式中启用了 %v 参数时显示。</li>
+<li><strong>来路URL</strong>: 如果问题主机通过其他的资源访问了你的站点，以及通过从其他主机上的链接或者跳转到你的站点，则这些来路URL将会被显示在此面板。可以在配置文件中通过 <code>--ignore-panel</code> 开启此功能。(默认关闭)</li>
+<li><strong>来路站点</strong>: 此面板将仅显示主机的部分，而不是完整的URL。</li>
+<li><strong>关键字</strong>: 报告支持用在谷歌搜索，谷歌缓存，谷歌翻译上使用关键字。目前仅支持通过 HTTP 使用谷歌搜索。 可以在配置文件中通过 <code>--ignore-panel</code> 开启此功能。(默认关闭)</li>
+<li><strong>地理位置</strong>: 根据 IP 地址判断地理位置。统计数据按照大洲和国家分组。需要地理位置模块的支持。</li>
+<li><strong>HTTP 状态码</strong>: 以数字表示的 HTTP 请求的状态编码。</li>
+<li>**远程用户(HTTP验证) **通过 HTTP 验证来确定访问文档的权限。如果文档没有被密码保护起来，这部分将会显示为 “-”。此面板默认为开启，除非在日志格式变量中设置了参数 %e 。</li>
+</ul>
+<h3 id="GoAccess使用"><a href="#GoAccess使用" class="headerlink" title="GoAccess使用"></a><strong>GoAccess使用</strong></h3><p><strong>安装goaccess</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# yum install goaccess</span><br><span class="line">Loaded plugins: fastestmirror, langpacks</span><br><span class="line">Repository epel is listed more than once in the configuration</span><br><span class="line">epel                                                                | 4.7 kB  00:00:00     </span><br><span class="line">extras                                                              | 2.9 kB  00:00:00     </span><br><span class="line">nux-dextop                                                          | 2.9 kB  00:00:00     </span><br><span class="line">os                                                                  | 3.6 kB  00:00:00     </span><br><span class="line">rpmfusion-free-updates                                              | 3.7 kB  00:00:00     </span><br><span class="line">rpmfusion-nonfree-updates                                           | 3.7 kB  00:00:00     </span><br><span class="line">updates                                                             | 2.9 kB  00:00:00     </span><br><span class="line">zabbix                                                              | 2.9 kB  00:00:00     </span><br><span class="line">zabbix-non-supported                                                |  951 B  00:00:00     </span><br><span class="line">(1/2): epel/7/x86_64/updateinfo                                     | 1.0 MB  00:00:00     </span><br><span class="line">(2/2): epel/7/x86_64/primary_db                                     | 6.9 MB  00:00:02     </span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * nux-dextop: mirror.li.nux.ro</span><br><span class="line"> * rpmfusion-free-updates: mirrors.ustc.edu.cn</span><br><span class="line"> * rpmfusion-nonfree-updates: mirrors.ustc.edu.cn</span><br><span class="line">Resolving Dependencies</span><br><span class="line">--&gt; Running transaction check</span><br><span class="line">---&gt; Package goaccess.x86_64 0:1.3-1.el7 will be installed</span><br><span class="line">--&gt; Processing Dependency: libtokyocabinet.so.9()(64bit) for package: goaccess-1.3-1.el7.x86_64</span><br><span class="line">--&gt; Running transaction check</span><br><span class="line">---&gt; Package tokyocabinet.x86_64 0:1.4.48-3.el7 will be installed</span><br><span class="line">--&gt; Finished Dependency Resolution</span><br><span class="line"></span><br><span class="line">Dependencies Resolved</span><br><span class="line"></span><br><span class="line">===========================================================================================</span><br><span class="line"> Package                 Arch              Version                   Repository       Size</span><br><span class="line">===========================================================================================</span><br><span class="line">Installing:</span><br><span class="line"> goaccess                x86_64            1.3-1.el7                 epel            240 k</span><br><span class="line">Installing for dependencies:</span><br><span class="line"> tokyocabinet            x86_64            1.4.48-3.el7              os              459 k</span><br><span class="line"></span><br><span class="line">Transaction Summary</span><br><span class="line">===========================================================================================</span><br><span class="line">Install  1 Package (+1 Dependent package)</span><br><span class="line"></span><br><span class="line">Total download size: 699 k</span><br><span class="line">Installed size: 2.0 M</span><br><span class="line">Is this ok [y/d/N]: y</span><br><span class="line">Downloading packages:</span><br><span class="line">(1/2): goaccess-1.3-1.el7.x86_64.rpm                                | 240 kB  00:00:00     </span><br><span class="line">(2/2): tokyocabinet-1.4.48-3.el7.x86_64.rpm                         | 459 kB  00:00:00     </span><br><span class="line">-------------------------------------------------------------------------------------------</span><br><span class="line">Total                                                      1.3 MB/s | 699 kB  00:00:00     </span><br><span class="line">Running transaction check</span><br><span class="line">Running transaction test</span><br><span class="line">Transaction test succeeded</span><br><span class="line">Running transaction</span><br><span class="line">  Installing : tokyocabinet-1.4.48-3.el7.x86_64                                        1/2 </span><br><span class="line">  Installing : goaccess-1.3-1.el7.x86_64                                               2/2 </span><br><span class="line">  Verifying  : tokyocabinet-1.4.48-3.el7.x86_64                                        1/2 </span><br><span class="line">  Verifying  : goaccess-1.3-1.el7.x86_64                                               2/2 </span><br><span class="line"></span><br><span class="line">Installed:</span><br><span class="line">  goaccess.x86_64 0:1.3-1.el7                                                              </span><br><span class="line"></span><br><span class="line">Dependency Installed:</span><br><span class="line">  tokyocabinet.x86_64 0:1.4.48-3.el7 </span><br></pre></td></tr></table></figure>
+
+<p><strong>查看使用方式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# goaccess -help</span><br><span class="line"></span><br><span class="line">GoAccess - 1.3</span><br><span class="line"></span><br><span class="line">Usage: goaccess [filename] [ options ... ] [-c][-M][-H][-S][-q][-d][...]</span><br><span class="line">The following options can also be supplied to the command:</span><br><span class="line"></span><br><span class="line">Log &amp; Date Format Options</span><br><span class="line"></span><br><span class="line">  --date-format=&lt;dateformat&gt;      - Specify log date format. e.g., %d/%b/%Y</span><br><span class="line">  --log-format=&lt;logformat&gt;        - Specify log format. Inner quotes need to be</span><br><span class="line">                                    escaped, or use single quotes.</span><br><span class="line">  --time-format=&lt;timeformat&gt;      - Specify log time format. e.g., %H:%M:%S</span><br><span class="line"></span><br><span class="line">User Interface Options</span><br><span class="line"></span><br><span class="line">  -c --config-dialog              - Prompt log/date/time configuration window.</span><br><span class="line">  -i --hl-header                  - Color highlight active panel.</span><br><span class="line">  -m --with-mouse                 - Enable mouse support on main dashboard.</span><br><span class="line">  --color=&lt;fg:bg[attrs, PANEL]&gt;   - Specify custom colors. See manpage for more</span><br><span class="line">                                    details and options.</span><br><span class="line">  --color-scheme=&lt;1|2|3&gt;          - Schemes: 1 =&gt; Grey, 2 =&gt; Green, 3 =&gt; Monokai.</span><br><span class="line">  --html-custom-css=&lt;path.css&gt;    - Specify a custom CSS file in the HTML report.</span><br><span class="line">  --html-custom-js=&lt;path.js&gt;      - Specify a custom JS file in the HTML report.</span><br><span class="line">  --html-prefs=&lt;json_obj&gt;         - Set default HTML report preferences.</span><br><span class="line">  --html-report-title=&lt;title&gt;     - Set HTML report page title and header.</span><br><span class="line">  --json-pretty-print             - Format JSON output w/ tabs &amp; newlines.</span><br><span class="line">  --max-items                     - Maximum number of items to show per panel.</span><br><span class="line">                                    See man page for limits.</span><br><span class="line">  --no-color                      - Disable colored output.</span><br><span class="line">  --no-column-names               - Don&#x27;t write column names in term output.</span><br><span class="line">  --no-csv-summary                - Disable summary metrics on the CSV output.</span><br><span class="line">  --no-html-last-updated          - Hide HTML last updated field.</span><br><span class="line">  --no-parsing-spinner            - Disable progress metrics and parsing spinner.</span><br><span class="line">  --no-progress                   - Disable progress metrics.</span><br><span class="line">  --no-tab-scroll                 - Disable scrolling through panels on TAB.</span><br><span class="line"></span><br><span class="line">Server Options</span><br><span class="line"></span><br><span class="line">  --addr=&lt;addr&gt;                   - Specify IP address to bind server to.</span><br><span class="line">  --daemonize                     - Run as daemon (if --real-time-html enabled).</span><br><span class="line">  --fifo-in=&lt;path&gt;                - Path to read named pipe (FIFO).</span><br><span class="line">  --fifo-out=&lt;path&gt;               - Path to write named pipe (FIFO).</span><br><span class="line">  --origin=&lt;addr&gt;                 - Ensure clients send the specified origin header</span><br><span class="line">                                    upon the WebSocket handshake.</span><br><span class="line">  --pid-file=&lt;path&gt;               - Write PID to a file when --daemonize is used.</span><br><span class="line">  --port=&lt;port&gt;                   - Specify the port to use.</span><br><span class="line">  --real-time-html                - Enable real-time HTML output.</span><br><span class="line">  --ssl-cert=&lt;cert.crt&gt;           - Path to TLS/SSL certificate.</span><br><span class="line">  --ssl-key=&lt;priv.key&gt;            - Path to TLS/SSL private key.</span><br><span class="line">  --ws-url=&lt;url&gt;                  - URL to which the WebSocket server responds.</span><br><span class="line"></span><br><span class="line">File Options</span><br><span class="line"></span><br><span class="line">  - - The log file to parse is read from stdin.</span><br><span class="line">  -f --log-file=&lt;filename&gt;        - Path to input log file.</span><br><span class="line">  -S --log-size=&lt;number&gt;          - Specify the log size, useful when piping in logs.</span><br><span class="line">  -l --debug-file=&lt;filename&gt;      - Send all debug messages to the specified</span><br><span class="line">                                    file.</span><br><span class="line">  -p --config-file=&lt;filename&gt;     - Custom configuration file.</span><br><span class="line">  --invalid-requests=&lt;filename&gt;   - Log invalid requests to the specified file.</span><br><span class="line">  --no-global-config              - Don&#x27;t load global configuration file.</span><br><span class="line"></span><br><span class="line">Parse Options</span><br><span class="line"></span><br><span class="line">  -a --agent-list                 - Enable a list of user-agents by host.</span><br><span class="line">  -b --browsers-file=&lt;path&gt;       - Use additional custom list of browsers.</span><br><span class="line">  -d --with-output-resolver       - Enable IP resolver on HTML|JSON output.</span><br><span class="line">  -e --exclude-ip=&lt;IP&gt;            - Exclude one or multiple IPv4/6. Allows IP</span><br><span class="line">                                    ranges e.g. 192.168.0.1-192.168.0.10</span><br><span class="line">  -H --http-protocol=&lt;yes|no&gt;     - Set/unset HTTP request protocol if found.</span><br><span class="line">  -M --http-method=&lt;yes|no&gt;       - Set/unset HTTP request method if found.</span><br><span class="line">  -o --output=file.html|json|csv  - Output either an HTML, JSON or a CSV file.</span><br><span class="line">  -q --no-query-string            - Ignore request&#x27;s query string. Removing the</span><br><span class="line">                                    query string can greatly decrease memory</span><br><span class="line">                                    consumption.</span><br><span class="line">  -r --no-term-resolver           - Disable IP resolver on terminal output.</span><br><span class="line">  --444-as-404                    - Treat non-standard status code 444 as 404.</span><br><span class="line">  --4xx-to-unique-count           - Add 4xx client errors to the unique visitors</span><br><span class="line">                                    count.</span><br><span class="line">  --anonymize-ip                  - Anonymize IP addresses before outputting to report.</span><br><span class="line">  --all-static-files              - Include static files with a query string.</span><br><span class="line">  --crawlers-only                 - Parse and display only crawlers.</span><br><span class="line">  --date-spec=&lt;date|hr&gt;           - Date specificity. Possible values: `date`</span><br><span class="line">                                    (default), or `hr`.</span><br><span class="line">  --double-decode                 - Decode double-encoded values.</span><br><span class="line">  --enable-panel=&lt;PANEL&gt;          - Enable parsing/displaying the given panel.</span><br><span class="line">  --hide-referer=&lt;NEEDLE&gt;         - Hide a referer but still count it. Wild cards</span><br><span class="line">                                    are allowed. i.e., *.bing.com</span><br><span class="line">  --hour-spec=&lt;hr|min&gt;            - Hour specificity. Possible values: `hr`</span><br><span class="line">                                    (default), or `min` (tenth of a min).</span><br><span class="line">  --ignore-crawlers               - Ignore crawlers.</span><br><span class="line">  --ignore-panel=&lt;PANEL&gt;          - Ignore parsing/displaying the given panel.</span><br><span class="line">  --ignore-referer=&lt;NEEDLE&gt;       - Ignore a referer from being counted. Wild cards</span><br><span class="line">                                    are allowed. i.e., *.bing.com</span><br><span class="line">  --ignore-statics=&lt;req|panel&gt;    - Ignore static requests.</span><br><span class="line">                                    req =&gt; Ignore from valid requests.</span><br><span class="line">                                    panel =&gt; Ignore from valid requests and panels.</span><br><span class="line">  --ignore-status=&lt;CODE&gt;          - Ignore parsing the given status code.</span><br><span class="line">  --num-tests=&lt;number&gt;            - Number of lines to test. &gt;= 0 (10 default)</span><br><span class="line">  --process-and-exit              - Parse log and exit without outputting data.</span><br><span class="line">  --real-os                       - Display real OS names. e.g, Windows XP, Snow</span><br><span class="line">                                    Leopard.</span><br><span class="line">  --sort-panel=PANEL,METRIC,ORDER - Sort panel on initial load. For example:</span><br><span class="line">                                    --sort-panel=VISITORS,BY_HITS,ASC. See</span><br><span class="line">                                    manpage for a list of panels/fields.</span><br><span class="line">  --static-file=&lt;extension&gt;       - Add static file extension. e.g.: .mp3.</span><br><span class="line">                                    Extensions are case sensitive.</span><br><span class="line"></span><br><span class="line">GeoIP Options</span><br><span class="line"></span><br><span class="line">  -g --std-geoip                  - Standard GeoIP database for less memory</span><br><span class="line">                                    consumption.</span><br><span class="line">  --geoip-database=&lt;path&gt;         - Specify path to GeoIP database file. i.e.,</span><br><span class="line">                                    GeoLiteCity.dat, GeoIPv6.dat ...</span><br><span class="line"></span><br><span class="line">Other Options</span><br><span class="line"></span><br><span class="line">  -h --help                       - This help.</span><br><span class="line">  -V --version                    - Display version information and exit.</span><br><span class="line">  -s --storage                    - Display current storage method. e.g., B+</span><br><span class="line">                                    Tree, Hash.</span><br><span class="line">  --dcf                           - Display the path of the default config</span><br><span class="line">                                    file when `-p` is not used.</span><br><span class="line"></span><br><span class="line">Examples can be found by running `man goaccess`.</span><br><span class="line"></span><br><span class="line">For more details visit: http://goaccess.io</span><br><span class="line">GoAccess Copyright (C) 2009-2017 by Gerardo Orellana</span><br></pre></td></tr></table></figure>
+
+<p><strong>获取Nginx日志格式</strong> 格式转换脚本在<a target="_blank" rel="noopener" href="https://github.com/stockrt/nginx2goaccess/blob/master/nginx2goaccess.sh%EF%BC%8C%E5%85%B7%E4%BD%93%E5%86%85%E5%AE%B9%E5%A6%82%E4%B8%8B">https://github.com/stockrt/nginx2goaccess/blob/master/nginx2goaccess.sh，具体内容如下</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# cat nginx2goaccess.sh </span><br><span class="line">#!/bin/bash</span><br><span class="line">#</span><br><span class="line"># Convert from this:</span><br><span class="line">#   http://nginx.org/en/docs/http/ngx_http_log_module.html</span><br><span class="line"># To this:</span><br><span class="line">#   https://goaccess.io/man</span><br><span class="line">#</span><br><span class="line"># Conversion table:</span><br><span class="line">#   $time_local         %d:%t %^</span><br><span class="line">#   $host               %v</span><br><span class="line">#   $http_host          %v</span><br><span class="line">#   $remote_addr        %h</span><br><span class="line">#   $request_time       %T</span><br><span class="line">#   $request_method     %m</span><br><span class="line">#   $request_uri        %U</span><br><span class="line">#   $server_protocol    %H</span><br><span class="line">#   $request            %r</span><br><span class="line">#   $status             %s</span><br><span class="line">#   $body_bytes_sent    %b</span><br><span class="line">#   $bytes_sent         %b</span><br><span class="line">#   $http_referer       %R</span><br><span class="line">#   $http_user_agent    %u</span><br><span class="line">#</span><br><span class="line"># Samples:</span><br><span class="line">#</span><br><span class="line"># log_format combined &#x27;$remote_addr - $remote_user [$time_local] &#x27;</span><br><span class="line"># &#x27;&quot;$request&quot; $status $body_bytes_sent &#x27;</span><br><span class="line"># &#x27;&quot;$http_referer&quot; &quot;$http_user_agent&quot;&#x27;;</span><br><span class="line">#   ./nginx2goaccess.sh &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; $status $body_bytes_sent &quot;$http_referer&quot; &quot;$http_user_agent&quot;&#x27;</span><br><span class="line">#</span><br><span class="line"># log_format compression &#x27;$remote_addr - $remote_user [$time_local] &#x27;</span><br><span class="line"># &#x27;&quot;$request&quot; $status $bytes_sent &#x27;</span><br><span class="line"># &#x27;&quot;$http_referer&quot; &quot;$http_user_agent&quot; &quot;$gzip_ratio&quot;&#x27;;</span><br><span class="line">#   ./nginx2goaccess.sh &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; $status $bytes_sent &quot;$http_referer&quot; &quot;$http_user_agent&quot; &quot;$gzip_ratio&quot;&#x27;</span><br><span class="line">#</span><br><span class="line"># log_format main</span><br><span class="line"># &#x27;$remote_addr\t$time_local\t$host\t$request\t$http_referer\t$http_x_mobile_group\t&#x27;</span><br><span class="line"># &#x27;Local:\t$status\t$body_bytes_sent\t$request_time\t&#x27;</span><br><span class="line"># &#x27;Proxy:\t$upstream_cache_status\t$upstream_status\t$upstream_response_length\t$upstream_response_time\t&#x27;</span><br><span class="line"># &#x27;Agent:\t$http_user_agent\t&#x27;</span><br><span class="line"># &#x27;Fwd:\t$http_x_forwarded_for&#x27;;</span><br><span class="line">#   ./nginx2goaccess.sh &#x27;$remote_addr\t$time_local\t$host\t$request\t$http_referer\t$http_x_mobile_group\tLocal:\t$status\t$body_bytes_sent\t$request_time\tProxy:\t$upstream_cache_status\t$upstream_status\t$upstream_response_length\t$upstream_response_time\tAgent:\t$http_user_agent\tFwd:\t$http_x_forwarded_for&#x27;</span><br><span class="line">#</span><br><span class="line"># log_format main</span><br><span class="line"># &#x27;$&#123;time_local&#125;\t$&#123;remote_addr&#125;\t$&#123;host&#125;\t$&#123;request_method&#125;\t$&#123;request_uri&#125;\t$&#123;server_protocol&#125;\t&#x27;</span><br><span class="line"># &#x27;$&#123;http_referer&#125;\t$&#123;http_x_mobile_group&#125;\t&#x27;</span><br><span class="line"># &#x27;Local:\t$&#123;status&#125;\t*$&#123;connection&#125;\t$&#123;body_bytes_sent&#125;\t$&#123;request_time&#125;\t&#x27;</span><br><span class="line"># &#x27;Proxy:\t$&#123;upstream_status&#125;\t$&#123;upstream_cache_status&#125;\t&#x27;</span><br><span class="line"># &#x27;$&#123;upstream_response_length&#125;\t$&#123;upstream_response_time&#125;\t$&#123;uri&#125;$&#123;log_args&#125;\t&#x27;</span><br><span class="line"># &#x27;Agent:\t$&#123;http_user_agent&#125;\t&#x27;</span><br><span class="line"># &#x27;Fwd:\t$&#123;http_x_forwarded_for&#125;&#x27;;</span><br><span class="line">#   ./nginx2goaccess.sh &#x27;$&#123;time_local&#125;\t$&#123;remote_addr&#125;\t$&#123;host&#125;\t$&#123;request_method&#125;\t$&#123;request_uri&#125;\t$&#123;server_protocol&#125;\t$&#123;http_referer&#125;\t$&#123;http_x_mobile_group&#125;\tLocal:\t$&#123;status&#125;\t*$&#123;connection&#125;\t$&#123;body_bytes_sent&#125;\t$&#123;request_time&#125;\tProxy:\t$&#123;upstream_status&#125;\t$&#123;upstream_cache_status&#125;\t$&#123;upstream_response_length&#125;\t$&#123;upstream_response_time&#125;\t$&#123;uri&#125;$&#123;log_args&#125;\tAgent:\t$&#123;http_user_agent&#125;\tFwd:\t$&#123;http_x_forwarded_for&#125;&#x27;</span><br><span class="line">#</span><br><span class="line"># Author: Rogério Carvalho Schneider &lt;stockrt@gmail.com&gt;</span><br><span class="line"></span><br><span class="line"># Params</span><br><span class="line">log_format=&quot;$1&quot;</span><br><span class="line"></span><br><span class="line"># Usage</span><br><span class="line">if [[ -z &quot;$log_format&quot; ]]; then</span><br><span class="line">    echo &quot;Usage: $0 &#x27;&lt;log_format&gt;&#x27;&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Variables map</span><br><span class="line">conversion_table=&quot;time_local,%d:%t_%^</span><br><span class="line">host,%v</span><br><span class="line">http_host,%v</span><br><span class="line">remote_addr,%h</span><br><span class="line">request_time,%T</span><br><span class="line">request_method,%m</span><br><span class="line">request_uri,%U</span><br><span class="line">server_protocol,%H</span><br><span class="line">request,%r</span><br><span class="line">status,%s</span><br><span class="line">body_bytes_sent,%b</span><br><span class="line">bytes_sent,%b</span><br><span class="line">http_referer,%R</span><br><span class="line">http_user_agent,%u&quot;</span><br><span class="line"></span><br><span class="line"># Conversion</span><br><span class="line">for item in $conversion_table; do</span><br><span class="line">    nginx_var=$&#123;item%%,*&#125;</span><br><span class="line">    goaccess_var=$&#123;item##*,&#125;</span><br><span class="line">    goaccess_var=$&#123;goaccess_var//_/ &#125;</span><br><span class="line">    log_format=$&#123;log_format//\$\&#123;$nginx_var\&#125;/$goaccess_var&#125;</span><br><span class="line">    log_format=$&#123;log_format//\$$nginx_var/$goaccess_var&#125;</span><br><span class="line">done</span><br><span class="line">log_format=$(echo &quot;$log_format&quot; | sed &#x27;s/$&#123;[a-z_]*&#125;/%^/g&#x27;)</span><br><span class="line">log_format=$(echo &quot;$log_format&quot; | sed &#x27;s/$[a-z_]*/%^/g&#x27;)</span><br><span class="line"></span><br><span class="line"># Config output</span><br><span class="line">echo &quot;</span><br><span class="line">- Generated goaccess config:</span><br><span class="line">time-format %T</span><br><span class="line">date-format %d/%b/%Y</span><br><span class="line">log_format $log_format</span><br><span class="line">&quot;</span><br><span class="line"></span><br><span class="line"># EOF</span><br></pre></td></tr></table></figure>
+
+<p>注意，其中nginx配置文件的log_format如下，下面转换时需要与实际情况保持一致</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                  &#x27;$status $upstream_addr $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>获取日志格式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# sh nginx2goaccess.sh &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; $status $upstream_addr $body_bytes_sent &quot;$http_referer&quot; &quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;</span><br><span class="line"></span><br><span class="line">- Generated goaccess config:</span><br><span class="line">time-format %T</span><br><span class="line">date-format %d/%b/%Y</span><br><span class="line">log_format %h - %^ [%d:%t %^] &quot;%r&quot; %s %^ %b &quot;%R&quot; &quot;%u&quot; &quot;%^&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置日志格式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# cat /etc/goaccess/goaccess.conf </span><br><span class="line">time-format %T</span><br><span class="line">date-format %d/%b/%Y</span><br><span class="line">log_format %h - %^ [%d:%t %^] &quot;%r&quot; %s %^ %b &quot;%R&quot; &quot;%u&quot; &quot;%^&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>生成分析报告</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_0_26_centos logs]# goaccess -f ./nginx_access.log -p ./nginxlog.conf -o day-report.html</span><br><span class="line">[root@VM_0_26_centos logs]# ls</span><br><span class="line">day-report.html      nginx_access.log             nginx2goaccess.sh           nginxlog.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看报告效果</strong> 浏览器打开day-report.html，效果如下 <img src="https://upload-images.jianshu.io/upload_images/7535971-1816cb6f1611eb07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/15/2020/09/2020-09-15-%E8%BD%AF%E4%BB%B6%E4%BA%A4%E4%BB%98%E7%9A%84%E5%8E%9F%E5%88%99/index/" rel="prev" title="软件交付的原则">
+      <i class="fa fa-chevron-left"></i> 软件交付的原则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/18/2020/09/2020-09-18-emoji%E8%A1%A8%E6%83%85%E5%8C%85%E5%AF%BC%E8%87%B4wiki%E6%97%A0%E6%B3%95%E4%BF%9D%E5%AD%98/index/" rel="next" title="emoji表情包导致wiki无法保存">
+      emoji表情包导致wiki无法保存 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#GoAccess%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">GoAccess简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GoAccess%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">GoAccess使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

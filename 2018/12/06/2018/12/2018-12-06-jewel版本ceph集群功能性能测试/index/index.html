@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档1234567http:&#x2F;&#x2F;docs.ceph.com&#x2F;docs&#x2F;master&#x2F;start&#x2F;quick-start-preflight&#x2F;#rhel-centoshttps:&#x2F;&#x2F;www.linuxidc.com&#x2F;Linux&#x2F;2017-09&#x2F;146760.htmhttp:&#x2F;&#x2F;s3browser.comhttp:&#x2F;&#x2F;docs.ceph.org.cn&#x2F;man&#x2F;8&#x2F;rbd&#x2F;https:&#x2F;&#x2F;githu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jewel版本Ceph集群功能性能测试">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-jewel%E7%89%88%E6%9C%ACceph%E9%9B%86%E7%BE%A4%E5%8A%9F%E8%83%BD%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档1234567http:&#x2F;&#x2F;docs.ceph.com&#x2F;docs&#x2F;master&#x2F;start&#x2F;quick-start-preflight&#x2F;#rhel-centoshttps:&#x2F;&#x2F;www.linuxidc.com&#x2F;Linux&#x2F;2017-09&#x2F;146760.htmhttp:&#x2F;&#x2F;s3browser.comhttp:&#x2F;&#x2F;docs.ceph.org.cn&#x2F;man&#x2F;8&#x2F;rbd&#x2F;https:&#x2F;&#x2F;githu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-7fbaf700b23eeb64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-87ccc756c665fc05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-0a1dd1f92552a217.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-17441354dc2dba4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2018-12-06T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.503Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/7535971-7fbaf700b23eeb64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-jewel%E7%89%88%E6%9C%ACceph%E9%9B%86%E7%BE%A4%E5%8A%9F%E8%83%BD%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Jewel版本Ceph集群功能性能测试 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-jewel%E7%89%88%E6%9C%ACceph%E9%9B%86%E7%BE%A4%E5%8A%9F%E8%83%BD%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jewel版本Ceph集群功能性能测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-06 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-06T08:00:00+08:00">2018-12-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bigdata/" itemprop="url" rel="index"><span itemprop="name">bigdata</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http://docs.ceph.com/docs/master/start/quick-start-preflight/<span class="comment">#rhel-centos</span></span><br><span class="line">https://www.linuxidc.com/Linux/2017-09/146760.htm</span><br><span class="line">http://s3browser.com</span><br><span class="line">http://docs.ceph.org.cn/man/8/rbd/</span><br><span class="line">https://github.com/s3fs-fuse/s3fs-fuse</span><br><span class="line">https://blog.csdn.net/miaodichiyou/article/details/76050361</span><br><span class="line">http://elf8848.iteye.com/blog/2089055</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试目标"><a href="#测试目标" class="headerlink" title="测试目标"></a><strong>测试目标</strong></h3><p>使用rbd映射挂载块存储并测试性能 使用rbd-nbd映射挂载条带块存储并测试性能 使用s3brower测试对象存储读写 使用s3fs挂载挂载对象存储 使用对象存储写使用块存储读</p>
+<h3 id="一，使用rbd映射挂载块存储并测试性能"><a href="#一，使用rbd映射挂载块存储并测试性能" class="headerlink" title="一，使用rbd映射挂载块存储并测试性能"></a><strong>一，使用rbd映射挂载块存储并测试性能</strong></h3><p>1、创建image</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# ceph osd pool create test_pool 100 pool ‘test_pool’ created [root@idcv-ceph0 cluster]# rados lspools rbd .rgw.root default.rgw.control default.rgw.data.root default.rgw.gc default.rgw.log default.rgw.users.uid default.rgw.users.keys default.rgw.buckets.index default.rgw.buckets.data test_pool [root@idcv-ceph0 cluster]# rbd list [root@idcv-ceph0 cluster]# rbd create test_pool&#x2F;testimage1 –size 40960 [root@idcv-ceph0 cluster]# rbd create test_pool&#x2F;testimage2 –size 40960 [root@idcv-ceph0 cluster]# rbd create test_pool&#x2F;testimage3 –size 40960 [root@idcv-ceph0 cluster]# rbd create test_pool&#x2F;testimage4 –size 40960 [root@idcv-ceph0 cluster]# rbd list [root@idcv-ceph0 cluster]# rbd list test_pool testimage1 testimage2 testimage3 testimage4</p>
+</blockquote>
+<p>2、映射image</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# rbd map test_pool&#x2F;testimage1 rbd: sysfs write failed RBD image feature set mismatch. You can disable features unsupported by the kernel with “rbd feature disable”. In some cases useful info is found in syslog - try “dmesg | tail” or so. rbd: map failed: (6) No such device or address [root@idcv-ceph0 cluster]# dmesg |tail [113320.926463] rbd: loaded (major 252) [113320.931044] libceph: mon2 172.20.1.141:6789 session established [113320.931364] libceph: client4193 fsid 812d3acb-eaa8-4355-9a74-64f2cd5209b3 [113320.936922] rbd: image testimage1: image uses unsupported features: 0x38 [113339.870548] libceph: mon1 172.20.1.140:6789 session established [113339.870906] libceph: client4168 fsid 812d3acb-eaa8-4355-9a74-64f2cd5209b3 [113339.877109] rbd: image testimage1: image uses unsupported features: 0x38 [113381.405453] libceph: mon2 172.20.1.141:6789 session established [113381.405784] libceph: client4202 fsid 812d3acb-eaa8-4355-9a74-64f2cd5209b3 [113381.411625] rbd: image testimage1: image uses unsupported features: 0x38</p>
+</blockquote>
+<p>报错处理方法：disable新特性</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# rbd info test_pool&#x2F;testimage1 rbd image ‘testimage1’: size 40960 MB in 10240 objects order 22 (4096 kB objects) block_name_prefix: rbd_data.10802ae8944a format: 2 features: layering, exclusive-lock, object-map, fast-diff, deep-flatten flags: [root@idcv-ceph0 cluster]# rbd feature disable test_pool&#x2F;testimage1 rbd: at least one feature name must be specified [root@idcv-ceph0 cluster]# rbd feature disable test_pool&#x2F;testimage1 fast-diff [root@idcv-ceph0 cluster]# rbd feature disable test_pool&#x2F;testimage1 object-map [root@idcv-ceph0 cluster]# rbd feature disable test_pool&#x2F;testimage1 exclusive-lock [root@idcv-ceph0 cluster]# rbd feature disable test_pool&#x2F;testimage1 deep-flatten [root@idcv-ceph0 cluster]# rbd info test_pool&#x2F;testimage1 rbd image ‘testimage1’: size 40960 MB in 10240 objects order 22 (4096 kB objects) block_name_prefix: rbd_data.10802ae8944a format: 2 features: layering flags: [root@idcv-ceph0 cluster]# rbd map test_pool&#x2F;testimage1 &#x2F;dev&#x2F;rbd0</p>
+</blockquote>
+<p>同理操作testimage2\3\4，最终如下</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# rbd showmapped id pool image snap device<br>0 test_pool testimage1 - &#x2F;dev&#x2F;rbd0 1 test_pool testimage2 - &#x2F;dev&#x2F;rbd1 2 test_pool testimage3 - &#x2F;dev&#x2F;rbd2 3 test_pool testimage4 - &#x2F;dev&#x2F;rbd3</p>
+</blockquote>
+<p>备注收缩image大小</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph-disk0]# rbd resize -p test_pool –image testimage1 -s 10240 –allow-shrink Resizing image: 100% complete…done. [root@idcv-ceph0 ceph-disk0]# rbd resize -p test_pool –image testimage2 -s 10240 –allow-shrink Resizing image: 100% complete…done. [root@idcv-ceph0 ceph-disk0]# rbd resize -p test_pool –image testimage3 -s 10240 –allow-shrink Resizing image: 100% complete…done. [root@idcv-ceph0 ceph-disk0]# rbd resize -p test_pool –image testimage4 -s 10240 –allow-shrink Resizing image: 100% complete…done.</p>
+</blockquote>
+<p>3、格式化挂载</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph-disk0]# mkfs.xfs &#x2F;dev&#x2F;rbd0 [root@idcv-ceph0 ceph-disk0]# mount &#x2F;mnt&#x2F;ceph-disk0 &#x2F;dev&#x2F;rbd0</p>
+</blockquote>
+<p>4、DD测试</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph-disk0]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-disk0&#x2F;file0 count&#x3D;1000 bs&#x3D;4M conv&#x3D;fsync 1000+0 records in 1000+0 records out 4194304000 bytes (4.2 GB) copied, 39.1407 s, 107 MB&#x2F;s</p>
+</blockquote>
+<h3 id="二、使用rbd-nbd映射挂载条带块存储并测试性能"><a href="#二、使用rbd-nbd映射挂载条带块存储并测试性能" class="headerlink" title="二、使用rbd-nbd映射挂载条带块存储并测试性能"></a><strong>二、使用rbd-nbd映射挂载条带块存储并测试性能</strong></h3><p>1、创建image 根据官网文档条带化测试需要带参数–stripe-unit及–stripe-count 计划测试object-size为4M、4K且count为1时，object-szie为32M且count为8、16时块存储性能</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage5 –size 10240 –stripe-unit 2097152 –stripe-count 16 [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage5 rbd image ‘testimage5’: size 10240 MB in 2560 objects order 22 (4096 kB objects) block_name_prefix: rbd_data.10c52ae8944a format: 2 features: layering, striping, exclusive-lock, object-map, fast-diff, deep-flatten flags: stripe unit: 2048 kB stripe count: 16 [root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage6 –size 10240 –stripe-unit 4096 –stripe-count 4 [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage6 rbd image ‘testimage6’: size 10240 MB in 2560 objects order 22 (4096 kB objects) block_name_prefix: rbd_data.10c82ae8944a format: 2 features: layering, striping, exclusive-lock, object-map, fast-diff, deep-flatten flags: stripe unit: 4096 bytes stripe count: 4 [root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage7 –size 10240 –object-size 32M –stripe-unit 4194304 –stripe-count 4 [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage7 rbd image ‘testimage7’: size 10240 MB in 320 objects order 25 (32768 kB objects) block_name_prefix: rbd_data.107e238e1f29 format: 2 features: layering, striping, exclusive-lock, object-map, fast-diff, deep-flatten flags: stripe unit: 4096 kB stripe count: 4 [root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage8 –size 10240 –object-size 32M –stripe-unit 2097152 –stripe-count 16 [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage8 rbd image ‘testimage8’: size 10240 MB in 320 objects order 25 (32768 kB objects) block_name_prefix: rbd_data.109d2ae8944a format: 2 features: layering, striping, exclusive-lock, object-map, fast-diff, deep-flatten flags: stripe unit: 2048 kB stripe count: 16 [root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage11 –size 10240 –object-size 4M [root@idcv-ceph0 ceph-disk0]# rbd create test_pool&#x2F;testimage12 –size 10240 –object-size 4K [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage11 rbd image ‘testimage11’: size 10240 MB in 2560 objects order 22 (4096 kB objects) block_name_prefix: rbd_data.10ac238e1f29 format: 2 features: layering, exclusive-lock, object-map, fast-diff, deep-flatten flags: [root@idcv-ceph0 ceph-disk0]# rbd info test_pool&#x2F;testimage12 rbd image ‘testimage12’: size 10240 MB in 2621440 objects order 12 (4096 bytes objects) block_name_prefix: rbd_data.10962ae8944a format: 2 features: layering, exclusive-lock, object-map, fast-diff, deep-flatten flags:</p>
+</blockquote>
+<p>2、映射image</p>
+<blockquote>
+<p>[root@idcv-ceph2 mnt]# rbd map test_pool&#x2F;testimage8 rbd: sysfs write failed In some cases useful info is found in syslog - try “dmesg | tail” or so. rbd: map failed: (22) Invalid argument [root@idcv-ceph2 mnt]# dmesg |tail [118760.024660] XFS (rbd0): Log I&#x2F;O Error Detected. Shutting down filesystem [118760.024710] XFS (rbd0): Please umount the filesystem and rectify the problem(s) [118760.024766] XFS (rbd0): Unable to update superblock counters. Freespace may not be correct on next mount. [118858.837102] XFS (rbd0): Mounting V5 Filesystem [118858.872345] XFS (rbd0): Ending clean mount [173522.968410] rbd: rbd0: encountered watch error: -107 [176701.031429] rbd: image testimage8: unsupported stripe unit (got 2097152 want 33554432) [176827.317008] rbd: image testimage8: unsupported stripe unit (got 2097152 want 33554432) [177423.107103] rbd: image testimage8: unsupported stripe unit (got 2097152 want 33554432) [177452.820032] rbd: image testimage8: unsupported stripe unit (got 2097152 want 33554432)</p>
+</blockquote>
+<p>3、排错发现rbd不支持条带特性需要需要使用rbd-nbd rbd-nbd支持所有的新特性，后续map时也不需要disable新特性，但是linux内核默认没有nbd模块，需要编译内核安装，可以参考下面链接<a target="_blank" rel="noopener" href="https://blog.csdn.net/miaodichiyou/article/details/76050361">https://blog.csdn.net/miaodichiyou/article/details/76050361</a></p>
+<blockquote>
+<p>[root@idcv-ceph2 ~]# wget <a target="_blank" rel="noopener" href="http://vault.centos.org/7.5.1804/updates/Source/SPackages/kernel-3.10.0-862.2.3.el7.src.rpm">http://vault.centos.org/7.5.1804/updates/Source/SPackages/kernel-3.10.0-862.2.3.el7.src.rpm</a> [root@idcv-ceph2 ~]# rpm -ivh kernel-3.10.0-862.2.3.el7.src.rpm [root@idcv-ceph2 ~]# cd &#x2F;root&#x2F;rpmbuild&#x2F; [root@idcv-ceph0 rpmbuild]# cd SOURCES&#x2F; [root@idcv-ceph0 SOURCES]# tar Jxvf linux-3.10.0-862.2.3.el7.tar.xz -C &#x2F;usr&#x2F;src&#x2F;kernels&#x2F; [root@idcv-ceph0 SOURCES]# cd &#x2F;usr&#x2F;src&#x2F;kernels&#x2F; [root@idcv-ceph0 kernels]# mv 3.10.0-862.6.3.el7.x86_64 3.10.0-862.6.3.el7.x86_64-old [root@idcv-ceph0 kernels]# mv linux-3.10.0-862.2.3.el7 3.10.0-862.6.3.el7.x86_64 [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# cd 3.10.0-862.6.3.el7.x86_64 [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# mkdir mrproper [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# cp ..&#x2F;3.10.0-862.6.3.el7.x86_64-old&#x2F;Module.symvers .&#x2F; [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# cp &#x2F;boot&#x2F;config-3.10.0-862.2.3.el7.x86_64 .&#x2F;.config [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# yum install elfutils-libelf-devel [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# make prepare [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# make scripts [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# make CONFIG_BLK_DEV_NBD&#x3D;m M&#x3D;drivers&#x2F;block [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# modinfo nbd [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# cp drivers&#x2F;block&#x2F;nbd.ko &#x2F;lib&#x2F;modules&#x2F;3.10.0-862.2.3.el7.x86_64&#x2F;kernel&#x2F;drivers&#x2F;block&#x2F; [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# depmod -a [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# modprobe nbd [root@idcv-ceph0 3.10.0-862.6.3.el7.x86_64]# lsmod |grep nbd nbd 17554 5</p>
+</blockquote>
+<p>4、使用rbd-nbd映射image</p>
+<blockquote>
+<p>[root@idcv-ceph0 ~]# rbd-nbd map test_pool&#x2F;testimage17 &#x2F;dev&#x2F;nbd0 [root@idcv-ceph0 ~]# rbd info test_pool&#x2F;testimage17 rbd image ‘testimage17’: size 10240 MB in 1280 objects order 23 (8192 kB objects) block_name_prefix: rbd_data.112d74b0dc51 format: 2 features: layering, striping flags: stripe unit: 1024 kB stripe count: 8 [root@idcv-ceph0 ~]# mkfs.xfs &#x2F;dev&#x2F;nbd0 meta-data&#x3D;&#x2F;dev&#x2F;nbd0 isize&#x3D;512 agcount&#x3D;4, agsize&#x3D;655360 blks &#x3D; sectsz&#x3D;512 attr&#x3D;2, projid32bit&#x3D;1 &#x3D; crc&#x3D;1 finobt&#x3D;0, sparse&#x3D;0 data &#x3D; bsize&#x3D;4096 blocks&#x3D;2621440, imaxpct&#x3D;25 &#x3D; sunit&#x3D;0 swidth&#x3D;0 blks naming &#x3D;version 2 bsize&#x3D;4096 ascii-ci&#x3D;0 ftype&#x3D;1 log &#x3D;internal log bsize&#x3D;4096 blocks&#x3D;2560, version&#x3D;2 &#x3D; sectsz&#x3D;512 sunit&#x3D;0 blks, lazy-count&#x3D;1 realtime &#x3D;none extsz&#x3D;4096 blocks&#x3D;0, rtextents&#x3D;0 [root@idcv-ceph0 ~]# mount &#x2F;dev&#x2F;nbd0 &#x2F;mnt&#x2F;ceph-8M&#x2F; [root@idcv-ceph0 ~]# df -h Filesystem Size Used Avail Use% Mounted on &#x2F;dev&#x2F;mapper&#x2F;centos-root 100G 3.5G 96G 4% &#x2F; devtmpfs 7.8G 0 7.8G 0% &#x2F;dev tmpfs 7.8G 0 7.8G 0% &#x2F;dev&#x2F;shm tmpfs 7.8G 12M 7.8G 1% &#x2F;run tmpfs 7.8G 0 7.8G 0% &#x2F;sys&#x2F;fs&#x2F;cgroup &#x2F;dev&#x2F;sda1 497M 150M 348M 31% &#x2F;boot tmpfs 1.6G 0 1.6G 0% &#x2F;run&#x2F;user&#x2F;0 &#x2F;dev&#x2F;sdb1 95G 40G 56G 42% &#x2F;var&#x2F;lib&#x2F;ceph&#x2F;osd&#x2F;ceph-0 &#x2F;dev&#x2F;rbd0 10G 7.9G 2.2G 79% &#x2F;mnt&#x2F;ceph-disk0 &#x2F;dev&#x2F;rbd1 10G 7.9G 2.2G 79% &#x2F;mnt&#x2F;ceph-4M &#x2F;dev&#x2F;nbd0 10G 33M 10G 1% &#x2F;mnt&#x2F;ceph-8M</p>
+</blockquote>
+<p>5、dd测试性能 object-size为8M</p>
+<blockquote>
+<p>[root@idcv-ceph0 ~]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-8M&#x2F;file0-1 count&#x3D;800 bs&#x3D;10M conv&#x3D;fsync 800+0 records in 800+0 records out 8388608000 bytes (8.4 GB) copied, 50.964 s, 165 MB&#x2F;s [root@idcv-ceph0 ~]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-8M&#x2F;file0-1 count&#x3D;80 bs&#x3D;100M conv&#x3D;fsync 80+0 records in 80+0 records out 8388608000 bytes (8.4 GB) copied, 26.3178 s, 319 MB&#x2F;s</p>
+</blockquote>
+<p>object-size为32M</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph-32M]# rbd info test_pool&#x2F;testimage18 rbd image ‘testimage18’: size 40960 MB in 1280 objects order 25 (32768 kB objects) block_name_prefix: rbd_data.11052ae8944a format: 2 features: layering, striping, exclusive-lock, object-map, fast-diff, deep-flatten flags: stripe unit: 2048 kB stripe count: 8 [root@idcv-ceph0 ceph-32M]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M&#x2F;file0-1 count&#x3D;2000 bs&#x3D;10M conv&#x3D;fsync 2000+0 records in 2000+0 records out 20971520000 bytes (21 GB) copied, 67.4266 s, 311 MB&#x2F;s [root@idcv-ceph0 ceph-32M]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M&#x2F;file0-1 count&#x3D;20000 bs&#x3D;1M conv&#x3D;fsync 20000+0 records in 20000+0 records out 20971520000 bytes (21 GB) copied, 61.7757 s, 339 MB&#x2F;s</p>
+</blockquote>
+<p>6、测试方法汇总 4m cnt&#x3D;1 4k cnt&#x3D;1 32M cnt&#x3D;8，16 dd测试 1M 100M</p>
+<p>32M &#x2F;mnt&#x2F;ceph-32M-8 &#x2F;mnt&#x2F;ceph-32M-16</p>
+<blockquote>
+<p>rbd create test_pool&#x2F;testimage8 –size 10240 –object-size 32M –stripe-unit 2097152 –stripe-count 16 dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M-16&#x2F;file32M count&#x3D;80 bs&#x3D;100M conv&#x3D;fsync dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M-16&#x2F;file32M count&#x3D;8000 bs&#x3D;1M conv&#x3D;fsync rbd create test_pool&#x2F;testimage19 –size 10240 –object-size 32M –stripe-unit 4194304 –stripe-count 8 dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M-8&#x2F;file32M count&#x3D;80 bs&#x3D;100M conv&#x3D;fsync dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-32M-8&#x2F;file32M count&#x3D;8000 bs&#x3D;1M conv&#x3D;fsync</p>
+</blockquote>
+<p>4M &#x2F;mnt&#x2F;ceph-4M</p>
+<blockquote>
+<p>rbd create test_pool&#x2F;testimage11 –size 10240 –object-size 4M dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-4M&#x2F;file4M count&#x3D;80 bs&#x3D;100M conv&#x3D;fsync dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-4M&#x2F;file4M count&#x3D;8000 bs&#x3D;1M conv&#x3D;fsync</p>
+</blockquote>
+<p>4K &#x2F;mnt&#x2F;ceph-4K</p>
+<blockquote>
+<p>rbd create test_pool&#x2F;testimage12 –size 10240 –object-size 4K dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-4K&#x2F;file4K count&#x3D;80 bs&#x3D;100M conv&#x3D;fsync dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;mnt&#x2F;ceph-4K&#x2F;file4K count&#x3D;8000 bs&#x3D;1M conv&#x3D;fsync</p>
+</blockquote>
+<p>7、dd测试结果汇总</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-7fbaf700b23eeb64.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>8、使用fio随机写测试 先安装fio</p>
+<blockquote>
+<p>yum install libaio-devel wget <a target="_blank" rel="noopener" href="http://brick.kernel.dk/snaps/fio-2.1.10.tar.gz">http://brick.kernel.dk/snaps/fio-2.1.10.tar.gz</a> tar zxf fio-2.1.10.tar.gz cd fio-2.1.10&#x2F; make make install</p>
+</blockquote>
+<p>32M-8</p>
+<blockquote>
+<p>fio -ioengine&#x3D;libaio -bs&#x3D;1m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;nbd4 -name&#x3D;”EBS 1m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60 Run status group 0 (all jobs): WRITE: io&#x3D;4096.0MB, aggrb&#x3D;272729KB&#x2F;s, minb&#x3D;272729KB&#x2F;s, maxb&#x3D;272729KB&#x2F;s, mint&#x3D;15379msec, maxt&#x3D;15379msec Disk stats (read&#x2F;write): nbd4: ios&#x3D;0&#x2F;32280, merge&#x3D;0&#x2F;0, ticks&#x3D;0&#x2F;36624, in_queue&#x3D;36571, util&#x3D;97.61% fio -ioengine&#x3D;libaio -bs&#x3D;100m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;nbd4 -name&#x3D;”EBS 100m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60 Run status group 0 (all jobs): WRITE: io&#x3D;4000.0MB, aggrb&#x3D;326504KB&#x2F;s, minb&#x3D;326504KB&#x2F;s, maxb&#x3D;326504KB&#x2F;s, mint&#x3D;12545msec, maxt&#x3D;12545msec Disk stats (read&#x2F;write): nbd4: ios&#x3D;0&#x2F;31391, merge&#x3D;0&#x2F;0, ticks&#x3D;0&#x2F;1592756, in_queue&#x3D;1597878, util&#x3D;97.04%</p>
+</blockquote>
+<p>32M-16</p>
+<blockquote>
+<p>fio -ioengine&#x3D;libaio -bs&#x3D;1m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;nbd3 -name&#x3D;”EBS 1m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60 fio -ioengine&#x3D;libaio -bs&#x3D;100m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;nbd3 -name&#x3D;”EBS 100m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60</p>
+</blockquote>
+<p>4M</p>
+<blockquote>
+<p>fio -ioengine&#x3D;libaio -bs&#x3D;1m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;rbd1 -name&#x3D;”EBS 1m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60 fio -ioengine&#x3D;libaio -bs&#x3D;100m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;4G -filename&#x3D;&#x2F;dev&#x2F;rbd1 -name&#x3D;”EBS 100m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60</p>
+</blockquote>
+<p>4K</p>
+<blockquote>
+<p>fio -ioengine&#x3D;libaio -bs&#x3D;1m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;400M -filename&#x3D;&#x2F;dev&#x2F;rbd2 -name&#x3D;”EBS 1m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60 fio -ioengine&#x3D;libaio -bs&#x3D;100m -direct&#x3D;1 -thread -rw&#x3D;randwrite -size&#x3D;400M -filename&#x3D;&#x2F;dev&#x2F;rbd2 -name&#x3D;”EBS 100m randwrite test” -iodepth&#x3D;1 -runtime&#x3D;60</p>
+</blockquote>
+<p>9、fio测试结果汇总</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-87ccc756c665fc05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<h3 id="三、使用s3brower测试对象存储读写"><a href="#三、使用s3brower测试对象存储读写" class="headerlink" title="三、使用s3brower测试对象存储读写"></a><strong>三、使用s3brower测试对象存储读写</strong></h3><p>1、创建对象存储账号密码</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# radosgw-admin user create –uid&#x3D;test –display-name&#x3D;”test” –access-key&#x3D;123456 –secret&#x3D;123456 [root@idcv-ceph0 cluster]# radosgw-admin user info –uid&#x3D;test { “user_id”: “test”, “display_name”: “test”, “email”: “”, “suspended”: 0, “max_buckets”: 1000, “auid”: 0, “subusers”: [], “keys”: [ { “user”: “test”, “access_key”: “123456”, “secret_key”: “123456” } ], “swift_keys”: [], “caps”: [], “op_mask”: “read, write, delete”, “default_placement”: “”, “placement_tags”: [], “bucket_quota”: { “enabled”: false, “max_size_kb”: -1, “max_objects”: -1 }, “user_quota”: { “enabled”: false, “max_size_kb”: -1, “max_objects”: -1 }, “temp_url_keys”: [] }</p>
+</blockquote>
+<p>2、安装配置s3brower</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-0a1dd1f92552a217.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>3、创建bucket上传下载测试</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-17441354dc2dba4e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<h3 id="四、使用s3fs挂载挂载对象存储读写"><a href="#四、使用s3fs挂载挂载对象存储读写" class="headerlink" title="四、使用s3fs挂载挂载对象存储读写"></a><strong>四、使用s3fs挂载挂载对象存储读写</strong></h3><p>测试对象存储方式写入文件，从rbd方式读目录 1、安装部署 <a target="_blank" rel="noopener" href="https://github.com/s3fs-fuse/s3fs-fuse/releases">https://github.com/s3fs-fuse/s3fs-fuse/releases</a></p>
+<p>安装 查看README On CentOS 7:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel</span><br></pre></td></tr></table></figure>
+
+<p>Then compile from master via the following commands:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/s3fs-fuse/s3fs-fuse.git</span><br><span class="line">cd s3fs-fuse</span><br><span class="line">./autogen.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[root@idcv-ceph0 ~]# wget <a target="_blank" rel="noopener" href="https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.83.tar.gz">https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.83.tar.gz</a> [root@idcv-ceph0 ~]# ls [root@idcv-ceph0 ~]# tar zxvf v1.83.tar.gz [root@idcv-ceph0 s3fs-fuse-1.83]# cd s3fs-fuse-1.83&#x2F; [root@idcv-ceph0 s3fs-fuse-1.83]# ls [root@idcv-ceph0 s3fs-fuse-1.83]# vi README.md [root@idcv-ceph0 s3fs-fuse-1.83]# yum install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel [root@idcv-ceph0 s3fs-fuse-1.83]# .&#x2F;autogen.sh [root@idcv-ceph0 s3fs-fuse-1.83]# ls [root@idcv-ceph0 s3fs-fuse-1.83]# .&#x2F;configure [root@idcv-ceph0 s3fs-fuse-1.83]# make [root@idcv-ceph0 s3fs-fuse-1.83]# make install [root@idcv-ceph0 s3fs-fuse-1.83]# mkdir &#x2F;mnt&#x2F;s3 [root@idcv-ceph0 s3fs-fuse-1.83]# vi &#x2F;root&#x2F;.passwd-s3fs [root@idcv-ceph0 s3fs-fuse-1.83]# chmod 600 &#x2F;root&#x2F;.passwd-s3fs</p>
+</blockquote>
+<p>2、挂载</p>
+<blockquote>
+<p>[root@idcv-ceph0 ~]# s3fs testbucket &#x2F;mnt&#x2F;s3 -o url&#x3D;<a target="_blank" rel="noopener" href="http://172.20.1.139:7480/">http://172.20.1.139:7480</a> -o umask&#x3D;0022 -o use_path_request_style [root@idcv-ceph0 ~]# df -h Filesystem Size Used Avail Use% Mounted on &#x2F;dev&#x2F;sdb1 95G 75G 21G 79% &#x2F;var&#x2F;lib&#x2F;ceph&#x2F;osd&#x2F;ceph-0 &#x2F;dev&#x2F;rbd1 10G 7.9G 2.2G 79% &#x2F;mnt&#x2F;ceph-4M &#x2F;dev&#x2F;rbd2 10G 814M 9.2G 8% &#x2F;mnt&#x2F;ceph-4K &#x2F;dev&#x2F;nbd3 10G 7.9G 2.2G 79% &#x2F;mnt&#x2F;ceph-32M-16 &#x2F;dev&#x2F;nbd4 10G 33M 10G 1% &#x2F;mnt&#x2F;ceph-32M-8 s3fs 256T 0 256T 0% &#x2F;mnt&#x2F;s3</p>
+</blockquote>
+<p>3、验证读写</p>
+<blockquote>
+<p>[root@idcv-ceph0 ~]# ls &#x2F;mnt&#x2F;s3&#x2F;images&#x2F; kernel-3.10.0-862.2.3.el7.src.rpm nbd.ko test.jpg [root@idcv-ceph0 ~]# cp &#x2F;etc&#x2F;hosts hosts hosts.allow hosts.deny<br>[root@idcv-ceph0 ~]# cp &#x2F;etc&#x2F;hosts &#x2F;mnt&#x2F;s3&#x2F;images&#x2F; [root@idcv-ceph0 ~]# ls &#x2F;mnt&#x2F;s3&#x2F;images&#x2F; hosts kernel-3.10.0-862.2.3.el7.src.rpm nbd.ko test.jpg</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ceph/" rel="tag"># ceph</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/03/2018/12/2018-12-03-%E7%A6%85%E7%9A%84%E8%A1%8C%E5%9B%8A%E8%B7%AF%E7%BA%BF%E5%9B%BE/index/" rel="prev" title="禅的行囊路线图">
+      <i class="fa fa-chevron-left"></i> 禅的行囊路线图
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/06/2018/12/2018-12-06-ceph%E9%9B%86%E7%BE%A4%E7%94%B1jewel%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0luminous%E7%89%88%E6%9C%AC/index/" rel="next" title="Ceph集群由Jewel版本升级到Luminous版本">
+      Ceph集群由Jewel版本升级到Luminous版本 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%9B%AE%E6%A0%87"><span class="nav-number">2.</span> <span class="nav-text">测试目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%EF%BC%8C%E4%BD%BF%E7%94%A8rbd%E6%98%A0%E5%B0%84%E6%8C%82%E8%BD%BD%E5%9D%97%E5%AD%98%E5%82%A8%E5%B9%B6%E6%B5%8B%E8%AF%95%E6%80%A7%E8%83%BD"><span class="nav-number">3.</span> <span class="nav-text">一，使用rbd映射挂载块存储并测试性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8rbd-nbd%E6%98%A0%E5%B0%84%E6%8C%82%E8%BD%BD%E6%9D%A1%E5%B8%A6%E5%9D%97%E5%AD%98%E5%82%A8%E5%B9%B6%E6%B5%8B%E8%AF%95%E6%80%A7%E8%83%BD"><span class="nav-number">4.</span> <span class="nav-text">二、使用rbd-nbd映射挂载条带块存储并测试性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BD%BF%E7%94%A8s3brower%E6%B5%8B%E8%AF%95%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E8%AF%BB%E5%86%99"><span class="nav-number">5.</span> <span class="nav-text">三、使用s3brower测试对象存储读写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BD%BF%E7%94%A8s3fs%E6%8C%82%E8%BD%BD%E6%8C%82%E8%BD%BD%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E8%AF%BB%E5%86%99"><span class="nav-number">6.</span> <span class="nav-text">四、使用s3fs挂载挂载对象存储读写</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

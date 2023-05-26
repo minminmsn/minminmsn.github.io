@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="起因 开发反馈habor镜像库登陆不了，初步查看是证书过期了。 解决方案 之前Harbor-helm部署镜像库文档可以回顾链接Kubernetes1.13.1集群集成Harbor-helm 1.首先新建新证书的secret 1[root@elasticsearch01 harbor-helm]#  kubectl  create secret tls ingress-secret2021 --ke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harbor-helm镜像库重新部署后PV数据恢复">
+<meta property="og:url" content="https://minminmsn.github.io/2020/07/15/2020/07/2020-07-15-harbor-helm%E9%95%9C%E5%83%8F%E5%BA%93%E9%87%8D%E6%96%B0%E9%83%A8%E7%BD%B2%E5%90%8Epv%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="起因 开发反馈habor镜像库登陆不了，初步查看是证书过期了。 解决方案 之前Harbor-helm部署镜像库文档可以回顾链接Kubernetes1.13.1集群集成Harbor-helm 1.首先新建新证书的secret 1[root@elasticsearch01 harbor-helm]#  kubectl  create secret tls ingress-secret2021 --ke">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/harbor-helm.png">
+<meta property="article:published_time" content="2020-07-15T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:34.578Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="helm">
+<meta property="article:tag" content="harbor">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/harbor-helm.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2020/07/15/2020/07/2020-07-15-harbor-helm%E9%95%9C%E5%83%8F%E5%BA%93%E9%87%8D%E6%96%B0%E9%83%A8%E7%BD%B2%E5%90%8Epv%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Harbor-helm镜像库重新部署后PV数据恢复 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/07/15/2020/07/2020-07-15-harbor-helm%E9%95%9C%E5%83%8F%E5%BA%93%E9%87%8D%E6%96%B0%E9%83%A8%E7%BD%B2%E5%90%8Epv%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Harbor-helm镜像库重新部署后PV数据恢复
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-15 08:00:00" itemprop="dateCreated datePublished" datetime="2020-07-15T08:00:00+08:00">2020-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cloud/" itemprop="url" rel="index"><span itemprop="name">cloud</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>起因</strong></p>
+<p>开发反馈habor镜像库登陆不了，初步查看是证书过期了。</p>
+<p><strong>解决方案</strong> 之前Harbor-helm部署镜像库文档可以回顾链接<a target="_blank" rel="noopener" href="https://minminmsn.com/middleware/698/">Kubernetes1.13.1集群集成Harbor-helm</a> 1.首先新建新证书的secret</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]#  kubectl  create secret tls ingress-secret2021 --key minminmsnauto.key --cert minminmsnauto.crt </span><br></pre></td></tr></table></figure>
+
+<p>2.然后修改harbor-helm的value.yaml，把secretName替换下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# head -n 20 values.yaml</span><br><span class="line">expose:</span><br><span class="line">  # Set the way how to expose the service. Set the type as &quot;ingress&quot;, </span><br><span class="line">  # &quot;clusterIP&quot; or &quot;nodePort&quot; and fill the information in the corresponding </span><br><span class="line">  # section</span><br><span class="line">  type: ingress</span><br><span class="line">  tls:</span><br><span class="line">    # Enable the tls or not. Note: if the type is &quot;ingress&quot; and the tls </span><br><span class="line">    # is disabled, the port must be included in the command when pull/push</span><br><span class="line">    # images. Refer to https://github.com/goharbor/harbor/issues/5291 </span><br><span class="line">    # for the detail.</span><br><span class="line">    enabled: true</span><br><span class="line">    # Fill the name of secret if you want to use your own TLS certificate</span><br><span class="line">    # and private key. The secret must contain keys named tls.crt and </span><br><span class="line">    # tls.key that contain the certificate and private key to use for TLS</span><br><span class="line">    # The certificate and private key will be generated automatically if </span><br><span class="line">    # it is not set</span><br><span class="line">    secretName: &quot;ingress-secret2021&quot;</span><br><span class="line">    # By default, the Notary service will use the same cert and key as</span><br><span class="line">    # described above. Fill the name of secret if you want to use a </span><br><span class="line">    # separated one. Only needed when the type is &quot;ingress&quot;.</span><br></pre></td></tr></table></figure>
+
+<p>3.最后使用helm upgrade更新版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]#  helm upgrade  minminmsn . -f values.yaml</span><br></pre></td></tr></table></figure>
+
+<p>到这个时候应该能解决需求，可是事与愿违，不知道哪儿除了问题，这时登陆Harbor证书问题是解决了，但是项目及库访问不了提示内部错误，看Pod的运行状态也都是Running。 最后打算使用helm先delete掉再install，但是这样创建的harbor看起来一切正常，实际上是个初始化环境，是自动生成的新PV并没有原来的数据。此时发现原来的PV还在，下面就开始找PV恢复的方案。</p>
+<p><strong>调整PV状态</strong></p>
+<p>1.查询此时PV与PVC状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pv</span><br><span class="line">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                                            STORAGECLASS   REASON   AGE                    9h</span><br><span class="line">pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6   50Gi       RWO            Retain           Released   default/minminmsn-harbor-chartmuseum                rbd                     417d</span><br><span class="line">pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Released   default/minminmsn-harbor-jobservice                 rbd                     417d</span><br><span class="line">pvc-e7985b55-7ded-11e9-a09d-52540089b2b6   2000Gi     RWO            Retain           Released   default/minminmsn-harbor-registry                   rbd                     417d</span><br><span class="line">pvc-e7d38097-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Released   default/database-data-minminmsn-harbor-database-0   rbd                     417d</span><br><span class="line">pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Released   default/data-minminmsn-harbor-redis-0               rbd                     417d</span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pvc</span><br><span class="line">NAME                                     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">data-minminmsn-harbor-redis-0               Bound    pvc-6cd422e4-c5f0-11ea-9386-52540089b2b6   20Gi       RWO            rbd            9h</span><br><span class="line">database-data-minminmsn-harbor-database-0   Bound    pvc-6ccda00b-c5f0-11ea-9386-52540089b2b6   20Gi       RWO            rbd            9h</span><br><span class="line">minminmsn-harbor-chartmuseum                Bound    pvc-6c903857-c5f0-11ea-9386-52540089b2b6   50Gi       RWO            rbd            9h</span><br><span class="line">minminmsn-harbor-jobservice                 Bound    pvc-6c91d1a4-c5f0-11ea-9386-52540089b2b6   20Gi       RWO            rbd            9h</span><br><span class="line">minminmsn-harbor-registry                   Bound    pvc-6c92bfc0-c5f0-11ea-9386-52540089b2b6   500Gi      RWO            rbd            9h</span><br></pre></td></tr></table></figure>
+
+<p>2.修改PV状态 先把PV的状态由Released改变成 备注：默认创建的PV的回收策略是Delete就是用完就删除，之前特意把RECLAIM POLICY改为了Retain，在线修改PV回收策略可以参考文档<a target="_blank" rel="noopener" href="https://minminmsn.com/cloud/1091/">在线修改 PV的回收策略</a>，否则这里Helm Delete后就会自动删除PV，就没有后来这篇PV数据恢复操作了。 在线编辑PV,需要把其中claimRef这段删除，这样状态就可以变成Available了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">claimRef:</span><br><span class="line">  apiVersion: v1</span><br><span class="line">  kind: PersistentVolumeClaim</span><br><span class="line">  name: minminmsn-harbor-chartmuseum</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: &quot;91736092&quot;</span><br><span class="line">  uid: b31ec8ca-c649-11ea-9386-52540089b2b6</span><br><span class="line">persistentVolumeReclaimPolicy: Retain</span><br></pre></td></tr></table></figure>
+
+<p>具体如下修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl edit pv pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6 </span><br><span class="line"># Please edit the object below. Lines beginning with a &#x27;#&#x27; will be ignored,</span><br><span class="line"># and an empty file will abort the edit. If an error occurs while saving this file will be</span><br><span class="line"># reopened with the relevant failures.</span><br><span class="line">#</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    pv.kubernetes.io/bound-by-controller: &quot;yes&quot;</span><br><span class="line">    pv.kubernetes.io/provisioned-by: ceph.com/rbd</span><br><span class="line">    rbdProvisionerIdentity: ceph.com/rbd</span><br><span class="line">  creationTimestamp: &quot;2019-05-24T06:33:55Z&quot;</span><br><span class="line">  finalizers:</span><br><span class="line">  - kubernetes.io/pv-protection</span><br><span class="line">  name: pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">  resourceVersion: &quot;91736100&quot;</span><br><span class="line">  selfLink: /api/v1/persistentvolumes/pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">  uid: e7ade7f7-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteOnce</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 50Gi</span><br><span class="line">  claimRef:</span><br><span class="line">    apiVersion: v1</span><br><span class="line">    kind: PersistentVolumeClaim</span><br><span class="line">    name: minminmsn-harbor-chartmuseum</span><br><span class="line">    namespace: default</span><br><span class="line">    resourceVersion: &quot;91736092&quot;</span><br><span class="line">    uid: b31ec8ca-c649-11ea-9386-52540089b2b6</span><br><span class="line">  persistentVolumeReclaimPolicy: Retain</span><br><span class="line">  rbd:</span><br><span class="line">    image: kubernetes-dynamic-pvc-e79b34d3-7ded-11e9-ac1b-02420afe4905</span><br><span class="line">    keyring: /etc/ceph/keyring</span><br><span class="line">    monitors:</span><br><span class="line">    - 10.0.4.8:6789</span><br><span class="line">    pool: rbd-k8s</span><br><span class="line">    secretRef:</span><br><span class="line">      name: ceph-secret</span><br><span class="line">      namespace: default</span><br><span class="line">    user: admin</span><br><span class="line">  storageClassName: rbd</span><br><span class="line">  volumeMode: Filesystem</span><br><span class="line">status:</span><br><span class="line">  phase: Released</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>3.其他四个PV同样操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl edit pv pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl edit pv pvc-e7985b55-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl edit pv pvc-e7d38097-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl edit pv pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6</span><br></pre></td></tr></table></figure>
+
+<p>4.查看效果 现在看PV的STATUS已经变成了Available，然后CLAIM也变空了，这样就可以在后面绑定使用了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pv</span><br><span class="line">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                       STORAGECLASS   REASON   AGE</span><br><span class="line">pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6   50Gi       RWO            Retain           Available                               rbd                     417d</span><br><span class="line">pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Available                               rbd                     417d</span><br><span class="line">pvc-e7985b55-7ded-11e9-a09d-52540089b2b6   2000Gi     RWO            Retain           Available                               rbd                     417d</span><br><span class="line">pvc-e7d38097-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Available                               rbd                     417d</span><br><span class="line">pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Available                               rbd                     417d</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建PVC</strong></p>
+<p>1.先设置好PVC及PV对应关系</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# cat minminmsn.pvc </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: minminmsn-harbor-registry</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: &quot;rbd&quot;</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 2000Gi</span><br><span class="line">  volumeName: &quot;pvc-e7985b55-7ded-11e9-a09d-52540089b2b6&quot;</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: minminmsn-harbor-jobservice</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: &quot;rbd&quot;</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20Gi</span><br><span class="line">  volumeName: &quot;pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6&quot;</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: minminmsn-harbor-chartmuseum</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: &quot;rbd&quot;</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 50Gi</span><br><span class="line">  volumeName: &quot;pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6&quot;</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: database-data-minminmsn-harbor-database-0</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: &quot;rbd&quot;</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20Gi</span><br><span class="line">  volumeName: &quot;pvc-e7d38097-7ded-11e9-a09d-52540089b2b6&quot;</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: data-minminmsn-harbor-redis-0</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  storageClassName: &quot;rbd&quot;</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20Gi</span><br><span class="line">  volumeName: &quot;pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6&quot;</span><br></pre></td></tr></table></figure>
+
+<p>2.创建PVC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# kubectl apply -f minminmsn.pvc </span><br><span class="line">persistentvolumeclaim/minminmsn-harbor-registry created</span><br><span class="line">persistentvolumeclaim/minminmsn-harbor-jobservice created</span><br><span class="line">persistentvolumeclaim/minminmsn-harbor-chartmuseum created</span><br><span class="line">persistentvolumeclaim/database-data-minminmsn-harbor-database-0 created</span><br><span class="line">persistentvolumeclaim/data-minminmsn-harbor-redis-0 created</span><br></pre></td></tr></table></figure>
+
+<p>3.检查PV与PVC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# kubectl get pv</span><br><span class="line">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                            STORAGECLASS   REASON   AGE</span><br><span class="line">pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6   50Gi       RWO            Retain           Bound    default/minminmsn-harbor-chartmuseum                rbd                     417d</span><br><span class="line">pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Bound    default/minminmsn-harbor-jobservice                 rbd                     417d</span><br><span class="line">pvc-e7985b55-7ded-11e9-a09d-52540089b2b6   2000Gi     RWO            Retain           Bound    default/minminmsn-harbor-registry                   rbd                     417d</span><br><span class="line">pvc-e7d38097-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Bound    default/database-data-minminmsn-harbor-database-0   rbd                     417d</span><br><span class="line">pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6   20Gi       RWO            Retain           Bound    default/data-minminmsn-harbor-redis-0               rbd                     417d</span><br><span class="line">[root@elasticsearch01 yaml]# kubectl get pvc</span><br><span class="line">NAME                                     STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">ceph-rbd-pv-claim                        Bound     ceph-rbd-pv                                20Gi       RWO                           540d</span><br><span class="line">data-minminmsn-harbor-redis-0               Pending   pvc-e7da3f3c-7ded-11e9-a09d-52540089b2b6   0                         rbd            12s</span><br><span class="line">database-data-minminmsn-harbor-database-0   Pending   pvc-e7d38097-7ded-11e9-a09d-52540089b2b6   0                         rbd            12s</span><br><span class="line">minminmsn-harbor-chartmuseum                Pending   pvc-e7967cfe-7ded-11e9-a09d-52540089b2b6   0                         rbd            12s</span><br><span class="line">minminmsn-harbor-jobservice                 Pending   pvc-e7974d1c-7ded-11e9-a09d-52540089b2b6   0                         rbd            12s</span><br><span class="line">minminmsn-harbor-registry                   Bound     pvc-e7985b55-7ded-11e9-a09d-52540089b2b6   2000Gi     RWO            rbd            12s</span><br><span class="line">[root@elasticsearch01 yaml]# kubectl describe pvc minminmsn-harbor-registry</span><br><span class="line">Name:          minminmsn-harbor-registry</span><br><span class="line">Namespace:     default</span><br><span class="line">StorageClass:  rbd</span><br><span class="line">Status:        Bound</span><br><span class="line">Volume:        pvc-e7985b55-7ded-11e9-a09d-52540089b2b6</span><br><span class="line">Labels:        &lt;none&gt;</span><br><span class="line">Annotations:   kubectl.kubernetes.io/last-applied-configuration:</span><br><span class="line">                 &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;PersistentVolumeClaim&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;name&quot;:&quot;minminmsn-harbor-registry&quot;,&quot;namespace&quot;:&quot;default&quot;&#125;,&quot;spe...</span><br><span class="line">               pv.kubernetes.io/bind-completed: yes</span><br><span class="line">Finalizers:    [kubernetes.io/pvc-protection]</span><br><span class="line">Capacity:      2000Gi</span><br><span class="line">Access Modes:  RWO</span><br><span class="line">VolumeMode:    Filesystem</span><br><span class="line">Events:        &lt;none&gt;</span><br><span class="line">Mounted By:    &lt;none&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用Hlem重新部署Harbor镜像库</strong></p>
+<p>1.部署前先删除版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# helm delete --purge minminmsn</span><br><span class="line">helm delete --purge minminmsn</span><br><span class="line">release &quot;minminmsn&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<p>2.修改Harbor-helm的values.yaml中PVC相关值 注意existingClaim: “”由空值改成上面生成的PVC名字，注意对应关系，其他不变，具体变更如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">persistence:</span><br><span class="line">  enabled: true</span><br><span class="line">  # Setting it to &quot;keep&quot; to avoid removing PVCs during a helm delete </span><br><span class="line">  # operation. Leaving it empty will delete PVCs after the chart deleted</span><br><span class="line">  resourcePolicy: &quot;keep&quot;</span><br><span class="line">  persistentVolumeClaim:</span><br><span class="line">    registry:</span><br><span class="line">      # Use the existing PVC which must be created manually before bound</span><br><span class="line">      existingClaim: &quot;minminmsn-harbor-registry&quot;</span><br><span class="line">      # Specify the &quot;storageClass&quot; used to provision the volume. Or the default</span><br><span class="line">      # StorageClass will be used(the default).</span><br><span class="line">      # Set it to &quot;-&quot; to disable dynamic provisioning</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 2000Gi</span><br><span class="line">    chartmuseum:</span><br><span class="line">      existingClaim: &quot;minminmsn-harbor-chartmuseum&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 50Gi</span><br><span class="line">    jobservice:</span><br><span class="line">      existingClaim: &quot;minminmsn-harbor-jobservice&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 20Gi</span><br><span class="line">    # If external database is used, the following settings for database will </span><br><span class="line">    # be ignored</span><br><span class="line">    database:</span><br><span class="line">      existingClaim: &quot;database-data-minminmsn-harbor-database-0&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 20Gi</span><br><span class="line">    # If external Redis is used, the following settings for Redis will </span><br><span class="line">    # be ignored</span><br><span class="line">    redis:</span><br><span class="line">      existingClaim: &quot;data-minminmsn-harbor-redis-0&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 20Gi</span><br></pre></td></tr></table></figure>
+
+<p>3.重新部署</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# helm  install . --name minminmsn</span><br><span class="line">NAME:   minminmsn</span><br><span class="line">LAST DEPLOYED: Wed Jul 15 11:18:13 2020</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: DEPLOYED</span><br><span class="line"></span><br><span class="line">RESOURCES:</span><br><span class="line">==&gt; v1/Service</span><br><span class="line">NAME                         TYPE       CLUSTER-IP      EXTERNAL-IP  PORT(S)            AGE</span><br><span class="line">minminmsn-harbor-adminserver    ClusterIP  10.254.58.23    &lt;none&gt;       80/TCP             1s</span><br><span class="line">minminmsn-harbor-chartmuseum    ClusterIP  10.254.154.44   &lt;none&gt;       80/TCP             1s</span><br><span class="line">minminmsn-harbor-clair          ClusterIP  10.254.25.107   &lt;none&gt;       6060/TCP           1s</span><br><span class="line">minminmsn-harbor-core           ClusterIP  10.254.56.153   &lt;none&gt;       80/TCP             1s</span><br><span class="line">minminmsn-harbor-database       ClusterIP  10.254.65.18    &lt;none&gt;       5432/TCP           1s</span><br><span class="line">minminmsn-harbor-jobservice     ClusterIP  10.254.81.97    &lt;none&gt;       80/TCP             1s</span><br><span class="line">minminmsn-harbor-notary-server  ClusterIP  10.254.99.90    &lt;none&gt;       4443/TCP           1s</span><br><span class="line">minminmsn-harbor-notary-signer  ClusterIP  10.254.175.105  &lt;none&gt;       7899/TCP           1s</span><br><span class="line">minminmsn-harbor-portal         ClusterIP  10.254.242.113  &lt;none&gt;       80/TCP             1s</span><br><span class="line">minminmsn-harbor-redis          ClusterIP  10.254.127.40   &lt;none&gt;       6379/TCP           1s</span><br><span class="line">minminmsn-harbor-registry       ClusterIP  10.254.158.222  &lt;none&gt;       5000/TCP,8080/TCP  1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Deployment</span><br><span class="line">NAME                         DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE</span><br><span class="line">minminmsn-harbor-adminserver    1        1        1           0          1s</span><br><span class="line">minminmsn-harbor-chartmuseum    1        1        1           0          1s</span><br><span class="line">minminmsn-harbor-clair          1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-core           1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-jobservice     1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-notary-server  1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-notary-signer  1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-portal         1        0        0           0          1s</span><br><span class="line">minminmsn-harbor-registry       1        0        0           0          1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/StatefulSet</span><br><span class="line">NAME                    DESIRED  CURRENT  AGE</span><br><span class="line">minminmsn-harbor-database  1        1        1s</span><br><span class="line">minminmsn-harbor-redis     1        1        1s</span><br><span class="line"></span><br><span class="line">==&gt; v1beta1/Ingress</span><br><span class="line">NAME                   HOSTS                                                    ADDRESS  PORTS  AGE</span><br><span class="line">minminmsn-harbor-ingress  core-harbor.minminmsn.com,notary-harbor.minminmsn.com  80, 443  1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Pod(related)</span><br><span class="line">NAME                                          READY  STATUS             RESTARTS  AGE</span><br><span class="line">minminmsn-harbor-adminserver-b5d58db8c-wmrbd     0/1    ContainerCreating  0         1s</span><br><span class="line">minminmsn-harbor-chartmuseum-7c6b9d4977-94rhb    0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-clair-54465ff7dd-d7bxx          0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-core-587cc5d9b5-2xxl9           0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-jobservice-764bb697d-wsxqx      0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-notary-server-77fbb84fcc-2bw7c  0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-notary-signer-8466d68f5b-klv76  0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-database-0                      0/1    Pending            0         1s</span><br><span class="line">minminmsn-harbor-redis-0                         0/1    Pending            0         1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Secret</span><br><span class="line">NAME                       TYPE    DATA  AGE</span><br><span class="line">minminmsn-harbor-adminserver  Opaque  4     1s</span><br><span class="line">minminmsn-harbor-chartmuseum  Opaque  1     1s</span><br><span class="line">minminmsn-harbor-core         Opaque  4     1s</span><br><span class="line">minminmsn-harbor-database     Opaque  1     1s</span><br><span class="line">minminmsn-harbor-jobservice   Opaque  1     1s</span><br><span class="line">minminmsn-harbor-registry     Opaque  1     1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/ConfigMap</span><br><span class="line">NAME                         DATA  AGE</span><br><span class="line">minminmsn-harbor-adminserver    39    1s</span><br><span class="line">minminmsn-harbor-chartmuseum    24    1s</span><br><span class="line">minminmsn-harbor-clair          1     1s</span><br><span class="line">minminmsn-harbor-core           1     1s</span><br><span class="line">minminmsn-harbor-jobservice     1     1s</span><br><span class="line">minminmsn-harbor-notary-server  5     1s</span><br><span class="line">minminmsn-harbor-registry       2     1s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NOTES:</span><br><span class="line">Please wait for several minutes for Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at https://core-harbor.minminmsn.com. </span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br><span class="line"></span><br><span class="line">3.查看新生成Pods的信息</span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pods</span><br><span class="line">NAME                                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">minminmsn-harbor-adminserver-b5d58db8c-wmrbd      0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-chartmuseum-7c6b9d4977-94rhb     0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-clair-54465ff7dd-d7bxx           0/1     Running             0          9s</span><br><span class="line">minminmsn-harbor-core-587cc5d9b5-2xxl9            0/1     Running             0          9s</span><br><span class="line">minminmsn-harbor-database-0                       0/1     Init:0/1            0          9s</span><br><span class="line">minminmsn-harbor-jobservice-764bb697d-wsxqx       0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-notary-server-77fbb84fcc-2bw7c   0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-notary-signer-8466d68f5b-klv76   0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-portal-64cf8b9b69-xm8nl          0/1     ContainerCreating   0          8s</span><br><span class="line">minminmsn-harbor-redis-0                          0/1     ContainerCreating   0          9s</span><br><span class="line">minminmsn-harbor-registry-755746c5bb-q8m55        0/2     ContainerCreating   0          8s</span><br></pre></td></tr></table></figure>
+
+<p>再等2分钟查看就上恢复了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pods</span><br><span class="line">NAME                                           READY   STATUS    RESTARTS   AGE</span><br><span class="line">jenkins-0                                      1/1     Running   0          62d</span><br><span class="line">rbd-provisioner-67b4857bcd-rjwlg               1/1     Running   0          61d</span><br><span class="line">minminmsn-harbor-adminserver-b5d58db8c-wmrbd      1/1     Running   1          2m33s</span><br><span class="line">minminmsn-harbor-chartmuseum-7c6b9d4977-94rhb     1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-clair-54465ff7dd-d7bxx           1/1     Running   1          2m33s</span><br><span class="line">minminmsn-harbor-core-587cc5d9b5-2xxl9            1/1     Running   1          2m33s</span><br><span class="line">minminmsn-harbor-database-0                       1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-jobservice-764bb697d-wsxqx       1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-notary-server-77fbb84fcc-2bw7c   1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-notary-signer-8466d68f5b-klv76   1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-portal-64cf8b9b69-xm8nl          1/1     Running   0          2m32s</span><br><span class="line">minminmsn-harbor-redis-0                          1/1     Running   0          2m33s</span><br><span class="line">minminmsn-harbor-registry-755746c5bb-q8m55        2/2     Running   0          2m32s</span><br></pre></td></tr></table></figure>
+
+<p>4.Harbor控制验证 证书更新了项目也恢复了 <a target="_blank" rel="noopener" href="https://core-harbor.minminmsn.com/harbor/projects">https://core-harbor.minminmsn.com/harbor/projects</a></p>
+<p><img src="/images/harbor-helm.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/helm/" rel="tag"># helm</a>
+              <a href="/tags/harbor/" rel="tag"># harbor</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/14/2020/07/2020-07-14-nginx%E7%BB%93%E5%90%88%E8%85%BE%E8%AE%AF%E4%BA%91clb%E5%AE%8C%E6%88%90%E8%AF%B7%E6%B1%82%E5%A4%B4host%E9%87%8D%E5%86%99/index/" rel="prev" title="Nginx结合腾讯云CLB完成请求头Host重写">
+      <i class="fa fa-chevron-left"></i> Nginx结合腾讯云CLB完成请求头Host重写
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/16/2020/07/2020-07-16-%E5%9C%A8%E7%BA%BF%E6%9B%BF%E6%8D%A2ingress%E8%AF%81%E4%B9%A6/index/" rel="next" title="在线更新ingress证书">
+      在线更新ingress证书 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

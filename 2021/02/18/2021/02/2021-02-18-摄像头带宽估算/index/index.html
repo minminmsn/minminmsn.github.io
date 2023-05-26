@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="像素一个像素占多大内存 多少字节取决于需要存储一个像素的多少信息，以及是否采用了压缩技术。 如果是非黑即白的二值图像，不压缩的情况下一个像素只需要1个bit。 如果是256种状态的灰度图像，不压缩的情况下一个像素需要8bit（1字节，256种状态）。 如果用256种状态标识屏幕上某种颜色的灰度，而屏幕采用三基色红绿蓝（RGB），不压缩的情况下一个像素需要占用24bit（3字节），这个就是常说的24">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络摄像头带宽估算">
+<meta property="og:url" content="https://minminmsn.github.io/2021/02/18/2021/02/2021-02-18-%E6%91%84%E5%83%8F%E5%A4%B4%E5%B8%A6%E5%AE%BD%E4%BC%B0%E7%AE%97/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="像素一个像素占多大内存 多少字节取决于需要存储一个像素的多少信息，以及是否采用了压缩技术。 如果是非黑即白的二值图像，不压缩的情况下一个像素只需要1个bit。 如果是256种状态的灰度图像，不压缩的情况下一个像素需要8bit（1字节，256种状态）。 如果用256种状态标识屏幕上某种颜色的灰度，而屏幕采用三基色红绿蓝（RGB），不压缩的情况下一个像素需要占用24bit（3字节），这个就是常说的24">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/node.png">
+<meta property="article:published_time" content="2021-02-18T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.053Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/node.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2021/02/18/2021/02/2021-02-18-%E6%91%84%E5%83%8F%E5%A4%B4%E5%B8%A6%E5%AE%BD%E4%BC%B0%E7%AE%97/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>网络摄像头带宽估算 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2021/02/18/2021/02/2021-02-18-%E6%91%84%E5%83%8F%E5%A4%B4%E5%B8%A6%E5%AE%BD%E4%BC%B0%E7%AE%97/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络摄像头带宽估算
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-18 08:00:00" itemprop="dateCreated datePublished" datetime="2021-02-18T08:00:00+08:00">2021-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="像素"><a href="#像素" class="headerlink" title="像素"></a><strong>像素</strong></h3><p>一个像素占多大内存 多少字节取决于需要存储一个像素的多少信息，以及是否采用了压缩技术。 如果是非黑即白的二值图像，不压缩的情况下一个像素只需要1个bit。 如果是256种状态的灰度图像，不压缩的情况下一个像素需要8bit（1字节，256种状态）。 如果用256种状态标识屏幕上某种颜色的灰度，而屏幕采用三基色红绿蓝（RGB），不压缩的情况下一个像素需要占用24bit（3字节），这个就是常说的24位真彩色。</p>
+<h3 id="分辨率"><a href="#分辨率" class="headerlink" title="分辨率"></a><strong>分辨率</strong></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">720P：分辨率1280*720</span><br><span class="line">1080P：分辨率1920*1080</span><br><span class="line">2K：分辨率2048*1080</span><br><span class="line">4K：分辨率4096*2160</span><br></pre></td></tr></table></figure>
+
+<p>其中P表示视频像素总行数，例如720P视频有720行像素数。 其中K表示视频像素总列数，例如2K表示视频有2048列像素数。 MP代表像素总数，指像素的行数（P）与列数（K)相乘后的一个结果（百万像素）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">720P分辨率为1280*720P像素，实际像素为921600，百万像素。</span><br><span class="line">1080P分辨率为1920*1080P像素，实际像素为2073600，200万像素分辨率。</span><br><span class="line">2K分辨率为2048*1080P像素，实际像素为221184600，200万像素分辨率。</span><br><span class="line">4K分辨率为4096*2160P像素，实际像素为8847360，800万像素分辨率。</span><br></pre></td></tr></table></figure>
+
+<h3 id="视频帧率"><a href="#视频帧率" class="headerlink" title="视频帧率"></a><strong>视频帧率</strong></h3><p>帧率，FPS，全称Frames Per Second。指每秒传输的帧数，或者每秒显示的帧数，一般来说，帧率影响画面流畅度，且成正比：帧率越大，画面越流畅；帧率越小，画面越有跳动感。 一个较权威的说法：当视频帧率不低于24fps时，人眼才会觉得视频时连贯的，称为“视觉暂留”现象。因此，才有说法：尽管帧率越高越流畅，但在很多实际应用场景中24fps就可以了。</p>
+<p><strong>24fps</strong> 24fps是以前将视频信号传输到胶片时被广泛使用的帧速率,也是常用的标准帧速率。现如今,大多数电影也依然采用24fps帧速率。如果您想制作短剧、短片，或者是电影视频，都可以使用24fps的帧速率。</p>
+<p><strong>30fps</strong> 30fps通常是新闻、电视剧以及网络上看到的许多视频所使用的帧速率，也是比较常用的帧速率之一。如果您平时录制一些视频，想分享到网络上的，可以选择使用30fps帧速率。</p>
+<p><strong>60fps</strong> 60fps可以提供更加平滑、流畅的画面运动，是现在一些高端的高清电视以及一些游戏所广泛使用的帧速率。</p>
+<h3 id="视频编码"><a href="#视频编码" class="headerlink" title="视频编码"></a><strong>视频编码</strong></h3><p>所谓视频编码方式就是指通过压缩技术，将原始视频格式的文件转换成另一种视频格式文件的方式。 现在主要在用的有H.264和H.265，他们具体区别如下： - 版本 H.265是新的编码协议，也即是H.264的升级版。H.265标准保留H.264原来的某些技术，同时对一些相关的技术加以改进。新技术使用先进的技术用以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置；</p>
+<ul>
+<li><p>降码率 比起H.264&#x2F;AVC，H.265&#x2F;HEVC提供了更多不同的工具来降低码率，以编码单位来说，H.264中每个宏块（macroblock&#x2F;MB）大小都是固定的16x16像素，而H.265的编码单位可以选择从最小的8x8到最大的64x64；</p>
+</li>
+<li><p>采用了块的四叉树划分结构 H.265相比H.264最主要的改变是采用了块的四叉树划分结构，采用了从64x64~8x8像素的自适应块划分，并基于这种块划分结构采用一系列自适应的预测和变换等编码技术；</p>
+</li>
+<li><p>算法优化 H264由于算法优化，可以低于1Mbps的速度实现标清数字图像传送；H265则可以实现利用1~2Mbps的传输速度传送720P（分辨率1280*720）普通高清音视频传送；</p>
+</li>
+<li><p>占用的存储空间缩小 同样的画质和同样的码率，H.265比H2.64 占用的存储空间要少理论50%；</p>
+</li>
+</ul>
+<h3 id="带宽预估"><a href="#带宽预估" class="headerlink" title="带宽预估"></a><strong>带宽预估</strong></h3><p><strong>H.264压缩</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">分辨率</th>
+<th align="center">水平像素（点）</th>
+<th align="center">垂直像素（点）</th>
+<th align="center">图像位深bit</th>
+<th align="center">单幅图像数据量Mbit</th>
+<th align="center">帧率fps</th>
+<th align="center">全帧码流Mbit&#x2F;S</th>
+<th align="center">视频流 Mbit&#x2F;S</th>
+<th align="center">网络带宽Mbit&#x2F;s</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">高清720P</td>
+<td align="center">1280</td>
+<td align="center">720</td>
+<td align="center">24</td>
+<td align="center">21</td>
+<td align="center">24</td>
+<td align="center">506</td>
+<td align="center">6</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td align="center">全高清1080P</td>
+<td align="center">1920</td>
+<td align="center">1080</td>
+<td align="center">24</td>
+<td align="center">47</td>
+<td align="center">24</td>
+<td align="center">1139</td>
+<td align="center">14</td>
+<td align="center">7</td>
+</tr>
+<tr>
+<td align="center">500万</td>
+<td align="center">2560</td>
+<td align="center">1920</td>
+<td align="center">24</td>
+<td align="center">113</td>
+<td align="center">24</td>
+<td align="center">2700</td>
+<td align="center">34</td>
+<td align="center">18</td>
+</tr>
+<tr>
+<td align="center">4K（8百万）</td>
+<td align="center">3840</td>
+<td align="center">2160</td>
+<td align="center">24</td>
+<td align="center">190</td>
+<td align="center">50</td>
+<td align="center">9492</td>
+<td align="center">119</td>
+<td align="center">62</td>
+</tr>
+</tbody></table>
+<p><strong>H.265压缩</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">分辨率</th>
+<th align="center">水平像素（点）</th>
+<th align="center">垂直像素（点）</th>
+<th align="center">图像位深bit</th>
+<th align="center">单幅图像数据量Mbit</th>
+<th align="center">帧率fps</th>
+<th align="center">全帧码流Mbit&#x2F;S</th>
+<th align="center">视频流 Mbit&#x2F;S</th>
+<th align="center">网络带宽Mbit&#x2F;s</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">高清720P</td>
+<td align="center">1280</td>
+<td align="center">720</td>
+<td align="center">24</td>
+<td align="center">21</td>
+<td align="center">24</td>
+<td align="center">506</td>
+<td align="center">3</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">全高清1080P</td>
+<td align="center">1920</td>
+<td align="center">1080</td>
+<td align="center">24</td>
+<td align="center">47</td>
+<td align="center">24</td>
+<td align="center">1139</td>
+<td align="center">7</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">500万</td>
+<td align="center">2560</td>
+<td align="center">1920</td>
+<td align="center">24</td>
+<td align="center">113</td>
+<td align="center">24</td>
+<td align="center">2700</td>
+<td align="center">17</td>
+<td align="center">9</td>
+</tr>
+<tr>
+<td align="center">4K（8百万）</td>
+<td align="center">3840</td>
+<td align="center">2160</td>
+<td align="center">24</td>
+<td align="center">190</td>
+<td align="center">50</td>
+<td align="center">9492</td>
+<td align="center">59</td>
+<td align="center">31</td>
+</tr>
+</tbody></table>
+<p><img src="/images/node.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/22/2021/01/2021-01-22-tcp%E5%9B%9B%E5%B1%82%E4%BB%A3%E7%90%86%E9%80%8F%E4%BC%A0%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9C%9F%E5%AE%9Eip/index/" rel="prev" title="TCP四层代理透传客户端真实IP">
+      <i class="fa fa-chevron-left"></i> TCP四层代理透传客户端真实IP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/07/2021/03/2021-03-07-python%E8%BF%90%E7%BB%B4%E7%9B%B8%E5%85%B3%E6%A8%A1%E5%9D%97%E6%B1%87%E6%80%BB/index/" rel="next" title="Python运维相关模块汇总">
+      Python运维相关模块汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0"><span class="nav-number">1.</span> <span class="nav-text">像素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E8%BE%A8%E7%8E%87"><span class="nav-number">2.</span> <span class="nav-text">分辨率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E9%A2%91%E5%B8%A7%E7%8E%87"><span class="nav-number">3.</span> <span class="nav-text">视频帧率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">视频编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E5%AE%BD%E9%A2%84%E4%BC%B0"><span class="nav-number">5.</span> <span class="nav-text">带宽预估</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

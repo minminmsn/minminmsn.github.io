@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考  https:&#x2F;&#x2F;github.com&#x2F;naver&#x2F;pinpoint-docker https:&#x2F;&#x2F;www.cnblogs.com&#x2F;zz0412&#x2F;p&#x2F;9333296.html https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq\_21816375&#x2F;article&#x2F;details&#x2F;80455681  简介 Pinpoint是一款全链路分析工具，提供了无侵入式的调用链监控、方法执行详情查看、应用状">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全链路监控工具Pinpoint1.8.2部署">
+<meta property="og:url" content="https://minminmsn.github.io/2019/03/30/2019/03/2019-03-30-%E5%85%A8%E9%93%BE%E8%B7%AF%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7pinpoint1-8-2%E9%83%A8%E7%BD%B2/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考  https:&#x2F;&#x2F;github.com&#x2F;naver&#x2F;pinpoint-docker https:&#x2F;&#x2F;www.cnblogs.com&#x2F;zz0412&#x2F;p&#x2F;9333296.html https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq\_21816375&#x2F;article&#x2F;details&#x2F;80455681  简介 Pinpoint是一款全链路分析工具，提供了无侵入式的调用链监控、方法执行详情查看、应用状">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-03-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.552Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="pinpoint">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/03/30/2019/03/2019-03-30-%E5%85%A8%E9%93%BE%E8%B7%AF%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7pinpoint1-8-2%E9%83%A8%E7%BD%B2/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>全链路监控工具Pinpoint1.8.2部署 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/03/30/2019/03/2019-03-30-%E5%85%A8%E9%93%BE%E8%B7%AF%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7pinpoint1-8-2%E9%83%A8%E7%BD%B2/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          全链路监控工具Pinpoint1.8.2部署
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-30 08:00:00" itemprop="dateCreated datePublished" datetime="2019-03-30T08:00:00+08:00">2019-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>参考</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/naver/pinpoint-docker">https://github.com/naver/pinpoint-docker</a> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/zz0412/p/9333296.html">https://www.cnblogs.com/zz0412/p/9333296.html</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq/_21816375/article/details/80455681">https://blog.csdn.net/qq\_21816375/article/details/80455681</a></p>
+</blockquote>
+<p><strong>简介</strong> Pinpoint是一款全链路分析工具，提供了无侵入式的调用链监控、方法执行详情查看、应用状态信息监控等功能。基于GoogleDapper论文进行的实现，与另一款开源的全链路分析工具Zipkin类似，但相比Zipkin提供了无侵入式、代码维度的监控等更多的特性。 Pinpoint支持的功能比较丰富，可以支持如下几种功能： - 服务拓扑图：对整个系统中应用的调用关系进行了可视化的展示，单击某个服务节点，可以显示该节点的详细信息，比如当前节点状态、请求数量等 实时活跃线程图：监控应用内活跃线程的执行情况，对应用的线程执行性能可以有比较直观的了解 - 请求响应散点图：以时间维度进行请求计数和响应时间的展示，拖过拖动图表可以选择对应的请求查看执行的详细情况 - 请求调用栈查看：对分布式环境中每个请求提供了代码维度的可见性，可以在页面中查看请求针对到代码维度的执行详情，帮助查找请求的瓶颈和故障原因。 - 应用状态、机器状态检查：通过这个功能可以查看相关应用程序的其他的一些详细信息，比如CPU使用情况，内存状态、垃圾收集状态，TPS和JVM信息等参数。</p>
+<p><strong>架构组成</strong> Pinpoint 主要由 3 个组件外加 Hbase 数据库组成，三个组件分别为：Agent、Collector 和 Web UI。 - Agent组件：用于收集应用端监控数据，无侵入式，只需要在启动命令中加入部分参数即可 - Collector组件：数据收集模块，接收Agent发送过来的监控数据，并存储到HBase - WebUI：监控展示模块，展示系统调用关系、调用详情、应用状态等，并支持报警等功能</p>
+<p><strong>部署</strong> 1.安装docker docker-compose</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum update -y</span><br><span class="line">yum install docker epel-release python-pip -y</span><br><span class="line">pip install --upgrade pip</span><br><span class="line">pip install docker-compose</span><br></pre></td></tr></table></figure>
+
+<p>报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  Found existing installation: requests 2.6.0</span><br><span class="line">Cannot uninstall &#x27;requests&#x27;. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstal</span><br></pre></td></tr></table></figure>
+
+<p>排错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/docker/compose/issues/5883</span><br><span class="line">与pip版本有关</span><br><span class="line">pip install --upgrade --force-reinstall pip==9.0.3</span><br></pre></td></tr></table></figure>
+
+<p>2.部署pinpoint git clone <a target="_blank" rel="noopener" href="https://github.com/naver/pinpoint-docker.git">https://github.com/naver/pinpoint-docker.git</a> cd pinpoint-docker docker-compose pull &amp;&amp; docker-compose up -d</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_77_centos ~]# git clone https://github.com/naver/pinpoint-docker.git</span><br><span class="line">Cloning into &#x27;pinpoint-docker&#x27;...</span><br><span class="line">remote: Enumerating objects: 269, done.</span><br><span class="line">remote: Total 269 (delta 0), reused 0 (delta 0), pack-reused 269</span><br><span class="line">Receiving objects: 100% (269/269), 167.23 MiB | 649.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (129/129), done.</span><br><span class="line"></span><br><span class="line">[root@VM_8_77_centos ~]# cd pinpoint-docker</span><br><span class="line">[root@VM_8_77_centos pinpoint-docker]# ls</span><br><span class="line">docker-compose.yml  pinpoint-agent                 pinpoint-flink  pinpoint-quickstart  Readme.md</span><br><span class="line">docs                pinpoint-agent-attach-example  pinpoint-hbase  pinpoint-web</span><br><span class="line">License             pinpoint-collector             pinpoint-mysql  pinpoint-zookeeper</span><br><span class="line"></span><br><span class="line">[root@VM_8_77_centos pinpoint-docker]# docker-compose pull &amp;&amp; docker-compose up -d</span><br><span class="line">Pulling jobmanager          ... done</span><br><span class="line">Pulling zoo2                ... done</span><br><span class="line">Pulling taskmanager         ... done</span><br><span class="line">Pulling zoo1                ... done</span><br><span class="line">Pulling zoo3                ... done</span><br><span class="line">Pulling pinpoint-mysql      ... done</span><br><span class="line">Pulling pinpoint-hbase      ... done</span><br><span class="line">Pulling pinpoint-web        ... done</span><br><span class="line">Pulling pinpoint-collector  ... done</span><br><span class="line">Pulling pinpoint-agent      ... done</span><br><span class="line">Pulling pinpoint-quickstart ... done</span><br><span class="line">Creating network &quot;pinpoint-docker_pinpoint&quot; with driver &quot;bridge&quot;</span><br><span class="line">Creating volume &quot;pinpoint-docker_data-volume&quot; with default driver</span><br><span class="line">Creating volume &quot;pinpoint-docker_mysql_data&quot; with default driver</span><br><span class="line">Creating pinpoint-docker_zoo2_1    ... done</span><br><span class="line">Creating pinpoint-docker_zoo3_1    ... done</span><br><span class="line">Creating pinpoint-mysql            ... done</span><br><span class="line">Creating pinpoint-hbase             ... done</span><br><span class="line">Creating pinpoint-flink-jobmanager ... done</span><br><span class="line">Creating pinpoint-docker_zoo1_1    ... done</span><br><span class="line">Creating pinpoint-flink-taskmanager ... done</span><br><span class="line">Creating pinpoint-web               ... done</span><br><span class="line">Creating pinpoint-collector         ... done</span><br><span class="line">Creating pinpoint-agent             ... done</span><br><span class="line">Creating pinpoint-quickstart        ... done</span><br></pre></td></tr></table></figure>
+
+<p>3.检查镜像及进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_77_centos pinpoint-docker]# docker images </span><br><span class="line">REPOSITORY                                     TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">docker.io/zookeeper                            3.4                 4c7dee7bb5a5        2 weeks ago         150 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-agent        1.8.2               1c148b50ec86        6 weeks ago         27.2 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-hbase        1.8.2               f851bde92ec0        6 weeks ago         993 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-mysql        1.8.2               bf4cdc9f9506        6 weeks ago         390 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-web          1.8.2               a0fa17b655a5        6 weeks ago         598 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-collector    1.8.2               c6e189845eef        6 weeks ago         533 MB</span><br><span class="line">docker.io/pinpointdocker/pinpoint-quickstart   latest              125fa49a4a38        10 months ago       566 MB</span><br><span class="line">docker.io/flink                                1.3.1               c08ccd5bb7a6        21 months ago       480 MB</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@VM_8_77_centos pinpoint-docker]# docker-compose ps</span><br><span class="line">           Name                         Command               State                          Ports                       </span><br><span class="line">-------------------------------------------------------------------------------------------------------------------------</span><br><span class="line">pinpoint-agent               /usr/local/bin/configure-a ...   Up                                                         </span><br><span class="line">pinpoint-collector           /usr/local/bin/start-colle ...   Up      8080/tcp, 0.0.0.0:9994-&gt;9994/tcp,                  </span><br><span class="line">                                                                      0.0.0.0:9995-&gt;9995/tcp, 0.0.0.0:9995-&gt;9995/udp,    </span><br><span class="line">                                                                      0.0.0.0:9996-&gt;9996/tcp, 0.0.0.0:9996-&gt;9996/udp     </span><br><span class="line">pinpoint-docker_zoo1_1       /docker-entrypoint.sh zkSe ...   Up      2181/tcp, 2888/tcp, 3888/tcp                       </span><br><span class="line">pinpoint-docker_zoo2_1       /docker-entrypoint.sh zkSe ...   Up      2181/tcp, 2888/tcp, 3888/tcp                       </span><br><span class="line">pinpoint-docker_zoo3_1       /docker-entrypoint.sh zkSe ...   Up      2181/tcp, 2888/tcp, 3888/tcp                       </span><br><span class="line">pinpoint-flink-jobmanager    /docker-entrypoint.sh jobm ...   Up      6123/tcp, 0.0.0.0:8081-&gt;8081/tcp                   </span><br><span class="line">pinpoint-flink-taskmanager   /docker-entrypoint.sh task ...   Up      0.0.0.0:19994-&gt;19994/tcp, 0.0.0.0:6121-&gt;6121/tcp,  </span><br><span class="line">                                                                      0.0.0.0:6122-&gt;6122/tcp, 6123/tcp, 8081/tcp         </span><br><span class="line">pinpoint-hbase               /bin/sh -c $&#123;BASE_DIR&#125;/hba ...   Up      0.0.0.0:16010-&gt;16010/tcp, 0.0.0.0:16030-&gt;16030/tcp,</span><br><span class="line">                                                                      0.0.0.0:2180-&gt;2181/tcp, 0.0.0.0:60000-&gt;60000/tcp,  </span><br><span class="line">                                                                      0.0.0.0:60020-&gt;60020/tcp                           </span><br><span class="line">pinpoint-mysql               docker-entrypoint.sh mysqld      Up      0.0.0.0:13306-&gt;3306/tcp, 33060/tcp                 </span><br><span class="line">pinpoint-quickstart          catalina.sh run                  Up      0.0.0.0:8000-&gt;8080/tcp                             </span><br><span class="line">pinpoint-web                 /usr/local/bin/start-web.sh      Up      0.0.0.0:8079-&gt;8080/tcp, 0.0.0.0:9997-&gt;9997/tcp </span><br></pre></td></tr></table></figure>
+
+<p><strong>访问</strong> Pinpoint页面 <a target="_blank" rel="noopener" href="http://10.2.8.77:8079/#/main">http://10.2.8.77:8079/#/main</a></p>
+<p>Apache Flink Daskboard <a target="_blank" rel="noopener" href="http://10.2.8.77:8081/#/overview">http://10.2.8.77:8081/#/overview</a></p>
+<p>Habse页面 <a target="_blank" rel="noopener" href="http://10.2.8.77:16010/master-status">http://10.2.8.77:16010/master-status</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pinpoint/" rel="tag"># pinpoint</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/27/2019/03/2019-03-27-%E9%AB%98%E6%95%88%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%BA%94%E7%A7%8D%E7%AD%96%E7%95%A5/index/" rel="prev" title="高效工作的五种策略">
+      <i class="fa fa-chevron-left"></i> 高效工作的五种策略
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/03/2019/04/2019-04-03-%E4%B8%80%E4%B8%AA%E4%BA%BA%E7%9A%84%E6%B8%85%E6%AC%A2/index/" rel="next" title="一个人的清欢">
+      一个人的清欢 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

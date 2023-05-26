@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档123456https:&#x2F;&#x2F;blog.csdn.net&#x2F;nwpushuai&#x2F;article&#x2F;details&#x2F;79935740https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_43030766&#x2F;article&#x2F;details&#x2F;91513501https:&#x2F;&#x2F;blog.csdn.net&#x2F;zhqh100&#x2F;article&#x2F;details&#x2F;77646497https:&#x2F;&#x2F;www.cnblogs.co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu16.04 部署GPU环境">
+<meta property="og:url" content="https://minminmsn.github.io/2019/09/06/2019/09/2019-09-06-ubuntu16-04-%E9%83%A8%E7%BD%B2gpu%E7%8E%AF%E5%A2%83/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档123456https:&#x2F;&#x2F;blog.csdn.net&#x2F;nwpushuai&#x2F;article&#x2F;details&#x2F;79935740https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_43030766&#x2F;article&#x2F;details&#x2F;91513501https:&#x2F;&#x2F;blog.csdn.net&#x2F;zhqh100&#x2F;article&#x2F;details&#x2F;77646497https:&#x2F;&#x2F;www.cnblogs.co">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-09-06T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:32.778Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/09/06/2019/09/2019-09-06-ubuntu16-04-%E9%83%A8%E7%BD%B2gpu%E7%8E%AF%E5%A2%83/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Ubuntu16.04 部署GPU环境 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/09/06/2019/09/2019-09-06-ubuntu16-04-%E9%83%A8%E7%BD%B2gpu%E7%8E%AF%E5%A2%83/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntu16.04 部署GPU环境
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-06 08:00:00" itemprop="dateCreated datePublished" datetime="2019-09-06T08:00:00+08:00">2019-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:32" itemprop="dateModified" datetime="2023-05-26T15:06:32+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cloud/" itemprop="url" rel="index"><span itemprop="name">cloud</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https://blog.csdn.net/nwpushuai/article/details/79935740</span><br><span class="line">https://blog.csdn.net/qq_43030766/article/details/91513501</span><br><span class="line">https://blog.csdn.net/zhqh100/article/details/77646497</span><br><span class="line">https://www.cnblogs.com/zixuan-L/p/11023051.html</span><br><span class="line">https://blog.csdn.net/huangfei711/article/details/79230446</span><br><span class="line">https://www.cnblogs.com/yjlch1016/p/8641910.html</span><br></pre></td></tr></table></figure>
+
+<h3 id="硬件环境"><a href="#硬件环境" class="headerlink" title="硬件环境"></a><strong>硬件环境</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CPU   I7-7700,8M,3.6GHZ,4核</span><br><span class="line">内存  DDR4  16G</span><br><span class="line">硬盘  SSD 500G</span><br><span class="line">系统  Ubuntu 16.04 Desktop版（需要用到图像界面）</span><br><span class="line">显卡  NVDIA  GeForce GTX1050Ti  4G</span><br></pre></td></tr></table></figure>
+
+<h3 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a><strong>系统环境</strong></h3><p><strong>1.双网卡绑定</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# cat /etc/modules</span><br><span class="line"># /etc/modules: kernel modules to load at boot time.</span><br><span class="line">#</span><br><span class="line"># This file contains the names of kernel modules that should be loaded</span><br><span class="line"># at boot time, one per line. Lines beginning with &quot;#&quot; are ignored.</span><br><span class="line">bonding mode=0 miimon=100</span><br><span class="line"></span><br><span class="line">root@mec03:/etc/network# cat /etc/network/interfaces</span><br><span class="line">auto bond0</span><br><span class="line">iface bond0 inet static</span><br><span class="line">address 172.30.10.249</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 172.30.10.254</span><br><span class="line">post-up ifenslave bond0 enp2s0 enp3s0</span><br><span class="line">pre-down ifenslave -d bond0 enp2s0 enp3s0</span><br><span class="line">开机启动放在rc.local里面</span><br><span class="line">root@mec03:/etc/network# modprobe bonding </span><br><span class="line">关闭网卡管理会与bonding冲突</span><br><span class="line">root@mec03:/etc/network# systemctl disable network-manager.service</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.设置apt-list源</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# cat /etc/apt/sources.list</span><br><span class="line">deb http://mirrors.163.com/ubuntu/ xenial main restricted universe multiverse</span><br><span class="line">deb http://mirrors.163.com/ubuntu/ xenial-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.163.com/ubuntu/ xenial-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.163.com/ubuntu/ xenial-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.163.com/ubuntu/ xenial-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.163.com/ubuntu/ xenial main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.163.com/ubuntu/ xenial-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.163.com/ubuntu/ xenial-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.163.com/ubuntu/ xenial-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.163.com/ubuntu/ xenial-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.默认语言设置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# cat /etc/default/locale </span><br><span class="line">#  File generated by update-locale</span><br><span class="line"># LANG=&quot;zh_CN.UTF-8&quot;</span><br><span class="line"># LANGUAGE=&quot;zh_CN:zh&quot;</span><br><span class="line">LANG=&quot;en_US.UTF-8&quot;</span><br><span class="line">LANGUAGE=&quot;en_US:en&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、安装Nvidia-GTX-1050TI驱动"><a href="#二、安装Nvidia-GTX-1050TI驱动" class="headerlink" title="二、安装Nvidia GTX 1050TI驱动"></a><strong>二、安装Nvidia GTX 1050TI驱动</strong></h3><p><strong>1.禁用系统默认自带nvidia驱动</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# lsmod | grep nouveau</span><br><span class="line">nouveau              1724416  1</span><br><span class="line">mxm_wmi                16384  1 nouveau</span><br><span class="line">wmi                    24576  2 mxm_wmi,nouveau</span><br><span class="line">i2c_algo_bit           16384  1 nouveau</span><br><span class="line">ttm                   106496  1 nouveau</span><br><span class="line">drm_kms_helper        172032  1 nouveau</span><br><span class="line">drm                   401408  4 drm_kms_helper,ttm,nouveau</span><br><span class="line">video                  45056  1 nouveau</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.禁用模块</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# vim /etc/modprobe.d/blacklist.conf </span><br><span class="line">在文件末尾添加如下几行：</span><br><span class="line">blacklist vga16fb </span><br><span class="line">blacklist nouveau </span><br><span class="line">blacklist rivafb </span><br><span class="line">blacklist rivatv </span><br><span class="line">blacklist nvidiafb</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.更新内核</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~#  update-initramfs -u</span><br><span class="line">update-initramfs: Generating /boot/initrd.img-4.15.0-45-generic</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.重启</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~#  reboot</span><br></pre></td></tr></table></figure>
+
+<p><strong>5.上传cudnn_cudn.zip包</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~#  rz</span><br><span class="line">root@mec03:~# ls</span><br><span class="line">cudnn_cuda  cudnn_cuda.zip</span><br><span class="line">root@mec03:~# cd cudnn_cuda/</span><br><span class="line">root@mec03:~/cudnn_cuda# ls</span><br><span class="line">cuda_10.0.130.1_linux.run                libcudnn7-dev_7.6.3.30-1+cuda10.0_amd64.deb</span><br><span class="line">cuda_10.0.130_410.48_linux.run           libcudnn7-doc_7.6.3.30-1+cuda10.0_amd64.deb</span><br><span class="line">libcudnn7_7.6.3.30-1+cuda10.0_amd64.deb  NVIDIA-Linux-x86_64-435.21.run</span><br></pre></td></tr></table></figure>
+
+<p><strong>6.安装驱动</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~/cudnn_cuda# systemctl stop lightdm.service </span><br><span class="line">root@mec03:~/cudnn_cuda# sh NVIDIA-Linux-x86_64-435.21.run</span><br><span class="line">Verifying archive integrity... OK</span><br><span class="line">Uncompressing NVIDIA Accelerated Graphics Driver for Linux-x86_64 435.21........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................</span><br><span class="line"></span><br><span class="line">root@mec03:~/cudnn_cuda# lsmod | grep nvi</span><br><span class="line">nvidia_drm             45056  0</span><br><span class="line">nvidia_modeset       1118208  1 nvidia_drm</span><br><span class="line">nvidia              19472384  1 nvidia_modeset</span><br><span class="line">drm_kms_helper        172032  1 nvidia_drm</span><br><span class="line">drm                   401408  3 drm_kms_helper,nvidia_drm</span><br><span class="line">ipmi_msghandler        53248  2 ipmi_devintf,nvidia</span><br></pre></td></tr></table></figure>
+
+<h3 id="三-安装cuda-10-1"><a href="#三-安装cuda-10-1" class="headerlink" title="三.安装cuda 10.1"></a><strong>三.安装cuda 10.1</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~/cudnn_cuda# sh cuda_10.0.130_410.48_linux.run</span><br><span class="line"></span><br><span class="line">Do you accept the previously read EULA?</span><br><span class="line">accept/decline/quit: accept</span><br><span class="line"></span><br><span class="line">Install NVIDIA Accelerated Graphics Driver for Linux-x86_64 410.48?</span><br><span class="line">(y)es/(n)o/(q)uit: n</span><br><span class="line"></span><br><span class="line">Install the CUDA 10.0 Toolkit?</span><br><span class="line">(y)es/(n)o/(q)uit: y</span><br><span class="line"></span><br><span class="line">Enter Toolkit Location</span><br><span class="line"> [ default is /usr/local/cuda-10.0 ]: </span><br><span class="line"></span><br><span class="line">Do you want to install a symbolic link at /usr/local/cuda?</span><br><span class="line">(y)es/(n)o/(q)uit: y</span><br><span class="line"></span><br><span class="line">Install the CUDA 10.0 Samples?</span><br><span class="line">(y)es/(n)o/(q)uit: y</span><br><span class="line"></span><br><span class="line">Enter CUDA Samples Location</span><br><span class="line"> [ default is /root ]: </span><br><span class="line"></span><br><span class="line">Installing the CUDA Toolkit in /usr/local/cuda-10.0 ...</span><br><span class="line"></span><br><span class="line">Installing the CUDA Toolkit in /usr/local/cuda-10.0 ...</span><br><span class="line">Missing recommended library: libGLU.so</span><br><span class="line">Missing recommended library: libX11.so</span><br><span class="line">Missing recommended library: libXi.so</span><br><span class="line">Missing recommended library: libXmu.so</span><br><span class="line"></span><br><span class="line">Installing the CUDA Samples in /root ...</span><br><span class="line">Copying samples to /root/NVIDIA_CUDA-10.0_Samples now...</span><br><span class="line">Finished copying samples.</span><br><span class="line"></span><br><span class="line">===========</span><br><span class="line">= Summary =</span><br><span class="line">===========</span><br><span class="line"></span><br><span class="line">Driver:   Not Selected</span><br><span class="line">Toolkit:  Installed in /usr/local/cuda-10.0</span><br><span class="line">Samples:  Installed in /root, but missing recommended libraries</span><br><span class="line"></span><br><span class="line">Please make sure that</span><br><span class="line"> - PATH includes /usr/local/cuda-10.0/bin</span><br><span class="line"> - LD_LIBRARY_PATH includes /usr/local/cuda-10.0/lib64, or, add /usr/local/cuda-10.0/lib64 to /etc/ld.so.conf and run ldconfig as root</span><br><span class="line"></span><br><span class="line">To uninstall the CUDA Toolkit, run the uninstall script in /usr/local/cuda-10.0/bin</span><br><span class="line"></span><br><span class="line">Please see CUDA_Installation_Guide_Linux.pdf in /usr/local/cuda-10.0/doc/pdf for detailed information on setting up CUDA.</span><br><span class="line"></span><br><span class="line">***WARNING: Incomplete installation! This installation did not install the CUDA Driver. A driver of version at least 384.00 is required for CUDA 10.0 functionality to work.</span><br><span class="line">To install the driver using this installer, run the following command, replacing &lt;CudaInstaller&gt; with the name of this run file:</span><br><span class="line">    sudo &lt;CudaInstaller&gt;.run -silent -driver</span><br><span class="line"></span><br><span class="line">Logfile is /tmp/cuda_install_9752.log</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">root@mec03:~/cudnn_cuda# vim /etc/ld.so.conf</span><br><span class="line">root@mec03:~/cudnn_cuda# ldconfig</span><br><span class="line"></span><br><span class="line">root@mec03:~# cat /etc/profile</span><br><span class="line">export PATH=/usr/local/cuda-10.0/bin$&#123;PATH:+:$&#123;PATH&#125;&#125;</span><br><span class="line">export LD_LIBRARY_PATH=/usr/local/cuda/lib64$&#123;LD_LIBRARY_PATH:+:$&#123;LD_LIBRARY_PATH&#125;&#125;</span><br><span class="line">export CUDA_HOME=/usr/local/cuda</span><br><span class="line"></span><br><span class="line">root@mec03:~# nvcc --version</span><br><span class="line">nvcc: NVIDIA (R) Cuda compiler driver</span><br><span class="line">Copyright (c) 2005-2018 NVIDIA Corporation</span><br><span class="line">Built on Sat_Aug_25_21:08:01_CDT_2018</span><br><span class="line">Cuda compilation tools, release 10.0, V10.0.130</span><br></pre></td></tr></table></figure>
+
+<h3 id="四-安装cuDNN-7-6"><a href="#四-安装cuDNN-7-6" class="headerlink" title="四.安装cuDNN 7.6"></a><strong>四.安装cuDNN 7.6</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~/cudnn_cuda# dpkg -i libcudnn7_7.6.3.30-1+cuda10.0_amd64.deb </span><br><span class="line">Selecting previously unselected package libcudnn7.</span><br><span class="line">(Reading database ... 184057 files and directories currently installed.)</span><br><span class="line">Preparing to unpack libcudnn7_7.6.3.30-1+cuda10.0_amd64.deb ...</span><br><span class="line">Unpacking libcudnn7 (7.6.3.30-1+cuda10.0) ...</span><br><span class="line">Setting up libcudnn7 (7.6.3.30-1+cuda10.0) ...</span><br><span class="line">Processing triggers for libc-bin (2.23-0ubuntu11) ...</span><br><span class="line">root@mec03:~/cudnn_cuda# dpkg -i libcudnn7-dev_7.6.3.30-1+cuda10.0_amd64.deb </span><br><span class="line">Selecting previously unselected package libcudnn7-dev.</span><br><span class="line">(Reading database ... 184063 files and directories currently installed.)</span><br><span class="line">Preparing to unpack libcudnn7-dev_7.6.3.30-1+cuda10.0_amd64.deb ...</span><br><span class="line">Unpacking libcudnn7-dev (7.6.3.30-1+cuda10.0) ...</span><br><span class="line">Setting up libcudnn7-dev (7.6.3.30-1+cuda10.0) ...</span><br><span class="line">update-alternatives: using /usr/include/x86_64-linux-gnu/cudnn_v7.h to provide /usr/include/cudnn.h (libcudnn) in auto mode</span><br><span class="line">root@mec03:~/cudnn_cuda# dpkg -i libcudnn7-doc_7.6.3.30-1+cuda10.0_amd64.deb </span><br><span class="line">Selecting previously unselected package libcudnn7-doc.</span><br><span class="line">(Reading database ... 184069 files and directories currently installed.)</span><br><span class="line">Preparing to unpack libcudnn7-doc_7.6.3.30-1+cuda10.0_amd64.deb ...</span><br><span class="line">Unpacking libcudnn7-doc (7.6.3.30-1+cuda10.0) ...</span><br><span class="line">Setting up libcudnn7-doc (7.6.3.30-1+cuda10.0) ...</span><br><span class="line"></span><br><span class="line">root@mec03:~/cudnn_cuda#  cp /usr/include/cudnn.h /usr/local/cuda/include</span><br><span class="line"></span><br><span class="line">root@mec03:~/cudnn_cuda# cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2</span><br><span class="line">#define CUDNN_MAJOR 7</span><br><span class="line">#define CUDNN_MINOR 6</span><br><span class="line">#define CUDNN_PATCHLEVEL 3</span><br><span class="line">--</span><br><span class="line">#define CUDNN_VERSION (CUDNN_MAJOR * 1000 + CUDNN_MINOR * 100 + CUDNN_PATCHLEVEL)</span><br><span class="line"></span><br><span class="line">#include &quot;driver_types.h&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试GPU效果"><a href="#测试GPU效果" class="headerlink" title="测试GPU效果"></a><strong>测试GPU效果</strong></h3><p><strong>1.安装python3.6</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~#  add-apt-repository ppa:jonathonf/python-3.6</span><br><span class="line"> A plain backport of *just* Python 3.6. System extensions/Python libraries may or may not work.</span><br><span class="line"></span><br><span class="line">Don&#x27;t remove Python 3.5 from your system - it will break.</span><br><span class="line"> More info: https://launchpad.net/~jonathonf/+archive/ubuntu/python-3.6</span><br><span class="line">Press [ENTER] to continue or ctrl-c to cancel adding it</span><br><span class="line"></span><br><span class="line">gpg: keyring `/tmp/tmpec5st1dk/secring.gpg&#x27; created</span><br><span class="line">gpg: keyring `/tmp/tmpec5st1dk/pubring.gpg&#x27; created</span><br><span class="line">gpg: requesting key F06FC659 from hkp server keyserver.ubuntu.com</span><br><span class="line">gpg: /tmp/tmpec5st1dk/trustdb.gpg: trustdb created</span><br><span class="line">gpg: key F06FC659: public key &quot;Launchpad PPA for J Fernyhough&quot; imported</span><br><span class="line">gpg: Total number processed: 1</span><br><span class="line">gpg:               imported: 1  (RSA: 1)</span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line">root@mec03:~#  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1</span><br><span class="line">update-alternatives: using /usr/bin/python3.5 to provide /usr/bin/python3 (python3) in auto mode</span><br><span class="line">root@mec03:~# update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 2</span><br><span class="line">update-alternatives: using /usr/bin/python3.6 to provide /usr/bin/python3 (python3) in auto mode</span><br><span class="line">root@mec03:~# update-alternatives --install /usr/bin/python python /usr/bin/python2 100</span><br><span class="line">update-alternatives: using /usr/bin/python2 to provide /usr/bin/python (python) in auto mode</span><br><span class="line">root@mec03:~# update-alternatives --install /usr/bin/python python /usr/bin/python3 150</span><br><span class="line">update-alternatives: using /usr/bin/python3 to provide /usr/bin/python (python) in auto mode</span><br><span class="line">root@mec03:~# python3</span><br><span class="line">Python 3.6.8 (default, May  7 2019, 14:58:50) </span><br><span class="line">[GCC 5.4.0 20160609] on linux</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>
+
+<p><strong>2.安装pip3</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# apt install  python3-pip</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.安装tensorflow</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# pip3 install tensorflow-gpu==1.13.1 -i https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line">Collecting tensorflow-gpu==1.13.1</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.测试gpu</strong> 测试python语句</p>
+<blockquote>
+<p>import numpy import tensorflow as tf a &#x3D; tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape&#x3D;[2, 3], name&#x3D;’a’) b &#x3D; tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape&#x3D;[3, 2], name&#x3D;’b’) c &#x3D; tf.matmul(a, b) sess &#x3D; tf.Session(config&#x3D;tf.ConfigProto(log_device_placement&#x3D;True)) print(sess.run(c))</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# python3</span><br><span class="line">Python 3.6.8 (default, May  7 2019, 14:58:50) </span><br><span class="line">[GCC 5.4.0 20160609] on linux</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; import numpy</span><br><span class="line">ement=True))</span><br><span class="line">print(sess.run(c))&gt;&gt;&gt; import tensorflow as tf</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:526: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  _np_qint8 = np.dtype([(&quot;qint8&quot;, np.int8, 1)])</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:527: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  _np_quint8 = np.dtype([(&quot;quint8&quot;, np.uint8, 1)])</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:528: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  _np_qint16 = np.dtype([(&quot;qint16&quot;, np.int16, 1)])</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:529: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  _np_quint16 = np.dtype([(&quot;quint16&quot;, np.uint16, 1)])</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:530: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  _np_qint32 = np.dtype([(&quot;qint32&quot;, np.int32, 1)])</span><br><span class="line">/usr/local/lib/python3.6/dist-packages/tensorflow/python/framework/dtypes.py:535: FutureWarning: Passing (type, 1) or &#x27;1type&#x27; as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / &#x27;(1,)type&#x27;.</span><br><span class="line">  np_resource = np.dtype([(&quot;resource&quot;, np.ubyte, 1)])</span><br><span class="line">&gt;&gt;&gt; a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name=&#x27;a&#x27;)</span><br><span class="line">&gt;&gt;&gt; b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name=&#x27;b&#x27;)</span><br><span class="line">&gt;&gt;&gt; c = tf.matmul(a, b)</span><br><span class="line">&gt;&gt;&gt; sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))</span><br><span class="line">2019-09-14 12:27:18.309361: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA</span><br><span class="line">2019-09-14 12:27:18.360212: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:998] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero</span><br><span class="line">2019-09-14 12:27:18.360498: I tensorflow/compiler/xla/service/service.cc:150] XLA service 0x3bb3a20 executing computations on platform CUDA. Devices:</span><br><span class="line">2019-09-14 12:27:18.360512: I tensorflow/compiler/xla/service/service.cc:158]   StreamExecutor device (0): GeForce GTX 1050 Ti, Compute Capability 6.1</span><br><span class="line">2019-09-14 12:27:18.379184: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3600000000 Hz</span><br><span class="line">2019-09-14 12:27:18.380446: I tensorflow/compiler/xla/service/service.cc:150] XLA service 0x3ccb2f0 executing computations on platform Host. Devices:</span><br><span class="line">2019-09-14 12:27:18.380503: I tensorflow/compiler/xla/service/service.cc:158]   StreamExecutor device (0): &lt;undefined&gt;, &lt;undefined&gt;</span><br><span class="line">2019-09-14 12:27:18.380792: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1433] Found device 0 with properties: </span><br><span class="line">name: GeForce GTX 1050 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.392</span><br><span class="line">pciBusID: 0000:01:00.0</span><br><span class="line">totalMemory: 3.94GiB freeMemory: 3.66GiB</span><br><span class="line">2019-09-14 12:27:18.380852: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1512] Adding visible gpu devices: 0</span><br><span class="line">2019-09-14 12:27:18.382037: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] Device interconnect StreamExecutor with strength 1 edge matrix:</span><br><span class="line">2019-09-14 12:27:18.382075: I tensorflow/core/common_runtime/gpu/gpu_device.cc:990]      0 </span><br><span class="line">2019-09-14 12:27:18.382090: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1003] 0:   N </span><br><span class="line">2019-09-14 12:27:18.382242: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1115] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 3452 MB memory) -&gt; physical GPU (device: 0, name: GeForce GTX 1050 Ti, pci bus id: 0000:01:00.0, compute capability: 6.1)</span><br><span class="line">Device mapping:</span><br><span class="line">/job:localhost/replica:0/task:0/device:XLA_GPU:0 -&gt; device: XLA_GPU device</span><br><span class="line">/job:localhost/replica:0/task:0/device:XLA_CPU:0 -&gt; device: XLA_CPU device</span><br><span class="line">/job:localhost/replica:0/task:0/device:GPU:0 -&gt; device: 0, name: GeForce GTX 1050 Ti, pci bus id: 0000:01:00.0, compute capability: 6.1</span><br><span class="line">2019-09-14 12:27:18.384493: I tensorflow/core/common_runtime/direct_session.cc:317] Device mapping:</span><br><span class="line">/job:localhost/replica:0/task:0/device:XLA_GPU:0 -&gt; device: XLA_GPU device</span><br><span class="line">/job:localhost/replica:0/task:0/device:XLA_CPU:0 -&gt; device: XLA_CPU device</span><br><span class="line">/job:localhost/replica:0/task:0/device:GPU:0 -&gt; device: 0, name: GeForce GTX 1050 Ti, pci bus id: 0000:01:00.0, compute capability: 6.1</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; print(sess.run(c))</span><br><span class="line">MatMul: (MatMul): /job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">2019-09-14 12:27:20.118473: I tensorflow/core/common_runtime/placer.cc:1059] MatMul: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">a: (Const): /job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">2019-09-14 12:27:20.118492: I tensorflow/core/common_runtime/placer.cc:1059] a: (Const)/job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">b: (Const): /job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">2019-09-14 12:27:20.118502: I tensorflow/core/common_runtime/placer.cc:1059] b: (Const)/job:localhost/replica:0/task:0/device:GPU:0</span><br><span class="line">[[22. 28.]</span><br><span class="line"> [49. 64.]]</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>
+
+<p><strong>5.查看GPU使用情况</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">root@mec03:~# nvidia-smi </span><br><span class="line">Fri Sep  6 19:42:42 2019    </span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0      9558      C   python3                                     3865MiB |</span><br><span class="line">|    0     12510      G   /usr/lib/xorg/Xorg                            39MiB |</span><br><span class="line">|    0     12608      G   gnome-shell                                   38MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">Fri Sep  6 00:22:27 2019       </span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 435.21       Driver Version: 435.21       CUDA Version: 10.1     |</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  GeForce GTX 105...  Off  | 00000000:01:00.0  On |                  N/A |</span><br><span class="line">| 31%   62C    P0    N/A /  80W |   3955MiB /  4038MiB |     97%      Default |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                       GPU Memory |</span><br><span class="line">|  GPU       PID   Type   Process name                             Usage      |</span><br><span class="line">|=============================================================================|</span><br><span class="line">|    0      9558      C   python3                                     3865MiB |</span><br><span class="line">|    0     12510      G   /usr/lib/xorg/Xorg                            39MiB |</span><br><span class="line">|    0     12608      G   gnome-shell                                   38MiB |</span><br><span class="line">+-----------------------------------------------------------------------------+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/02/2019/09/2019-09-02-%E5%85%BB%E6%88%90%E4%BC%98%E7%A7%80%E5%93%81%E6%A0%BC%E7%9A%847%E6%9D%A1%E5%87%86%E5%88%99/index/" rel="prev" title="养成优秀品格的7条准则">
+      <i class="fa fa-chevron-left"></i> 养成优秀品格的7条准则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/26/2019/09/2019-09-26-ubuntu-16-04-opencvpclvtk%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index/" rel="next" title="ubuntu 16.04 opencv+pcl+vtk环境部署">
+      ubuntu 16.04 opencv+pcl+vtk环境部署 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">硬件环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">系统环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85Nvidia-GTX-1050TI%E9%A9%B1%E5%8A%A8"><span class="nav-number">4.</span> <span class="nav-text">二、安装Nvidia GTX 1050TI驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-%E5%AE%89%E8%A3%85cuda-10-1"><span class="nav-number">5.</span> <span class="nav-text">三.安装cuda 10.1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-%E5%AE%89%E8%A3%85cuDNN-7-6"><span class="nav-number">6.</span> <span class="nav-text">四.安装cuDNN 7.6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95GPU%E6%95%88%E6%9E%9C"><span class="nav-number">7.</span> <span class="nav-text">测试GPU效果</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

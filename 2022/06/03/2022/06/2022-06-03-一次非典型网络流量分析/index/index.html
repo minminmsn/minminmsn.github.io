@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景本来我在吃着花生，听着老师唱王心凌男孩，突然群里有人@我了，不过这也是之前让你有问题找我，怪不得别人，都是工作，车端流量使用非常大，基本是1天几十个G，而且最近才发生  分析主要怀疑几个方向，都和业务场景有关  Pad端流量分析：APP流量、数据收集、地图 云端流量分析：日志收集、直播、场景 域控制器流量分析：外联业务  过程首先联系端和云上同事一起看看他们这边是否有异常流量，经过分析并没发现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次非典型网络流量分析">
+<meta property="og:url" content="https://minminmsn.github.io/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="背景本来我在吃着花生，听着老师唱王心凌男孩，突然群里有人@我了，不过这也是之前让你有问题找我，怪不得别人，都是工作，车端流量使用非常大，基本是1天几十个G，而且最近才发生  分析主要怀疑几个方向，都和业务场景有关  Pad端流量分析：APP流量、数据收集、地图 云端流量分析：日志收集、直播、场景 域控制器流量分析：外联业务  过程首先联系端和云上同事一起看看他们这边是否有异常流量，经过分析并没发现">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/image-1024x768.jpg">
+<meta property="og:image" content="https://minminmsn.github.io/images/5CD352C0-958E-42C6-826D-B53BA30D296A-1024x267.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_16542294481943.png">
+<meta property="article:published_time" content="2022-06-03T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.729Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/image-1024x768.jpg">
+
+<link rel="canonical" href="https://minminmsn.github.io/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>一次非典型网络流量分析 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/06/03/2022/06/2022-06-03-%E4%B8%80%E6%AC%A1%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一次非典型网络流量分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-06-03 08:00:00" itemprop="dateCreated datePublished" datetime="2022-06-03T08:00:00+08:00">2022-06-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>本来我在吃着花生，听着老师唱王心凌男孩，突然群里有人@我了，不过这也是之前让你有问题找我，怪不得别人，都是工作，车端流量使用非常大，基本是1天几十个G，而且最近才发生</p>
+<p><img src="/images/image-1024x768.jpg"></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>主要怀疑几个方向，都和业务场景有关</p>
+<ul>
+<li>Pad端流量分析：APP流量、数据收集、地图</li>
+<li>云端流量分析：日志收集、直播、场景</li>
+<li>域控制器流量分析：外联业务</li>
+</ul>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>首先联系端和云上同事一起看看他们这边是否有异常流量，经过分析并没发现特别大的流程，期间也对流量使用及业务场景加深了了解。</p>
+<p>其次运维方主要别精力放在域控制流量分析上，首先看Iftop流量过滤出外网的，发现了几个流量比较大的IP，分别是日志收集、业务场景，还有一个流量比较大的IP没有记录在案。通过查询发现是武汉的IP，还以为是域控制供应商留下的后门呢（有点儿乱想了），此时已经有了突破点儿，通过ss、netstat等命令发现，本地和该IP有10来个链接，而且端口一直在变，然后看流量每秒有50Mbps，开始还以为是恶意程序。最好安装了tcpdump，让同事抓包分析，最后才知道是测试网速的站点。</p>
+<p>最后复盘，是同事之前测试网速后网络关闭了，让他开机启动一直运行了，可能是对这个测试原理不清楚，给人的教训就是发现了问题要及时分析，另外还得加强评审（最近一直在培养突破同事技能，难免有试错成本，还得加强把控）。</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>1、iftop找到外网异常流量ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@titan-ubuntu1:~# iftop -F  59.175.206.86/32 -P </span><br><span class="line">59.175.206.86:http-alt             =&gt; rosmaster:54604                   8.97Mb  6.83Mb  6.83M</span><br><span class="line">                                  &lt;=                                               99.5Kb  77.4Kb  77.4Kb</span><br><span class="line">59.175.206.86:http-alt             =&gt; rosmaster:54650                   8.31Mb  6.20Mb  6.20Mb</span><br><span class="line">                                  &lt;=                                               92.6Kb  69.4Kb  69.4Kb</span><br><span class="line">59.175.206.86:http-alt              =&gt; rosmaster:54532                  1.65Mb  5.85Mb  5.85Mb</span><br><span class="line">                                    &lt;=                                              17.0Kb  66.0Kb  66.0Kb</span><br><span class="line">59.175.206.86:http-alt              =&gt; rosmaster:54528                   4.85Mb  5.85Mb  5.85Mb</span><br><span class="line">                                    &lt;=                                               49.9Kb  62.8Kb  62.8Kb</span><br><span class="line">59.175.206.86:http-alt               =&gt; rosmaster:54530                  7.00Mb  5.79Mb  5.79Mb</span><br><span class="line">                                     &lt;=                                               73.1Kb  63.0Kb  63.0Kb                                                                             0b    677b    677b</span><br></pre></td></tr></table></figure>
+
+<p>2、ss查看建立的链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@titan-ubuntu1:~# ss -an |grep 59.175.206.86</span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39204                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:38576                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39654                                        59.175.206.86:8080                 </span><br><span class="line">tcp              FIN-WAIT-1             0                   31365                                                                                 192.168.1.102:40112                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39652                                        59.175.206.86:8080                 </span><br><span class="line">tcp              FIN-WAIT-1             0                   28357                                                                                 192.168.1.102:40074                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39650                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:38838                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39656                                        59.175.206.86:8080                 </span><br><span class="line">tcp              TIME-WAIT              0                   0                                                                                     192.168.1.102:39198                                        59.175.206.86:8080                 </span><br></pre></td></tr></table></figure>
+
+<p>3、tcp分析得出结论</p>
+<p><img src="/images/5CD352C0-958E-42C6-826D-B53BA30D296A-1024x267.png"></p>
+<p>发现一个可疑链接 <a target="_blank" rel="noopener" href="http://59.175.206.86:8080/speedtest/latency.txt?x=1654228563731">http://59.175.206.86:8080/speedtest/latency.txt?x=1654228563731</a>，再一核对原来是之前测试流量脚本里面的带宽，由于车端上5G网络，测一次网速就得100Mb流量消化。</p>
+<p><img src="/images/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_16542294481943.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/29/2022/05/2022-05-29-%E6%9B%BE%E5%9B%BD%E8%97%A9%E9%A2%86%E5%AF%BC%E5%8A%9B%E5%8D%81%E4%BA%8C%E5%AD%97/index/" rel="prev" title="曾国藩领导力十二讲">
+      <i class="fa fa-chevron-left"></i> 曾国藩领导力十二讲
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/11/2022/06/2022-06-11-%E6%98%8E%E5%84%92%E5%AD%A6%E6%A1%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index/" rel="next" title="明儒学案学习笔记">
+      明儒学案学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.</span> <span class="nav-text">步骤</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

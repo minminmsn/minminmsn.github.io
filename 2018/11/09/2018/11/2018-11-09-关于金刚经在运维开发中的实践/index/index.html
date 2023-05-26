@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考   姚秦 鸠摩罗什 《金刚般若波罗蜜经》    梁 昭明太子 《金刚经》三十二品   唐 六祖惠能 六祖讲《金刚经》   金刚经 金刚经（《金刚般若波罗蜜经》，又译《佛说能断金刚般若波罗蜜多经》，简称《金刚经》）的核心思想，其实就是一句话：菩萨于法，应无所住，行于布施。简单概况下就是不着相（应无所住而生其心），行布施，能做到这点就算觉悟了 ，也算自觉了，成就阿罗汉果了。再后面就是觉他及觉行圆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于金刚经在运维开发中的实践">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E5%85%B3%E4%BA%8E%E9%87%91%E5%88%9A%E7%BB%8F%E5%9C%A8%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考   姚秦 鸠摩罗什 《金刚般若波罗蜜经》    梁 昭明太子 《金刚经》三十二品   唐 六祖惠能 六祖讲《金刚经》   金刚经 金刚经（《金刚般若波罗蜜经》，又译《佛说能断金刚般若波罗蜜多经》，简称《金刚经》）的核心思想，其实就是一句话：菩萨于法，应无所住，行于布施。简单概况下就是不着相（应无所住而生其心），行布施，能做到这点就算觉悟了 ，也算自觉了，成就阿罗汉果了。再后面就是觉他及觉行圆">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:29.628Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="zen">
+<meta property="article:tag" content="op">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E5%85%B3%E4%BA%8E%E9%87%91%E5%88%9A%E7%BB%8F%E5%9C%A8%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>关于金刚经在运维开发中的实践 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E5%85%B3%E4%BA%8E%E9%87%91%E5%88%9A%E7%BB%8F%E5%9C%A8%E8%BF%90%E7%BB%B4%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%AE%9E%E8%B7%B5/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于金刚经在运维开发中的实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-09 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-09T08:00:00+08:00">2018-11-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:29" itemprop="dateModified" datetime="2023-05-26T15:06:29+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/zen/" itemprop="url" rel="index"><span itemprop="name">zen</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/zen/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h3><table>
+<thead>
+<tr>
+<th>姚秦</th>
+<th>鸠摩罗什</th>
+<th>《金刚般若波罗蜜经》</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>梁</td>
+<td>昭明太子</td>
+<td>《金刚经》三十二品</td>
+</tr>
+<tr>
+<td>唐</td>
+<td>六祖惠能</td>
+<td>六祖讲《金刚经》</td>
+</tr>
+</tbody></table>
+<h3 id="金刚经"><a href="#金刚经" class="headerlink" title="金刚经"></a><strong>金刚经</strong></h3><blockquote>
+<p>金刚经（《金刚般若波罗蜜经》，又译《佛说能断金刚般若波罗蜜多经》，简称《金刚经》）的核心思想，其实就是一句话：菩萨于法，应无所住，行于布施。简单概况下就是不着相（应无所住而生其心），行布施，能做到这点就算觉悟了 ，也算自觉了，成就阿罗汉果了。再后面就是觉他及觉行圆满了，据说只有佛祖释迦牟尼（姓乔达摩，名悉达多）一人达到了，毕竟他老人家35岁就觉悟了，自觉后又花了45年觉他，觉行圆满后才涅槃。</p>
+</blockquote>
+<p><strong>如下分别从法门、着相、布施几个方面来对比:</strong></p>
+<ul>
+<li><h3 id="关于法门"><a href="#关于法门" class="headerlink" title="关于法门"></a><strong>关于法门</strong></h3><p>  法门相对于各种技术，各种技术就代表各个法门了，佛门有四万八千法门，与多于牛毛的开源技术差不多了。前几年云计算、大数据，后来的加密货币、人工智能，以及未来的量子技术，哪一个不需要了解，哪一个又能透彻理解？所以说这些都是法门，哪一个精通了就差不多达到了，都可以做为修炼的功法。要是哪天你觉悟了就不得了了，一通百通，说不定连前世特斯拉的技术你都知道了。</p>
+</li>
+<li><h3 id="关于着相"><a href="#关于着相" class="headerlink" title="关于着相"></a><strong>关于着相</strong></h3><p>  凡夫众生与修行者最大的差别，在于众生执著四相（我相、人相、众生相、寿者相）而轮回不断；而大乘行者则能于佛法修行中证悟金刚智慧渐渐舍离于四相之执著，直至圆成佛道。能不能成佛道暂且不说，断不断轮回也不讲，要是能没有烦恼就谢天谢地了，我等凡夫在运维时老是执着于背锅侠、网管、产品经理等等这些听着让人不舒服的词语，他们只是个名词，他们又有什么错呢？他们只是定义区分一些事物而已与叫大爷、二狗、世尊等等又有什么区别？何必执着，何必自寻烦恼呢？要是能把满大街的人都看成圣人，哪你还有烦恼吗？比如把产品经理看成圣人，这是个着力点，可以好好拿来格一格，不着相了你就释然了，就逍遥了，就通达了！既然众生平等，那么对上就应该不卑不亢，对下就应该不骄不躁，看问题应该使用佛祖视角，也就是五维关注的是过去现在将来，不在意一生一世的得失，还得考虑下来生来世啊，更何况是一时一势呢？</p>
+</li>
+<li><h3 id="关于布施"><a href="#关于布施" class="headerlink" title="关于布施"></a><strong>关于布施</strong></h3><p>  布施就是服务，反过来服务就是布施啊，我们得坚定心态端正态度：当领导同事使用必须、尽快、下班之前等等字眼时，我们看到不应该是我们又得做保姆型运维服务了，我们那是在布施，当我们请客吃饭时那是七宝布施，当我们加班到凌晨时那是身体布施，身体布施大于七宝布施所以领导同事的愉悦度会更大。我特别反对揣摩洞察领导的意图，子非鱼，安知鱼之乐？只有布施就好了，无所住而行布施，布施了也不挂于心，时间久了境界也就上去了。何况这个还是有偿布施，所以运维就是修行，好好珍惜这次修行的机会吧！</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/zen/" rel="tag"># zen</a>
+              <a href="/tags/op/" rel="tag"># op</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/09/2018/11/2018-11-09-%E6%88%91%E7%9A%84%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86/index/" rel="prev" title="我的互联网面试经历">
+      <i class="fa fa-chevron-left"></i> 我的互联网面试经历
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/09/2018/11/2018-11-09-%E4%BD%BF%E7%94%A8elk%E5%88%86%E6%9E%90%E8%85%BE%E8%AE%AF%E4%BA%91clb%E6%97%A5%E5%BF%97/index/" rel="next" title="使用ELK分析腾讯云CLB日志">
+      使用ELK分析腾讯云CLB日志 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%91%E5%88%9A%E7%BB%8F"><span class="nav-number">2.</span> <span class="nav-text">金刚经</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%B3%95%E9%97%A8"><span class="nav-number">3.</span> <span class="nav-text">关于法门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%9D%80%E7%9B%B8"><span class="nav-number">4.</span> <span class="nav-text">关于着相</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%B8%83%E6%96%BD"><span class="nav-number">5.</span> <span class="nav-text">关于布施</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

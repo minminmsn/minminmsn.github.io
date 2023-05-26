@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1、resolv.conf &#x2F;etc&#x2F;resolv.conf 文件里面的dns服务器是实时生效的，发现ubuntu18.04和Centos系列的差别很大，ubuntu18.04是个软链接并建议不要去修改；centos系列是个配置文件，可以直接修改使用。 2、resolvconf 默认软链接 12345678910111213141516171819202122user@ubun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="影响ubuntu18.04系统DNS的几个因素">
+<meta property="og:url" content="https://minminmsn.github.io/2021/07/27/2021/07/2021-07-27-%E5%BD%B1%E5%93%8Dubuntu18-04%E7%B3%BB%E7%BB%9Fdns%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9B%A0%E7%B4%A0/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="1、resolv.conf &#x2F;etc&#x2F;resolv.conf 文件里面的dns服务器是实时生效的，发现ubuntu18.04和Centos系列的差别很大，ubuntu18.04是个软链接并建议不要去修改；centos系列是个配置文件，可以直接修改使用。 2、resolvconf 默认软链接 12345678910111213141516171819202122user@ubun">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-27T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.228Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2021/07/27/2021/07/2021-07-27-%E5%BD%B1%E5%93%8Dubuntu18-04%E7%B3%BB%E7%BB%9Fdns%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9B%A0%E7%B4%A0/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>影响ubuntu18.04系统DNS的几个因素 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2021/07/27/2021/07/2021-07-27-%E5%BD%B1%E5%93%8Dubuntu18-04%E7%B3%BB%E7%BB%9Fdns%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9B%A0%E7%B4%A0/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          影响ubuntu18.04系统DNS的几个因素
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-07-27 08:00:00" itemprop="dateCreated datePublished" datetime="2021-07-27T08:00:00+08:00">2021-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>1、resolv.conf</strong></p>
+<p>&#x2F;etc&#x2F;resolv.conf 文件里面的dns服务器是实时生效的，发现ubuntu18.04和Centos系列的差别很大，ubuntu18.04是个软链接并建议不要去修改；centos系列是个配置文件，可以直接修改使用。</p>
+<p><strong>2、resolvconf</strong> 默认软链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">user@ubuntu:~$ ls -lh /etc/resolv.conf </span><br><span class="line">lrwxrwxrwx 1 root root 27 10月 22  2018 /etc/resolv.conf -&gt; /run/resolvconf/resolv.conf</span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ netstat -tulpn|grep 53</span><br><span class="line">(Not all processes could be identified, non-owned process info</span><br><span class="line"> will not be shown, you would have to be root to see it all.)</span><br><span class="line">tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      - </span><br><span class="line">udp        0      0 127.0.0.53:53           0.0.0.0:*                           - </span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ cat /run/resolvconf/resolv.conf </span><br><span class="line"># Dynamic resolv.conf(5) file for glibc resolver(3) generated by resolvconf(8)</span><br><span class="line">#     DO NOT EDIT THIS FILE BY HAND -- YOUR CHANGES WILL BE OVERWRITTEN</span><br><span class="line"># 127.0.0.53 is the systemd-resolved stub resolver.</span><br><span class="line"># run &quot;systemd-resolve --status&quot; to see details about the actual nameservers.</span><br><span class="line"></span><br><span class="line">nameserver 114.114.114.114</span><br><span class="line">nameserver 127.0.0.53</span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ cat /run/resolvconf/interface/eth0.inet </span><br><span class="line">nameserver 114.114.114.114  </span><br><span class="line">mogo@mogo-desktop:~$ cat /run/resolvconf/interface/systemd-resolved </span><br><span class="line">nameserver 127.0.0.53</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、systemd-resloved</strong> 修改软链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">user@ubuntu:~$ ls -lh /etc/resolv.conf </span><br><span class="line">lrwxrwxrwx 1 root root 27 10月 22  2018 /etc/resolv.conf -&gt; /run/systemd/resolve/resolv.conf</span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ cat /etc/systemd/resolved.conf</span><br><span class="line">#  This file is part of systemd.</span><br><span class="line">#</span><br><span class="line">#  systemd is free software; you can redistribute it and/or modify it</span><br><span class="line">#  under the terms of the GNU Lesser General Public License as published by</span><br><span class="line">#  the Free Software Foundation; either version 2.1 of the License, or</span><br><span class="line">#  (at your option) any later version.</span><br><span class="line">#</span><br><span class="line"># Entries in this file show the compile time defaults.</span><br><span class="line"># You can change settings by editing this file.</span><br><span class="line"># Defaults can be restored by simply deleting this file.</span><br><span class="line">#</span><br><span class="line"># See resolved.conf(5) for details</span><br><span class="line"></span><br><span class="line">[Resolve]</span><br><span class="line">DNS=192.168.1.1</span><br><span class="line">#FallbackDNS=</span><br><span class="line">#Domains=</span><br><span class="line">#LLMNR=no</span><br><span class="line">#MulticastDNS=no</span><br><span class="line">#DNSSEC=no</span><br><span class="line">#Cache=yes</span><br><span class="line">#DNSStubListener=yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ cat /run/systemd/resolve/resolv.conf </span><br><span class="line"># This file is managed by man:systemd-resolved(8). Do not edit.</span><br><span class="line">#</span><br><span class="line"># This is a dynamic resolv.conf file for connecting local clients directly to</span><br><span class="line"># all known uplink DNS servers. This file lists all configured search domains.</span><br><span class="line">#</span><br><span class="line"># Third party programs must not access this file directly, but only through the</span><br><span class="line"># symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a different way,</span><br><span class="line"># replace this symlink by a static file or a different symlink.</span><br><span class="line">#</span><br><span class="line"># See man:systemd-resolved.service(8) for details about the supported modes of</span><br><span class="line"># operation for /etc/resolv.conf.</span><br><span class="line"></span><br><span class="line">nameserver 192.168.1.1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">user@ubuntu:~$ cat /run/systemd/resolve/stub-resolv.conf </span><br><span class="line"># This file is managed by man:systemd-resolved(8). Do not edit.</span><br><span class="line">#</span><br><span class="line"># This is a dynamic resolv.conf file for connecting local clients to the</span><br><span class="line"># internal DNS stub resolver of systemd-resolved. This file lists all</span><br><span class="line"># configured search domains.</span><br><span class="line">#</span><br><span class="line"># Run &quot;systemd-resolve --status&quot; to see details about the uplink DNS servers</span><br><span class="line"># currently in use.</span><br><span class="line">#</span><br><span class="line"># Third party programs must not access this file directly, but only through the</span><br><span class="line"># symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a different way,</span><br><span class="line"># replace this symlink by a static file or a different symlink.</span><br><span class="line">#</span><br><span class="line"># See man:systemd-resolved.service(8) for details about the supported modes of</span><br><span class="line"># operation for /etc/resolv.conf.</span><br><span class="line"></span><br><span class="line">nameserver 127.0.0.53</span><br><span class="line">options edns0</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、network-manager（图形界面）&#x2F;network（服务器）</strong> 图形界面时可以直接桌面修改dns。如果不是图形界面直接network服务控制的&#x2F;etc&#x2F;network&#x2F;interfaces配置文件dns-nameservers参数可以配置。经过测试，以上所有服务都开启时，systemd-resolved优先级大于network-manager。 综上可以推荐使用第三个systemd-resloved服务的软链接，通过修改&#x2F;etc&#x2F;systemd&#x2F;resolved.conf配置文件来定义dns服务器，默认该服务是开机启动的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/09/2021/06/2021-06-09-arm64v8%E6%9E%B6%E6%9E%84%E4%B8%8Bautopolit%E7%8E%AF%E5%A2%83docker%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C/index/" rel="prev" title="Arm64v8架构下Autopolit环境Docker镜像制作">
+      <i class="fa fa-chevron-left"></i> Arm64v8架构下Autopolit环境Docker镜像制作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/08/30/2021/08/2021-08-30-xavier%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0docker%E4%B8%AD%E5%AE%89%E8%A3%85pcan/index/" rel="next" title="Xavier开发者平台Docker中安装PCAN">
+      Xavier开发者平台Docker中安装PCAN <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="这是一种比较少见，困扰我很久的问题，虽然这个问题很简单，但是找到根本原因还是费了不少时间，现在把分析过程分享如下。 前提：需要对Linux系统启动过程、Nginx进程启动过程及进程跟踪有一定的理解。  一，Nginx reload过程分析：经过查看官网文档及结合Nginx源码分析，大致得出reload过程进行了如下操作。 1，检查配置是否正确 相当于nginx -t 2，打开日志文件 相当于ng">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统重启后nginx reload不生效原因分析">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/15/2018/11/2018-11-15-%E7%B3%BB%E7%BB%9F%E9%87%8D%E5%90%AF%E5%90%8Enginx-reload%E4%B8%8D%E7%94%9F%E6%95%88%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="这是一种比较少见，困扰我很久的问题，虽然这个问题很简单，但是找到根本原因还是费了不少时间，现在把分析过程分享如下。 前提：需要对Linux系统启动过程、Nginx进程启动过程及进程跟踪有一定的理解。  一，Nginx reload过程分析：经过查看官网文档及结合Nginx源码分析，大致得出reload过程进行了如下操作。 1，检查配置是否正确 相当于nginx -t 2，打开日志文件 相当于ng">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-15T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:29.878Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/15/2018/11/2018-11-15-%E7%B3%BB%E7%BB%9F%E9%87%8D%E5%90%AF%E5%90%8Enginx-reload%E4%B8%8D%E7%94%9F%E6%95%88%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>系统重启后nginx reload不生效原因分析 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/15/2018/11/2018-11-15-%E7%B3%BB%E7%BB%9F%E9%87%8D%E5%90%AF%E5%90%8Enginx-reload%E4%B8%8D%E7%94%9F%E6%95%88%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统重启后nginx reload不生效原因分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-15 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-15T08:00:00+08:00">2018-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:29" itemprop="dateModified" datetime="2023-05-26T15:06:29+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>这是一种比较少见，困扰我很久的问题，虽然这个问题很简单，但是找到根本原因还是费了不少时间，现在把分析过程分享如下。 前提：需要对Linux系统启动过程、Nginx进程启动过程及进程跟踪有一定的理解。</p>
+</blockquote>
+<h3 id="一，Nginx-reload过程分析："><a href="#一，Nginx-reload过程分析：" class="headerlink" title="一，Nginx reload过程分析："></a>一，Nginx reload过程分析：</h3><p>经过查看官网文档及结合Nginx源码分析，大致得出reload过程进行了如下操作。 1，检查配置是否正确 相当于nginx -t 2，打开日志文件 相当于nginx -s reopen 由于日志文件比较多，需要打开多个文件 3，重新监听套接字 相当于nginx 这个步骤会初始化很多东西，重点关注哈希表 4，关闭旧worker进程 相当于nginx -s quit</p>
+<h3 id="二，nginx进程分析"><a href="#二，nginx进程分析" class="headerlink" title="二，nginx进程分析"></a>二，nginx进程分析</h3><p>1，首先了解nginx的两种进程 master进程，root用户打开，接收信号，管理worker进程 worker进程，nginx用户打开，工作进程，负责处理http请求 2，starce跟踪主进程号，期间执行nginx -s reload，发现卡在检查日志文件这块 主进程跟踪，因为reload过程是系统发送HUP信号给nginx主进程 #starce -p 2298</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">open(&quot;/data/wwwlogs/access.xxx.xxx.xxx.log&quot;, O_WRONLY|O_CREAT|O_APPEND, 0644) = -1 EMFILE (Too many open files)</span><br><span class="line">write(808, &quot;2016/02/17 09:50:22 [emerg] 2298&quot;..., 124) = 124</span><br></pre></td></tr></table></figure>
+
+<p>3，根据提示，查找进程的系统限制文件 master进程限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># cat /proc/2398/limits</span><br><span class="line">Limit                     Soft Limit           Hard Limit           Units</span><br><span class="line">Max cpu time              unlimited            unlimited            seconds</span><br><span class="line">Max file size             unlimited            unlimited            bytes</span><br><span class="line">Max data size             unlimited            unlimited            bytes</span><br><span class="line">Max stack size            10485760             unlimited            bytes</span><br><span class="line">Max core file size        0                    unlimited            bytes</span><br><span class="line">Max resident set          unlimited            unlimited            bytes</span><br><span class="line">Max processes             127015               127015               processes</span><br><span class="line">Max open files            1024                 4096                 files</span><br><span class="line">Max locked memory         65536                65536                bytes</span><br><span class="line">Max address space         unlimited            unlimited            bytes</span><br><span class="line">Max file locks            unlimited            unlimited            locks</span><br><span class="line">Max pending signals       127015               127015               signals</span><br><span class="line">Max msgqueue size         819200               819200               bytes</span><br><span class="line">Max nice priority         0                    0</span><br><span class="line">Max realtime priority     0                    0</span><br><span class="line">Max realtime timeout      unlimited            unlimited            us</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>worker进程限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># cat /proc/2300/limits</span><br><span class="line">Limit                     Soft Limit           Hard Limit           Units</span><br><span class="line">Max cpu time              unlimited            unlimited            seconds</span><br><span class="line">Max file size             unlimited            unlimited            bytes</span><br><span class="line">Max data size             unlimited            unlimited            bytes</span><br><span class="line">Max stack size            10485760             unlimited            bytes</span><br><span class="line">Max core file size        0                    unlimited            bytes</span><br><span class="line">Max resident set          unlimited            unlimited            bytes</span><br><span class="line">Max processes             127015               127015               processes</span><br><span class="line">Max open files            409600               409600               files</span><br><span class="line">Max locked memory         65536                65536                bytes</span><br><span class="line">Max address space         unlimited            unlimited            bytes</span><br><span class="line">Max file locks            unlimited            unlimited            locks</span><br><span class="line">Max pending signals       127015               127015               signals</span><br><span class="line">Max msgqueue size         819200               819200               bytes</span><br><span class="line">Max nice priority         0                    0</span><br><span class="line">Max realtime priority     0                    0</span><br><span class="line">Max realtime timeout      unlimited            unlimited            us</span><br></pre></td></tr></table></figure>
+
+<p>补充错误日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2016/02/17 10:48:05 [notice] 47386#0: signal process started</span><br><span class="line">2016/02/17 10:48:05 [emerg] 2298#0: open() &quot;/data/wwwlogs/access_xxx.xxx.xxx.log&quot; failed (24: Too many open files)</span><br></pre></td></tr></table></figure>
+
+<h3 id="三，解决方案"><a href="#三，解决方案" class="headerlink" title="三，解决方案"></a>三，解决方案</h3><p>1，修改限制 一般从以下3方面调优： 第一：nginx.conf参数规划与设置 worker_rlimit_nofile ：限制单个工作进程打开的最大文件数： 线上配置没有问题 worker_rlimit_nofile 409600; 第二：系统级别的检查与设置 就是 &#x2F;etc&#x2F;security&#x2F;limits.conf的配置与修改，请参考Linux系统资源限制汇总 线上配置没有问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*                soft   nofile          655350</span><br><span class="line">*                hard   nofile          655350</span><br></pre></td></tr></table></figure>
+
+<p>第三：内核级别的检查与设置： fs.file-max值的大小设置： 线上配置比较大 fs.file-max &#x3D; 6553600 注意：file-max的默认值大概是系统内存的10%（系统内存以kb计算） 2，验证生效 结果发现以上配置前期都有配置，但是重启服务器发现主进程的限制并没有修改过来，但是登陆服务器后无论在终端ulimit -n 查看还是关闭nginx主进程后重启nginx都生效了，由此推理出问题可能出在linux系统启动过程中，也就是说nginx主进程启动时，上面的限制配置没有生效，后来查阅资料发现系统启动后执行login时才会使limits.conf配置生效，所以需要调整顺序。 根据实际情况，系统启动过程如下： 1、读取&#x2F;etc&#x2F;inittab来读取默认级别 假设：读取到的默认级别是 3 2、执行初始化系统脚本 &#x2F;etc&#x2F;rc.d&#x2F;rc.sysinit 来初始化脚本 3、然后执行 &#x2F;etc&#x2F;rc.d&#x2F;rc 脚本 4、执行&#x2F;etc&#x2F;rc.d&#x2F;rc.local脚本，此脚本是启动过程中最后启动的一个脚本。 最后会执行 &#x2F;bin&#x2F;login 登录用户。至此系统启动过程完成，login时才会执行&#x2F;etc&#x2F;profile，～&#x2F;.bash_profile和～&#x2F;.bashrc等，此时的ulimit -n查到的值不是nginx进程启动时的值。</p>
+<p>默认用户登陆时会使limits.conf配置文件生效，这个比nginx进程启动晚，要在这之前使配置生效，需要补充配置如下： cat &#x2F;etc&#x2F;rc.local ulimit -HSn 655350 （注意在nginx启动前执行） &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin&#x2F;nginx</p>
+<h3 id="四，补充优化"><a href="#四，补充优化" class="headerlink" title="四，补充优化"></a>四，补充优化</h3><p>主要是相关参数调大了一些。 1，内核优化 net.ipv4.tcp_max_tw_buckets 修改大一些，减少内核负担，iptable本身对内核性能有影响</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># ss -an |awk &#x27;&#123;print $1&#125;&#x27;|sort |uniq -c |sort -rn</span><br><span class="line">15415 ESTAB</span><br><span class="line">12979 TIME-WAIT</span><br><span class="line">1961 FIN-WAIT-2</span><br><span class="line">501 FIN-WAIT-1</span><br><span class="line">234 LAST-ACK</span><br><span class="line">32 SYN-RECV</span><br><span class="line">11 LISTEN</span><br><span class="line">3 CLOSING</span><br><span class="line">1 SYN-SENT</span><br><span class="line">1 State</span><br><span class="line">1 CLOSE-WAIT</span><br></pre></td></tr></table></figure>
+
+<p>线上修改配置如下： net.ipv4.tcp_max_tw_buckets &#x3D; 18000 2，nginx优化 主要是哈希表，其他配置已经优化，哈希表有如下几种 server_names_hash可以加 map_hash可以加 types_hash够用 request header 不考虑 variables_hash 够用 线上修改配置如下： server_names_hash_max_size 512000; server_names_hash_bucket_size 64; （默认） map_hash_max_size 204800; map_hash_bucket_size 64; （默认）</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/12/2018/11/2018-11-12-%E8%87%B4%E8%89%AF%E7%9F%A5%E4%B9%8B%E5%8A%9F/index/" rel="prev" title="致良知之功">
+      <i class="fa fa-chevron-left"></i> 致良知之功
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/15/2018/11/2018-11-15-%E5%A6%82%E4%BD%95%E6%97%A0%E4%B8%AD%E7%94%9F%E6%9C%89/index/" rel="next" title="如何无中生有">
+      如何无中生有 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%EF%BC%8CNginx-reload%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">一，Nginx reload过程分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%EF%BC%8Cnginx%E8%BF%9B%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">二，nginx进程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%EF%BC%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">三，解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%EF%BC%8C%E8%A1%A5%E5%85%85%E4%BC%98%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">四，补充优化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文链接：https:&#x2F;&#x2F;bbs.huaweicloud.com&#x2F;blogs&#x2F;285546【摘要】 在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈基于 OpenStack 和 k8s 轻量研发私有云建设">
+<meta property="og:url" content="https://minminmsn.github.io/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="原文链接：https:&#x2F;&#x2F;bbs.huaweicloud.com&#x2F;blogs&#x2F;285546【摘要】 在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106163724298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106163758762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106163816789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106163838236.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020091013482924.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106163916653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201003155716750.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616420877.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164231710.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164332369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164402530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616442229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164447218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164531538.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164608979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164634520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164654525.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164710603.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164756895.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164828782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164828769.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616490564.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165001592.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165027353.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164946485.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106164851685.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616505068.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165103997.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165123426.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165150114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165208840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165223150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616524286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165306616.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165328633.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165347427.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165409806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165422972.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020110616543539.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165448886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165459180.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165508702.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20201106165528572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+<meta property="article:published_time" content="2022-11-01T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.828Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20201106163724298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center">
+
+<link rel="canonical" href="https://minminmsn.github.io/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>浅谈基于 OpenStack 和 k8s 轻量研发私有云建设 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/11/01/2022/11/2022-11-01-%E6%B5%85%E8%B0%88%E5%9F%BA%E4%BA%8E-openstack-%E5%92%8C-k8s-%E8%BD%BB%E9%87%8F%E7%A0%94%E5%8F%91%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈基于 OpenStack 和 k8s 轻量研发私有云建设
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-11-01 08:00:00" itemprop="dateCreated datePublished" datetime="2022-11-01T08:00:00+08:00">2022-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="原文链接：https-bbs-huaweicloud-com-blogs-285546"><a href="#原文链接：https-bbs-huaweicloud-com-blogs-285546" class="headerlink" title="原文链接：https://bbs.huaweicloud.com/blogs/285546"></a>原文链接：<a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/285546">https://bbs.huaweicloud.com/blogs/285546</a></h2><p>【摘要】 在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性、更高的资源使用效率等都是关键问题；</p>
+<ol>
+<li>背景</li>
+<li>面临的挑战</li>
+<li>功能简介<ol>
+<li>核心优势</li>
+<li>核心设施平台（IaaS云）</li>
+<li>基础服务平台（PaaS云）</li>
+</ol>
+</li>
+<li>技术落地<ol>
+<li>整体架构</li>
+<li>技术选型<ol>
+<li>IaaS云技术</li>
+<li>PaaS云技术</li>
+</ol>
+</li>
+<li>实践的过程<ol>
+<li>OpenStack &amp; CloudStack</li>
+<li>KVM &amp; VMWare</li>
+<li>CentOS &amp; Ubuntu</li>
+<li>OpenStack &amp; k8s</li>
+<li>拥抱开源面临的困难</li>
+<li>云原生架构带来的挑战</li>
+<li>私有云建设路线</li>
+<li>私有云的容量评估</li>
+<li>全栈监控</li>
+<li>k8s集群规模</li>
+<li>k8s集群计算资源</li>
+<li>压力引擎</li>
+<li>其它</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>运行效果展示<ol>
+<li>基础服务平台（IaaS云）<ol>
+<li>登录认证</li>
+<li>高效管理物理资源（计算、网络、存储）</li>
+<li>1.2、轻松管理系统镜像</li>
+<li>web桌面</li>
+<li>集群管理 Web UI</li>
+</ol>
+</li>
+<li>基础服务平台（PaaS云）<ol>
+<li>DevOps流水线</li>
+<li>负载均衡</li>
+<li>代码仓库</li>
+<li>敏捷研发管理</li>
+<li>调用链监控</li>
+<li>服务注册</li>
+<li>服务监控</li>
+<li>日志聚合</li>
+<li>API文档</li>
+<li>配置管理</li>
+<li>制品仓库</li>
+<li>容器仓库</li>
+<li>静态代码扫描</li>
+<li>可视化微服务管理</li>
+<li>压力引擎</li>
+<li>资源监控</li>
+<li>服务可视化监控</li>
+<li>自定义告警</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>经验心得</li>
+<li>未来展望</li>
+</ol>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>建设公司研发私有云，为研发部门提供安全、可靠、高效的基础资源、数据存储服务、DevOps 流水线以及运维自动化服务等。</p>
+<h2 id="面临的挑战"><a href="#面临的挑战" class="headerlink" title="面临的挑战"></a>面临的挑战</h2><ul>
+<li>运维：高效管理基础设施资源、监控报警完善且易用；</li>
+<li>产品：弹性扩容、资源随时可用；</li>
+<li>研发整体：提升资源利用率、提高产品交付效能，降低成本。</li>
+</ul>
+<h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><h3 id="核心优势"><a href="#核心优势" class="headerlink" title="核心优势"></a>核心优势</h3><ul>
+<li>任务调度：为集群系统中的任务提供调度服务，自动将服务按资源需求分配到资源限制的计算节点;</li>
+<li>资源隔离：为产品提供管控与服务节点隔离能力，保证研发应用跟管控服务不互相产生影响;</li>
+<li>高可用能力：自动监控服务的运行，根据运行情况对失效的服务进行自动重启恢复;</li>
+<li>网络互联互通能力：提供统一的IP地址分配和网络互通能力;</li>
+<li>统一编排管理能力：结合 gitlab 和 k8s 对输出的产品进行统一的编排管理;</li>
+<li>公共产品组件为团队提供了统一部署、验证、授权、调度和管控能力，为私有云服务提供基础性的支撑。</li>
+</ul>
+<h3 id="核心设施平台（IaaS云）"><a href="#核心设施平台（IaaS云）" class="headerlink" title="核心设施平台（IaaS云）"></a>核心设施平台（IaaS云）</h3><ul>
+<li>提供计算、网络、存储等核心资源设备的虚拟化；<ul>
+<li>支持不同操作系统，包括主流的 win 和 Linux 系统；</li>
+<li>提供主要包括三种服务：云主机、云网络、云硬盘；</li>
+<li>提供可视化 Web UI。</li>
+</ul>
+</li>
+<li>提供 k8s 集群（容器云）规划、部署和运营；<ul>
+<li>支持多种计算、存储和网络方案；</li>
+<li>集成 Ansible 运维自动化工具；</li>
+<li>支持在线环境和离线环境部署；</li>
+<li>提供可视化 Web UI。</li>
+</ul>
+</li>
+</ul>
+<h3 id="基础服务平台（PaaS云）"><a href="#基础服务平台（PaaS云）" class="headerlink" title="基础服务平台（PaaS云）"></a>基础服务平台（PaaS云）</h3><ul>
+<li>提供数据存储、应用服务、DevOps、运维管理等服务；</li>
+<li>数据存储类：支持常见 NFS 、Ceph RBD、Local Volume 等；</li>
+<li>应用服务类：自愈和自动伸缩、调度和发布、负载均衡、消息队列、容器引擎、调用链监控、Metrics 监控、日志聚合、服务安全、API管理、弹性和容错、配置管理等；</li>
+<li>DevOps：敏捷研发管理、持续交付流水线、代码扫描、代码仓库、制品仓库、容器仓库、压测引擎等；</li>
+<li>运维管理：日志监控、资源监控、消息告警等。</li>
+</ul>
+<h2 id="技术落地"><a href="#技术落地" class="headerlink" title="技术落地"></a>技术落地</h2><h3 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h3><p><img src="https://img-blog.csdnimg.cn/20201106163724298.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="整体架构"></p>
+<h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><h4 id="IaaS云技术"><a href="#IaaS云技术" class="headerlink" title="IaaS云技术"></a>IaaS云技术</h4><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>说明</th>
+<th>官网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OpenStack Nova</td>
+<td>云主机</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/nova">https://www.openstack.org/software/releases/victoria/components/nova</a></td>
+</tr>
+<tr>
+<td>OpenStack keystone</td>
+<td>认证中心</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/keystone">https://www.openstack.org/software/releases/victoria/components/keystone</a></td>
+</tr>
+<tr>
+<td>OpenStack Glance</td>
+<td>磁盘镜像</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/glance">https://www.openstack.org/software/releases/victoria/components/glance</a></td>
+</tr>
+<tr>
+<td>OpenStack Neutron</td>
+<td>云网络</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/neutron">https://www.openstack.org/software/releases/victoria/components/neutron</a></td>
+</tr>
+<tr>
+<td>OpenStack Cinder</td>
+<td>云硬盘</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/cinder">https://www.openstack.org/software/releases/victoria/components/cinder</a></td>
+</tr>
+<tr>
+<td>OpenStack Horizon</td>
+<td>可视化UI</td>
+<td><a target="_blank" rel="noopener" href="https://www.openstack.org/software/releases/victoria/components/horizon">https://www.openstack.org/software/releases/victoria/components/horizon</a></td>
+</tr>
+<tr>
+<td>KubeOperator</td>
+<td>规划、部署和运营 k8s 集群</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/KubeOperator/KubeOperator">https://github.com/KubeOperator/KubeOperator</a></td>
+</tr>
+<tr>
+<td>NFS</td>
+<td>网络存储</td>
+<td><a target="_blank" rel="noopener" href="http://nfs.sourceforge.net/">http://nfs.sourceforge.net</a></td>
+</tr>
+<tr>
+<td>Ceph</td>
+<td>分布式存储</td>
+<td><a target="_blank" rel="noopener" href="https://ceph.com/">https://ceph.com</a></td>
+</tr>
+</tbody></table>
+<h4 id="PaaS云技术"><a href="#PaaS云技术" class="headerlink" title="PaaS云技术"></a>PaaS云技术</h4><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>说明</th>
+<th>官网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kubernetes(k8s)</td>
+<td>容器云</td>
+<td><a target="_blank" rel="noopener" href="https://kubernetes.io/">https://kubernetes.io</a></td>
+</tr>
+<tr>
+<td>helm</td>
+<td>k8s 包管理器</td>
+<td><a target="_blank" rel="noopener" href="https://helm.sh/">https://helm.sh</a></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>应用容器引擎</td>
+<td><a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com</a></td>
+</tr>
+<tr>
+<td>Weave Scope</td>
+<td>k8s 可视化监控工具</td>
+<td><a target="_blank" rel="noopener" href="https://www.weave.works/">https://www.weave.works</a></td>
+</tr>
+<tr>
+<td>Spring Cloud</td>
+<td>微服务框架</td>
+<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud">https://spring.io/projects/spring-cloud</a></td>
+</tr>
+<tr>
+<td>Spring Cloud Alibaba</td>
+<td>微服务框架</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/spring-cloud-alibaba">https://github.com/alibaba/spring-cloud-alibaba</a></td>
+</tr>
+<tr>
+<td>Spring Boot</td>
+<td>容器+ MVC 框架</td>
+<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-boot">https://spring.io/projects/spring-boot</a></td>
+</tr>
+<tr>
+<td>Knife4j</td>
+<td>文档生产工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/xiaoymin/swagger-bootstrap-ui">https://github.com/xiaoymin/swagger-bootstrap-ui</a></td>
+</tr>
+<tr>
+<td>Elasticsearch</td>
+<td>搜索引擎</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/elastic/elasticsearch">https://github.com/elastic/elasticsearch</a></td>
+</tr>
+<tr>
+<td>RabbitMq</td>
+<td>消息队列</td>
+<td><a target="_blank" rel="noopener" href="https://www.rabbitmq.com/">https://www.rabbitmq.com</a></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>分布式缓存</td>
+<td><a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io</a></td>
+</tr>
+<tr>
+<td>MongoDb</td>
+<td>NoSql数据库</td>
+<td><a target="_blank" rel="noopener" href="https://www.mongodb.com/">https://www.mongodb.com</a></td>
+</tr>
+<tr>
+<td>LogStash</td>
+<td>应用日志收集</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/logstash/logstash-logback-encoder">https://github.com/logstash/logstash-logback-encoder</a></td>
+</tr>
+<tr>
+<td>Jenkins</td>
+<td>DevOps 调度工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins">https://github.com/jenkinsci/jenkins</a></td>
+</tr>
+<tr>
+<td>Promethues</td>
+<td>资源监控系统</td>
+<td><a target="_blank" rel="noopener" href="https://prometheus.io/">https://prometheus.io</a></td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td>监控可视化看板</td>
+<td><a target="_blank" rel="noopener" href="https://grafana.com/">https://grafana.com</a></td>
+</tr>
+<tr>
+<td>harbor</td>
+<td>Docker 镜像仓库</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/goharbor/harbor-helm">https://github.com/goharbor/harbor-helm</a></td>
+</tr>
+<tr>
+<td>SkyWalking</td>
+<td>分布式追踪、服务网格遥测分析、度量聚合和可视化一体化解决方案</td>
+<td><a target="_blank" rel="noopener" href="http://skywalking.apache.org/">http://skywalking.apache.org</a></td>
+</tr>
+<tr>
+<td>Kibana</td>
+<td>日志可视化看板</td>
+<td><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/kibana">https://www.elastic.co/cn/downloads/kibana</a></td>
+</tr>
+<tr>
+<td>Fluentd</td>
+<td>容器日志收集</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch">https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch</a></td>
+</tr>
+<tr>
+<td>Gitlab</td>
+<td>代码仓库</td>
+<td><a target="_blank" rel="noopener" href="https://about.gitlab.com/">https://about.gitlab.com</a></td>
+</tr>
+<tr>
+<td>Nexus3 OSS</td>
+<td>制品仓库</td>
+<td><a target="_blank" rel="noopener" href="https://www.sonatype.com/">https://www.sonatype.com</a></td>
+</tr>
+<tr>
+<td>SonarQube</td>
+<td>静态代码扫描</td>
+<td><a target="_blank" rel="noopener" href="https://www.sonarqube.org/">https://www.sonarqube.org</a></td>
+</tr>
+<tr>
+<td>YouTrack</td>
+<td>敏捷研发管理</td>
+<td><a target="_blank" rel="noopener" href="https://www.jetbrains.com/youtrack">https://www.jetbrains.com/youtrack</a></td>
+</tr>
+<tr>
+<td>Jmeter</td>
+<td>压测引擎</td>
+<td><a target="_blank" rel="noopener" href="https://jmeter.apache.org/">https://jmeter.apache.org</a></td>
+</tr>
+<tr>
+<td>Kuboard</td>
+<td>微服务管理工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/eip-work/kuboard-press">https://github.com/eip-work/kuboard-press</a></td>
+</tr>
+</tbody></table>
+<h3 id="实践的过程"><a href="#实践的过程" class="headerlink" title="实践的过程"></a>实践的过程</h3><h4 id="OpenStack-amp-CloudStack"><a href="#OpenStack-amp-CloudStack" class="headerlink" title="OpenStack &amp; CloudStack"></a>OpenStack &amp; CloudStack</h4><p>作为两大主流开源云平台，OpenStack 和 CloudStack 各具优势。<br>CloudStack 是从 cloud.com 公司的产品转向开源，从产品化方面来说，本身是个比较成熟的产品，安装和部署都很方便，且提供了完整的升级流程，可以便于将来和社区保持同步。然而随着社区版本的不断更新和兼容各家产品，CloudStack 也逐渐变得庞大。以目前公司搭建私有云落地方案而言，很多功能无用且显得多余。<br>OpenStack 目前已经成为了大家选择云计算技术落地框架的事实标准，优势在于其插件化的框架，因为技术框架允许自由的选择可用插件，私有云落地方案中，可以只选择需要的组件进行安装。因为框架允许插入不同组件，所以 OpenStack 社区也获得了更多厂商的支持，社区活跃度也比较高。在企业实施落地方案的时候，可以有更多的选择余地，对遇到的问题，也有了更多更快的响应。<br>考虑到如果将来公司还需要进一步开发所需要的组件，并且需要对云平台进行针对性的调优，例如虚拟机的 IO、CPU 绑定等操作，而不只是依赖于开源社区的版本，OpenStack 的框架则是更好的选择。CloudStack 如果进行二次开发，代码未合并入社区版本的时候，升级则需要再次 merge 代码，重复工作比较多。OpenStack 则可以做成插件，在升级 OpenStack 版本的时候，保持插件的可用。<br>但是由于 OpenStack 的产品化复杂度较高，搭建落地到将来的升级，以及后续的二次开发，都需要进行不少的开发和测试人力投入。对于非互联网公司来说，咱们并没有比较成熟的运维团队和研发团队，开发和测试在人力资源成本方面计算都很紧张，所以对于有公有云需求还是直接购买大厂的云服务即可。<br>最终的在开源方案选择上，更倾向于 OpenStack。</p>
+<h4 id="KVM-amp-VMWare"><a href="#KVM-amp-VMWare" class="headerlink" title="KVM &amp; VMWare"></a>KVM &amp; VMWare</h4><p>OpenStack 原生对 KVM 支持更加完善。<br>KVM 也是比较成熟的虚拟化平台，于 2006 年写入 Linux 内核，且在 Redhat 6 以后，转向对 KVM 的支持而非之前大力推广 Xen 的虚拟化方案。<br>VMware 是商业软件，在虚拟化平台中，目前应该属于 IO 和稳定性都最优化的方案。OpenStack 中，因为 VMware 本身提供了相应的 driver，对 VMware 的支持也比较成熟。<br>最终放弃 VMware 的原因，是因为其授权比较昂贵。<br>目前选择的方案，以 KVM 为主。</p>
+<h4 id="CentOS-amp-Ubuntu"><a href="#CentOS-amp-Ubuntu" class="headerlink" title="CentOS &amp; Ubuntu"></a>CentOS &amp; Ubuntu</h4><p>OpenStack 社区 对 Ubuntu 支持比较完善，Ubuntu 更新速度快，内核版本比较新，可以支持更高版本的KVM，对OpenStack使用者来说，Ubuntu 可以提供更好的性能。<br>就系统的稳定性而言，CentOS 来自 Redhat 商业版本的重新编译，稳定性和系统优化以及兼容性方面，CentOS 有着比较完善的测试和发型流程。CentOS 7 以后，也换用了 Linux 3.x 内核版本。<br>鉴于系统可靠性的选择和之前公司的技术积累，还是选用 CentOS 系列，比 Ubuntu 管理更为方便。</p>
+<h4 id="OpenStack-amp-k8s"><a href="#OpenStack-amp-k8s" class="headerlink" title="OpenStack &amp; k8s"></a>OpenStack &amp; k8s</h4><p>OpenStack 主要是面向资源分配，虚拟机创出来了就基本没有责任了，至于服务高可用，自动伸缩，监控等这类的功能完全由应用方来处理，平台不提供支持，适合传统的部署模式，对应用而言和物理机时代没有区别；<br>而 k8s 容器云主要面向的是服务，强调服务能力，具有弹性与高可用保障，而不是简单地提供 IT 资源。对应的，应用服务也要使用云原生的理念来进行改造拆分，以更好地利用 k8s 提供的平台能力。<br><strong>就咱们公司而言目前还需要 OpenStack，因为很多老系统没有容器化，所以到了现实环境下就要妥协</strong>。</p>
+<p>但是无论是 OpenStack 还是 k8s 上手技术门槛较高，最痛苦的事情，莫过于看它的架构。</p>
+<p>不信？好，扔个 OpenStack 架构图给你看：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106163758762.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt=" OpenStack 架构图"></p>
+<p>我还是用一个简单的图吧，看得更明白些。如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106163816789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="简单的图"></p>
+<p>k8s 架构图如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106163838236.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 架构图"></p>
+<p>看上去比 OpenStack 的架构图稍微好点，不过从技术上来说也是比较复杂的。</p>
+<h4 id="拥抱开源面临的困难"><a href="#拥抱开源面临的困难" class="headerlink" title="拥抱开源面临的困难"></a>拥抱开源面临的困难</h4><p>云计算发展到今天，无论是在技术、服务层面，还是在商业层面都已经相对比较成熟。当前绝大多数初创公司在基础设施上的策略一定是公有云，已经极少再有自建或托管 IDC 的情况，所以不会存在是否上云这样的纠结。<br>但是对于我们这样体量的公司，全部上云，就必须要考虑得更全面：考虑基础设施的变化，业务的平稳过度，运维模式的转变，成本管控的调整，以及众多的细节问题。</p>
+<p>虽然需要比较和考虑的因素非常多，主要从人员能力、技术掌控、未来发展等方面进行说明。<br>人的因素是放在第一位的，企业中一般是业务开发应用及基础架构运维人员（比如系统、网络管理等），采用开源的方案的话，如果仅仅是在开发、测试环境去试着安装、使用是没有问题的，但是当准备在生产上进行实施部署，并且后续为了进一步提升开源平台化的能力（比如生产遇到问题需要分析、内部系统集成、进行前端定制、跟随社区优化&#x2F;升级等），会发现这些均需要能力较强的既懂开发也懂基础架构的人员团队时候就寸步难行了。</p>
+<p>越是底层的技术，技术门槛就越高、越复杂，也越离不开高端人才的投入。比如硬件资源虚拟化，就需要有懂内核、懂网络、懂 OpenStack、懂 k8s、懂分布式存储如 Ceph 等等的专业人才。但是真正精通的人却不多，加上要搞定整套解决方案，还需要一个完整的团队，这就难上加难，在团队组建上面临更大的困难。人才紧缺，就意味着人力成本会很高，这个就是技术投入的隐性成本。而且因为技术门槛高，一旦发生人员流动，那么，对于原有技术平台来说，无人能把控的风险就会更高。这一点往往会是最大的隐性管理成本所在。</p>
+<p>当然，在人才招揽上，我们可以加大人力成本投入，招聘最优秀的人才。但是作为像咱们这样以更加聚焦于业务，以业务发展为生命线的公司，我们更期望能够在业务上取得创新和发展，而不是在技术上取得多么非凡的成就（这一点与公司的发展诉求是不一致的）。所以这就从根本上决定了，我们不会无限度地投入，或投入非常大的成本在这些基础技术的研究上。</p>
+<p>所以从未来发展来看，<strong>私有云（存量+测试&amp;开发）与公有云（生产+增量）方案是适合我们的方向</strong>，开源方案和商业方案会长时间存在，这是受每个公司的技术战略定位决定的。而对于大多数企业来说，以实现功能服务前端业务为主的技术战略，则选择上更应该倾向于选择商业方案。</p>
+<h4 id="云原生架构带来的挑战"><a href="#云原生架构带来的挑战" class="headerlink" title="云原生架构带来的挑战"></a>云原生架构带来的挑战</h4><p>大致来说，在部署应用程序的方式上，我们现在主要经历了三个时代：</p>
+<p><img src="https://img-blog.csdnimg.cn/2020091013482924.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li>传统部署时代：早期企业直接将应用程序部署在物理机上。由于物理机上不能为应用程序定义资源使用边界，我们也就很难合理地分配计算资源。例如：如果多个应用程序运行在同一台物理机上，可能发生这样的情况：其中的一个应用程序消耗了大多数的计算资源，导致其他应用程序不能正常运行。应对此问题的一种解决办法是，将每一个应用程序运行在不同的物理机上。然而，这种做法无法大规模实施，因为资源利用率很低，且企业维护更多物理机的成本昂贵。</li>
+<li>虚拟化部署时代：针对上述问题，虚拟化技术应运而生。用户可以在单台物理机的CPU上运行多个虚拟机，虚拟化技术使得应用程序被虚拟机相互分隔开，限制了应用程序之间的非法访问，进而提供了一定程度的安全性。虚拟化技术提高了物理机的资源利用率，可以更容易地安装或更新应用程序，降低了硬件成本，因此可以更好地规模化实施。每一个虚拟机可以认为是被虚拟化的物理机之上的一台完整的机器，其中运行了一台机器的所有组件，包括虚拟机自身的操作系统。</li>
+<li>容器化部署时代：容器与虚拟机类似，但是降低了隔离层级，共享了操作系统。因此，容器可以认为是轻量级的。与虚拟机相似，每个容器拥有自己的文件系统、CPU、内存、进程空间等。运行应用程序所需要的资源都被容器包装，并和底层基础架构解耦。容器化的应用程序可以跨云服务商、跨Linux操作系统发行版进行部署。借助容器技术呈现了一个优雅的抽象场景：让开发所需要的灵活性、开放性和运维所关注的标准化、自动化达成相对平衡。容器镜像迅速成为了应用分发的 <strong>工业标准</strong>。</li>
+</ul>
+<p>前面我们说了，我们公司目前正处于 <strong>「虚拟化部署时代」 到 「容器化部署时代」的过渡阶段</strong>，那么它必然带来了更高的要求：</p>
+<ul>
+<li>敏捷地创建和部署应用程序：相较于创建虚拟机，创建容器更加容易和快速；</li>
+<li>高度自动化的软件交付：可以更快更频繁地构建、部署的、并且轻松地回滚；</li>
+<li>分离开发和运维的关注点：在开发构建阶段可以部署到多种基础设施上，将部署阶段需要关注的内容聚焦在如何提供基础设施以及如何使用的过程中。降低了开发和运维的耦合度；</li>
+<li>可监控性：不仅可以查看操作系统级别的资源监控信息，还可以查看应用程序健康状态以及 k8s 集群的监控信息;</li>
+<li>开发、测试、生产不同阶段的环境一致性：在开发环境的容器与测试、生产环境中运行的容器一致;</li>
+<li>跨云服务商、跨操作系统的可移植性：容器支持运行在 Ubuntu、RHEL、CentOS 等不同的操作系统发行版上，可以运行在私有云、也可以支持阿里云等不同的云供应商的环境中；</li>
+<li>以应用程序为中心的管理：虚拟机时代的考虑的问题是在虚拟硬件上运行一个操作系统，而容器化时代，问题的焦点则是在操作系统的逻辑资源上运行一个应用程序；</li>
+<li>松耦合、分布式、弹性、无约束的微服务：满足更小的、独立的微服务，可以动态部署和管理；</li>
+<li>资源隔离：支持多租户，确保应用程序性能不受干扰；</li>
+<li>资源利用：需要满足资源高效、高密度利用。</li>
+</ul>
+<p>针对上述更高诉求，我们在建设私有云的过程中需要重点考虑并逐一落地。</p>
+<h4 id="私有云建设路线"><a href="#私有云建设路线" class="headerlink" title="私有云建设路线"></a>私有云建设路线</h4><p>私有云建设很少有一步到位的，往往最开始的阶段是满足最基础的需求，例如计算虚拟化，存储虚拟化，然后网络虚拟化，然后容器，监控，大数据，编排，数据库，等等公共应用。<br>其实，这个和云计算的分层也是有很大关系的。从 IaaS 到 PaaS，再到 SaaS，层层递进。研发云的建设，往往也是遵循这个规律。在实践中，可能会有一些交集。<br>通常都是分几期的。第一期为试点项目，第二期根据一期结果形成规范，标准，成为新开发应用的标准平台。第三期逐渐将老应用迁移到私有云上。</p>
+<p>对于私有云实施：</p>
+<ul>
+<li>通常来讲私有云基础设施只被公司研发团队使用，支持单租户即可；</li>
+<li>一般使用 4 个网：管理网、业务网（vxlan）、带外网、存储网；</li>
+<li>使用不同子网</li>
+</ul>
+<h4 id="私有云的容量评估"><a href="#私有云的容量评估" class="headerlink" title="私有云的容量评估"></a>私有云的容量评估</h4><p>私有云的容量需要根据公司业务来评估，以一般行业来说，都有 web 区，有 app，有 db。需要根据运行在私有云上的业务的多少，来统计所需要的资源的多少。例如，web区需要 nginx，需要考虑 HA 和 LB，那么就需要 2 台以上；如果多个业务共享 nginx，那么就需要多个 nginx 集群来分担压力。</p>
+<p>OpenStack Celimeter 模块专门用来拥挤CPU，内存，网络的使用量，可以统计出使用云资源，相对传统环境节省了多少资源。<br>至于成本和效率的平衡，一般在私有云建设初期很难做到。设备的购置，部署，人员的配置等等都是一笔不小的开支；私有云真正的优势体现在后期的使用中。<br>容量如何评估，这个肯定是没有普适标准的了。容量通常从三方面考虑：计算能力、存储容量、网络带宽。这三方面可以说也是数据中心最基本的三大核心要素了，我们都知道，云计算是以规模取胜的，这个规模如何决定？究竟是 20 节点，50 节点，还是 100+ 节点，这个得根据你自己的业务需求来考虑了，在小规模情况下，为了高可用，如果可用容量评估是 N，那你就按 2N 来计算，私有云一般不会像达到公有云那种规模，所以通常也不可能达到很多大佬口中的虚机随便挂，真挂了你宿主机资源没有了，咋整？<br>至于成本，的看你的方案了，我们是采用开源自建，如果是与厂商合作共建，合作情况下如何分工，哪些外包出去，这个得仔细考虑。通常，如果人力资源有限，技术实力有限，那就由承包给厂商来实施吧，不然到后面也是个烂摊子。但是，全部外部给厂商的不足也是明显的，一不小心就被人家锁定，每年烧钱的跑不掉的了，尤其是项目上马后，停也停不下来了。</p>
+<h4 id="全栈监控"><a href="#全栈监控" class="headerlink" title="全栈监控"></a>全栈监控</h4><p>首先我们要了解监控的必要性，如果没有监控数据，运维侧无从谈起，没有数据，那么如何去度量一个指标呢？<br>所以，在建设研发私有云尽量搭建一套适合的监控体系是必要的。<br>而从监控分类来说，常见的是以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>主要内容</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Metrics监控</td>
+<td>计数器，时序数值</td>
+<td>监控告警</td>
+</tr>
+<tr>
+<td>日志监控</td>
+<td>离散事件，结构化&#x2F;非结构化</td>
+<td>调试发现</td>
+</tr>
+<tr>
+<td>调用链监控</td>
+<td>调用链</td>
+<td>调试发现</td>
+</tr>
+<tr>
+<td>健康检查</td>
+<td>探活</td>
+<td>监控告警</td>
+</tr>
+<tr>
+<td>告警系统</td>
+<td>监控告警</td>
+<td>监控告警</td>
+</tr>
+</tbody></table>
+<p>Metrics 监控主要包括核心业务指标监控和资源监控，核心业务指标监控主要方式还是埋点，目前这块我们基本是空白。至于资源监控，我们集成云原生的开源监控系统 Prometheus 可以 cover 大部分的需求。<br>日志监控这块包括应用日志和平台日志的聚合，这块目前的技术比较成熟，基本是集成成熟 ELK &amp; EFk 开源方案解决。<br>健康检查方面，在 k8s 容器云层提供存活和就绪探针，另外，在微服务框架也提供了应用监控中心，可以很方便进行监控。<br>告警系统是每个监控系统的必备功能，Prometheus 支持丰富的告警规则和方式，常见的邮件、钉钉、微信等都支持。<br>这里特别提一下调用链监控，这个在目前的微服务系统里面是必可少的组件，分布式追踪、服务网格遥测分析、度量聚合和可视化还是挺好用的，这里我们选择了 Skywalking，具体考量可以参考下表：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>CAT</th>
+<th>Zipkin</th>
+<th>Pinpoint</th>
+<th>Skywalking</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>调用链可视化</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>报表</td>
+<td>非常丰富</td>
+<td>少</td>
+<td>中</td>
+<td>中</td>
+</tr>
+<tr>
+<td>ServerMap</td>
+<td>简单依赖图</td>
+<td>简单</td>
+<td>好</td>
+<td>好</td>
+</tr>
+<tr>
+<td>埋点方式</td>
+<td>侵入</td>
+<td>侵入</td>
+<td>不侵入字节码增强</td>
+<td>不侵入字节码增强</td>
+</tr>
+<tr>
+<td>性能损耗</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>Hearbeat支持</td>
+<td>有</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>Metric支持</td>
+<td>有</td>
+<td>无</td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td>Java&#x2F;.Net支持</td>
+<td>有</td>
+<td>有</td>
+<td>只有Java</td>
+<td>有</td>
+</tr>
+<tr>
+<td>Dashboard中文支持</td>
+<td>好</td>
+<td>无</td>
+<td>无</td>
+<td>好</td>
+</tr>
+<tr>
+<td>社区支持</td>
+<td>好，文档较丰富，作者在携程点评</td>
+<td>好，文档一般，暂无中文社区</td>
+<td>一般，文档缺，无中文社区</td>
+<td>好，文档丰富，中文社区活跃</td>
+</tr>
+<tr>
+<td>调国内案例</td>
+<td>携程、点评、陆金所</td>
+<td>京东、阿里不开源</td>
+<td>暂无</td>
+<td>很多</td>
+</tr>
+<tr>
+<td>源头祖先</td>
+<td>eBayCAL~Centralized Application Logging</td>
+<td>Google Dapper</td>
+<td>Google Dapper</td>
+<td>Google Dapper</td>
+</tr>
+</tbody></table>
+<p>综上所述，我们可以通过下图来简单概况全栈监控这块的设计：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106163916653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="全栈监控"></p>
+<h4 id="k8s集群规模"><a href="#k8s集群规模" class="headerlink" title="k8s集群规模"></a>k8s集群规模</h4><p>在实践中，大家经常问到的一个问题是我们公司应该选择一个还是多个 k8s 集群？</p>
+<ul>
+<li>一个大一统的的平台，支持多种应用负载、环境和多租户隔离；</li>
+<li>或者，一组以应用为中心的小集群，支持不同应用和环境的生命周期管理。</li>
+</ul>
+<p>我们可以比较一下这两种选择：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>单一大集群</th>
+<th>多个应用为中心集群</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>特点</td>
+<td>支持多种应用负载、环境和多租户隔离</td>
+<td>支持不同应用和环境的生命周期管理</td>
+<td></td>
+</tr>
+<tr>
+<td>硬多租（安全、资源强隔离）</td>
+<td>复杂</td>
+<td>简单</td>
+<td></td>
+</tr>
+<tr>
+<td>混合调度多种类型资源 (GPU等 )</td>
+<td>复杂</td>
+<td>简单</td>
+<td></td>
+</tr>
+<tr>
+<td>集群管理复杂性</td>
+<td>较低</td>
+<td>较高(自建)</td>
+<td></td>
+</tr>
+<tr>
+<td>节点管理开销</td>
+<td>较高</td>
+<td>较低</td>
+<td></td>
+</tr>
+<tr>
+<td>集群生命周期的灵活性</td>
+<td>困难</td>
+<td>简单（不同集群可以有不同的版本和伸缩策略）</td>
+<td></td>
+</tr>
+<tr>
+<td>规模化引入的复杂性</td>
+<td>复杂</td>
+<td>简单</td>
+<td></td>
+</tr>
+<tr>
+<td>节点管理开销</td>
+<td>较低</td>
+<td>较高</td>
+<td></td>
+</tr>
+<tr>
+<td>操作系统额外开销</td>
+<td>较低</td>
+<td>较高</td>
+<td></td>
+</tr>
+<tr>
+<td>节点调度复杂性（如 NUMA）</td>
+<td>较高</td>
+<td>较低</td>
+<td>部署密度增加之后，需要更加合理的资源调度来保障应用 SLA</td>
+</tr>
+<tr>
+<td>节点稳定性</td>
+<td>较低</td>
+<td>较高</td>
+<td>随着部署密度增加，节点自身的稳定性也会随之下降</td>
+</tr>
+<tr>
+<td>节点失效爆炸半径</td>
+<td>较大</td>
+<td>较小</td>
+<td>一个大规格实例失效，会影响更多的应用容器。也需要预留更多的资源进行宕机迁移</td>
+</tr>
+<tr>
+<td>Master 组件压力</td>
+<td>较小</td>
+<td>较大</td>
+<td>Worker 节点数量是影响 Master 节点容量规划和稳定性的因素之一。k8s 1.13 版本引入的 NodeLease 功能让节点数量对 Master 组件的压力降低很多</td>
+</tr>
+</tbody></table>
+<p>默认情况下，kubelet 使用 CFS 配额 来执行 pod 的 CPU 约束。当节点上运行了很多 CPU 密集的应用时，工作负载可能会迁移到不同的 CPU 核，工作负载的会受到 CPU 缓存亲和性以及调度延迟的影响。当使用大规格实例类型时，节点的 CPU 数量较多，现有的 Java，Golang 等应用在多 CPU 共享的场景，性能会出现明显下降。所有对于大规格实例，需要对CPU管理策略进行配置，利用 CPU set 进行资源分配。</p>
+<p>此外一个重要的考虑因素就是 NUMA 支持。在 NUMA 开启的物理机实例或者大规格实例上，如果处理不当，内存访问吞吐可能会比优化方式降低了30%。Topology 管理器可以开启 NUMA 感知 <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/">https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/</a> 。但是目前 k8s 对 NUMA 的支持比较简单，还无法充分发挥 NUMA 的性能。</p>
+<p>选择后者典型的场景是：</p>
+<ul>
+<li>开发、测试环境使用不同的集群；</li>
+<li>不同的部门使用不同的集群进行隔离；</li>
+<li>不同的应用使用不同的集群；</li>
+<li>不同版本的 k8s 集群。</li>
+</ul>
+<p>采用以多个小集群的主要原因在于爆炸半径比较小，可以有效提升系统的可用性。同时通过集群也可以比较好地进行资源隔离。管理、运维复杂性的增加是采用多个小集群的一个不足之处。</p>
+<p>值得一提的是源自 <code>Google Borg</code> 的理念，Kubernetes 的愿景是成为 Data Center Operating System，而且 Kubernetes 也提供了 RBAC、namespace 等管理能力，支持多用户共享一个集群，并实现资源限制。 但是这些更多是 “软多租” 能力，不能实现不同租户之间的强隔离。在多租户最佳实践中，我们可以有如下的一些建议：</p>
+<ul>
+<li>数据平面：可以通过 PSP (PodSecurityPolicy) 提升容器的隔离性；利用 Network Policy 提升应用之间网络隔离性；可以通过将 nodes 和 namespace 绑定在一起，来提升 namespace 之间资源的隔离。</li>
+<li>控制平面：Kubernetes 的控制平面包括 master 组件 API Server, Scheduler, etcd 等，系统 addon 如CoreDNS, Ingress Controller 等，以及用户的扩展，如第三方的CRD (Customer Resource Definition) controller。这些组件大多不具备良好的租户之间的安全、资源和故障隔离能力。一个错误的CRD contoller 实现有可能打挂一个集群的 API Server。</li>
+</ul>
+<p>目前而言，Kubernetes 对硬隔离的支持存在很多局限性，同时社区也在积极探索一些方向。</p>
+<p>另一个需要考虑的方案是 Kubernetes 自身的可扩展性，我们知道一个 Kubernetes 集群的规模在保障稳定性的前提下受限于多个维度，一般而言 Kubernetes 集群小于 5000 节点。云厂商 Kubernetes 规模化上有丰富的经验，但是对于绝大多数公司而言，是无法解决超大集群的运维和定制化复杂性的。</p>
+<p><img src="https://img-blog.csdnimg.cn/20201003155716750.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>另外值得一提的是可以利用 Istio 服务网格轻松实现对多个 k8s 集群的应用的统一路由管理。</p>
+<h4 id="k8s集群计算资源"><a href="#k8s集群计算资源" class="headerlink" title="k8s集群计算资源"></a>k8s集群计算资源</h4><p>k8s 集群计算资源考量可以参考下表：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>物理机</th>
+<th>云主机</th>
+<th>自行准备的虚机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>I&#x2F;O损耗</td>
+<td>低</td>
+<td>稍微</td>
+<td>高</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>中</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>额外资源开销</td>
+<td>低</td>
+<td>中</td>
+<td>高</td>
+</tr>
+<tr>
+<td>灵活度</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+</tr>
+</tbody></table>
+<ul>
+<li>传统虚拟化技术 I&#x2F;O 损耗较大；对于 I&#x2F;O 密集型应用，物理机相比传统虚拟机有更好的性能表现；</li>
+<li>在物理机上部署有更少的额外资源开销（如虚拟化管理、虚拟机操作系统等）；可以有更高的部署密度，从而降低基础设施成本；</li>
+<li>在物理机上可以更加灵活地选择网络、存储等设备和软件应用生态。</li>
+</ul>
+<p>一般而言建议：</p>
+<ul>
+<li>对性能极其敏感的应用，如高性能计算，物理机是较好的选择；</li>
+<li>云主机支持热迁移，可以有效降低运维成本；</li>
+<li>在工作实践，我们会为 k8s 集群划分静态资源池和弹性资源池。通常而言，固定资源池可以根据需要选择物理机或者云主机实例。弹性资源池建议根据应用负载使用合适规格的云主机实例来优化成本、避免浪费，提升弹性供给保障。</li>
+</ul>
+<h4 id="压力引擎"><a href="#压力引擎" class="headerlink" title="压力引擎"></a>压力引擎</h4><p>在压力引擎这块，目前还是倾向选择开源压测工具一哥：Jmeter。</p>
+<p>Jmeter 容器云的设计如下：<br><img src="https://img-blog.csdnimg.cn/2020110616420877.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="Jmeter 容器云"></p>
+<p>目前常规 Jmeter 存在的问题：</p>
+<ul>
+<li>并发数超过单节点承载能力时，多节点环境配置、维护复杂；</li>
+<li>默认配置下无法并行运行多个测试，需要更改配置启动额外进程；</li>
+<li>难以支持云环境下测试资源的弹性伸缩需求。</li>
+</ul>
+<p>Jmeter 容器云带来的改变：</p>
+<ul>
+<li>压测执行节点一键安装；</li>
+<li>多个项目、多个测试可并行使用同一个测试资源池（多租户），提高资源利用率；</li>
+<li>对接 k8s HPA 根据并发数自动启动、释放压测执行节点，可以做到自动伸缩容。</li>
+</ul>
+<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><p>这个过程中其实还有许许多多的技术细节可以拿来展开说，但是鉴于文章篇幅有限就不在本文一一列举了，有机会的话可以另开一篇详细阐述。</p>
+<h2 id="运行效果展示"><a href="#运行效果展示" class="headerlink" title="运行效果展示"></a>运行效果展示</h2><h3 id="基础服务平台（IaaS云）"><a href="#基础服务平台（IaaS云）" class="headerlink" title="基础服务平台（IaaS云）"></a>基础服务平台（IaaS云）</h3><h4 id="登录认证"><a href="#登录认证" class="headerlink" title="登录认证"></a>登录认证</h4><p>这里我们对默认的首页定制成了阿里云首页的风格：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164231710.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="登录认证"></p>
+<h4 id="高效管理物理资源（计算、网络、存储）"><a href="#高效管理物理资源（计算、网络、存储）" class="headerlink" title="高效管理物理资源（计算、网络、存储）"></a>高效管理物理资源（计算、网络、存储）</h4><p>可视化UI的方式一键创建云主机：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164332369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云主机"></p>
+<p>支持简单编辑云网络：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164402530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云网络"></p>
+<p>很容易的挂载云硬盘：</p>
+<p><img src="https://img-blog.csdnimg.cn/2020110616442229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="云硬盘"></p>
+<h4 id="1-2、轻松管理系统镜像"><a href="#1-2、轻松管理系统镜像" class="headerlink" title="1.2、轻松管理系统镜像"></a>1.2、轻松管理系统镜像</h4><p>定制的操作系统可以轻松上传：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164447218.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="系统镜像"></p>
+<h4 id="web桌面"><a href="#web桌面" class="headerlink" title="web桌面"></a>web桌面</h4><p>支持 web VNC 访问桌面：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164531538.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="web桌面"></p>
+<h4 id="集群管理-Web-UI"><a href="#集群管理-Web-UI" class="headerlink" title="集群管理 Web UI"></a>集群管理 Web UI</h4><p>傻瓜式的创建 k8s 集群，并支持集群扩展：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164608979.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="集群管理 Web UI "></p>
+<h3 id="基础服务平台（PaaS云）-1"><a href="#基础服务平台（PaaS云）-1" class="headerlink" title="基础服务平台（PaaS云）"></a>基础服务平台（PaaS云）</h3><h4 id="DevOps流水线"><a href="#DevOps流水线" class="headerlink" title="DevOps流水线"></a>DevOps流水线</h4><p>基于 Kubernetes 的容器编排和管理能力，整合 DevOps 工具链、微服务和应用框架，来帮助研发团队实现敏捷化的应用交付和自动化的运营管理：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164634520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="DevOps流水线"></p>
+<h4 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h4><p>集成 Ingress 授权入站连接到达集群服务的规则集合，提供七层负载均衡能力，配置提供外部可访问的 URL、负载均衡、SSL、基于名称的虚拟主机等。作为集群流量接入层，提供高可靠性：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164654525.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="Ingress "></p>
+<h4 id="代码仓库"><a href="#代码仓库" class="headerlink" title="代码仓库"></a>代码仓库</h4><p>基于 Git 的项目管理平台。提供网页版和客户端版接口，提供给用户空间存储 git 仓储，保存用户的一些数据文档或者代码等数据。一个开源的分布式版本控制系统，用于处理项目中的版本迭代问题：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164710603.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="代码仓库"></p>
+<h4 id="敏捷研发管理"><a href="#敏捷研发管理" class="headerlink" title="敏捷研发管理"></a>敏捷研发管理</h4><p>实现缺陷和问题跟踪；提供高效方式规划、可视化和管理研发工作，同时为 Scrum 和 Kanban 流程提供支持；支持多个可共享的仪表板；支持任务时间管理：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164756895.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="敏捷研发管理"></p>
+<h4 id="调用链监控"><a href="#调用链监控" class="headerlink" title="调用链监控"></a>调用链监控</h4><p>提供微服务分布式追踪、服务网格遥测分析、度量聚合和可视化一体化解决方案：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164828782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="调用链监控"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164828769.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="调用链监控"></p>
+<h4 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h4><p>提供了一组简单易用的特性集，快速实现动态服务发现和服务监控检查。</p>
+<p><img src="https://img-blog.csdnimg.cn/2020110616490564.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务注册"></p>
+<h4 id="服务监控"><a href="#服务监控" class="headerlink" title="服务监控"></a>服务监控</h4><p>SpringBoot 服务应用可以通过 Actuator 来暴露应用运行过程中的各项指标，Spring Boot Admin 通过这些指标来监控 SpringBoot 应用，通过图形化界面呈现出来：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165001592.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务监控"></p>
+<h4 id="日志聚合"><a href="#日志聚合" class="headerlink" title="日志聚合"></a>日志聚合</h4><p>ELK 即 Elasticsearch、Logstash、Kibana，组合起来搭建日志聚合系统：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165027353.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="日志聚合"></p>
+<h4 id="API文档"><a href="#API文档" class="headerlink" title="API文档"></a>API文档</h4><p>微服务聚合 Swagger 文档，支持在线接口调试：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164946485.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="API文档"></p>
+<h4 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h4><p>动态配置服务可以让以中心化、外部化和动态化的方式管理所有环境的应用配置和服务配置：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164851685.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="配置管理"></p>
+<h4 id="制品仓库"><a href="#制品仓库" class="headerlink" title="制品仓库"></a>制品仓库</h4><p>提供 maven 私服和二进制制品仓库：</p>
+<p><img src="https://img-blog.csdnimg.cn/2020110616505068.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="制品仓库"></p>
+<h4 id="容器仓库"><a href="#容器仓库" class="headerlink" title="容器仓库"></a>容器仓库</h4><p>提供存储、管理和分发 Docker 镜像的企业级仓库：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165103997.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="容器仓库"></p>
+<h4 id="静态代码扫描"><a href="#静态代码扫描" class="headerlink" title="静态代码扫描"></a>静态代码扫描</h4><p>代码质量分析平台，便于管理代码的质量，可检查出项目代码的漏洞和潜在的逻辑问题。同时提供了丰富的插件，支持多种语言的检测：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165123426.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="静态代码扫描"></p>
+<h4 id="可视化微服务管理"><a href="#可视化微服务管理" class="headerlink" title="可视化微服务管理"></a>可视化微服务管理</h4><p>可视化UI的方式管理应用和组件，降低了 k8s 容器云使用门槛：<br><img src="https://img-blog.csdnimg.cn/20201106165150114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="可视化微服务管理"></p>
+<p>web 在线编辑容器应用：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165208840.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="web 在线编辑容器应用："></p>
+<p>方便查看应用日志：<br><img src="https://img-blog.csdnimg.cn/20201106165223150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="方便查看应用日志"></p>
+<p>在线编辑配置文件：<br><img src="https://img-blog.csdnimg.cn/2020110616524286.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="在线编辑配置文件"></p>
+<h4 id="压力引擎-1"><a href="#压力引擎-1" class="headerlink" title="压力引擎"></a>压力引擎</h4><p>通过可视化看板收集压测结果：</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106165306616.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="压测结果"></p>
+<h4 id="资源监控"><a href="#资源监控" class="headerlink" title="资源监控"></a>资源监控</h4><p>k8s 集群资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165328633.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群资源监控"></p>
+<p>服务器资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165347427.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务器资源监控"></p>
+<p>关系型数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165409806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="关系型数据库资源"></p>
+<p>消息队列资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165422972.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="消息队列资源监控"></p>
+<p>NoSQL 数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/2020110616543539.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="NoSQL 数据库资源"></p>
+<p>k8s 集群数据库资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165448886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群数据库资源"></p>
+<p>k8s 集群核心组件资源监控：<br><img src="https://img-blog.csdnimg.cn/20201106165459180.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="k8s 集群核心组件资源"></p>
+<h4 id="服务可视化监控"><a href="#服务可视化监控" class="headerlink" title="服务可视化监控"></a>服务可视化监控</h4><p>应用服务拓扑展示：<br><img src="https://img-blog.csdnimg.cn/20201106165508702.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="服务可视化监控"></p>
+<h4 id="自定义告警"><a href="#自定义告警" class="headerlink" title="自定义告警"></a>自定义告警</h4><p>钉钉实时告警：<br><img src="https://img-blog.csdnimg.cn/20201106165528572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3p1b3pld2Vp,size_16,color_FFFFFF,t_70#pic_center" alt="自定义告警"></p>
+<h2 id="经验心得"><a href="#经验心得" class="headerlink" title="经验心得"></a>经验心得</h2><ul>
+<li>基于开源，拥抱开源；</li>
+<li>尽量使用成熟的第三方平台；</li>
+<li>不重复造轮子；</li>
+<li>技术栈和组件要适合研发团队技术能力及主流技术方向；</li>
+<li>KISS 原则(Keep It Simple and Stupid)；</li>
+<li>尽量考虑 ROI（投入产出比）；</li>
+<li>不断演进迎合公司业务发展、大公司方案不一定是适合的、避免为技术而技术；</li>
+<li>任何方案不必最求大而全和完美，实践中不断完善和演进；</li>
+<li>需求导向，借力开源，科学选型，快速集成，重视扩展，演进改善。</li>
+</ul>
+<h2 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a>未来展望</h2><ul>
+<li>在容器时代，不能只看 k8s 本身，对于企业内的基础设施，“向上”和“向下”的融合和兼容问题也很关键。“向上”是面向业务场景为用户提供对接，因为容器并不能直接服务于业务，它还涉及到如何部署应用、服务治理、调度等诸多层面。“向下”，即容器与基础设施相结合的问题，这里更多的是兼容资源类型、更强大的隔离性、更高的资源使用效率等都是关键问题；</li>
+<li>云原生应用管理：当前，我们已有项目云原生应用管理在生产环境落地，未来我们需进一步扩大云原生应用的覆盖面，不断提升研发效率；</li>
+<li>云原生架构落地：推进各个中间件、存储系统、大数据以及核心业务合作落地各个领域的云原生系统。</li>
+</ul>
+<p>参考资料：</p>
+<ul>
+<li>[1]：阿里云原生架构白皮书</li>
+<li>[2]：基于OpenStack搭建公司私有云平台</li>
+<li>[3]：Kubernetes如何改变美团的云基础设施</li>
+<li>[4]：关于Kubernetes规划的灵魂n问</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/17/2022/06/2022-06-17-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E9%9B%86%E9%94%A6/index/" rel="prev" title="数学公式集锦">
+      <i class="fa fa-chevron-left"></i> 数学公式集锦
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/27/2022/12/2022-12-27-%E8%BF%90%E7%BB%B4%E8%83%BD%E5%8A%9B%E8%A6%81%E6%B1%82/index/" rel="next" title="运维能力要求">
+      运维能力要求 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E6%96%87%E9%93%BE%E6%8E%A5%EF%BC%9Ahttps-bbs-huaweicloud-com-blogs-285546"><span class="nav-number">1.</span> <span class="nav-text">原文链接：https:&#x2F;&#x2F;bbs.huaweicloud.com&#x2F;blogs&#x2F;285546</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E4%B8%B4%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">3.</span> <span class="nav-text">面临的挑战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E7%AE%80%E4%BB%8B"><span class="nav-number">4.</span> <span class="nav-text">功能简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%BC%98%E5%8A%BF"><span class="nav-number">4.1.</span> <span class="nav-text">核心优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%AE%BE%E6%96%BD%E5%B9%B3%E5%8F%B0%EF%BC%88IaaS%E4%BA%91%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">核心设施平台（IaaS云）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%B9%B3%E5%8F%B0%EF%BC%88PaaS%E4%BA%91%EF%BC%89"><span class="nav-number">4.3.</span> <span class="nav-text">基础服务平台（PaaS云）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%90%BD%E5%9C%B0"><span class="nav-number">5.</span> <span class="nav-text">技术落地</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">整体架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">5.2.</span> <span class="nav-text">技术选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IaaS%E4%BA%91%E6%8A%80%E6%9C%AF"><span class="nav-number">5.2.1.</span> <span class="nav-text">IaaS云技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PaaS%E4%BA%91%E6%8A%80%E6%9C%AF"><span class="nav-number">5.2.2.</span> <span class="nav-text">PaaS云技术</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">5.3.</span> <span class="nav-text">实践的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenStack-amp-CloudStack"><span class="nav-number">5.3.1.</span> <span class="nav-text">OpenStack &amp; CloudStack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KVM-amp-VMWare"><span class="nav-number">5.3.2.</span> <span class="nav-text">KVM &amp; VMWare</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CentOS-amp-Ubuntu"><span class="nav-number">5.3.3.</span> <span class="nav-text">CentOS &amp; Ubuntu</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenStack-amp-k8s"><span class="nav-number">5.3.4.</span> <span class="nav-text">OpenStack &amp; k8s</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%A5%E6%8A%B1%E5%BC%80%E6%BA%90%E9%9D%A2%E4%B8%B4%E7%9A%84%E5%9B%B0%E9%9A%BE"><span class="nav-number">5.3.5.</span> <span class="nav-text">拥抱开源面临的困难</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%91%E5%8E%9F%E7%94%9F%E6%9E%B6%E6%9E%84%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">5.3.6.</span> <span class="nav-text">云原生架构带来的挑战</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E4%BA%91%E5%BB%BA%E8%AE%BE%E8%B7%AF%E7%BA%BF"><span class="nav-number">5.3.7.</span> <span class="nav-text">私有云建设路线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E4%BA%91%E7%9A%84%E5%AE%B9%E9%87%8F%E8%AF%84%E4%BC%B0"><span class="nav-number">5.3.8.</span> <span class="nav-text">私有云的容量评估</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E6%A0%88%E7%9B%91%E6%8E%A7"><span class="nav-number">5.3.9.</span> <span class="nav-text">全栈监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k8s%E9%9B%86%E7%BE%A4%E8%A7%84%E6%A8%A1"><span class="nav-number">5.3.10.</span> <span class="nav-text">k8s集群规模</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k8s%E9%9B%86%E7%BE%A4%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90"><span class="nav-number">5.3.11.</span> <span class="nav-text">k8s集群计算资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%8B%E5%8A%9B%E5%BC%95%E6%93%8E"><span class="nav-number">5.3.12.</span> <span class="nav-text">压力引擎</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">5.3.13.</span> <span class="nav-text">其它</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="nav-number">6.</span> <span class="nav-text">运行效果展示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%B9%B3%E5%8F%B0%EF%BC%88IaaS%E4%BA%91%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">基础服务平台（IaaS云）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81"><span class="nav-number">6.1.1.</span> <span class="nav-text">登录认证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E6%95%88%E7%AE%A1%E7%90%86%E7%89%A9%E7%90%86%E8%B5%84%E6%BA%90%EF%BC%88%E8%AE%A1%E7%AE%97%E3%80%81%E7%BD%91%E7%BB%9C%E3%80%81%E5%AD%98%E5%82%A8%EF%BC%89"><span class="nav-number">6.1.2.</span> <span class="nav-text">高效管理物理资源（计算、网络、存储）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2%E3%80%81%E8%BD%BB%E6%9D%BE%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E9%95%9C%E5%83%8F"><span class="nav-number">6.1.3.</span> <span class="nav-text">1.2、轻松管理系统镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#web%E6%A1%8C%E9%9D%A2"><span class="nav-number">6.1.4.</span> <span class="nav-text">web桌面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86-Web-UI"><span class="nav-number">6.1.5.</span> <span class="nav-text">集群管理 Web UI</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%B9%B3%E5%8F%B0%EF%BC%88PaaS%E4%BA%91%EF%BC%89-1"><span class="nav-number">6.2.</span> <span class="nav-text">基础服务平台（PaaS云）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DevOps%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="nav-number">6.2.1.</span> <span class="nav-text">DevOps流水线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">6.2.2.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93"><span class="nav-number">6.2.3.</span> <span class="nav-text">代码仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%8F%E6%8D%B7%E7%A0%94%E5%8F%91%E7%AE%A1%E7%90%86"><span class="nav-number">6.2.4.</span> <span class="nav-text">敏捷研发管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE%E7%9B%91%E6%8E%A7"><span class="nav-number">6.2.5.</span> <span class="nav-text">调用链监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C"><span class="nav-number">6.2.6.</span> <span class="nav-text">服务注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7"><span class="nav-number">6.2.7.</span> <span class="nav-text">服务监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E8%81%9A%E5%90%88"><span class="nav-number">6.2.8.</span> <span class="nav-text">日志聚合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#API%E6%96%87%E6%A1%A3"><span class="nav-number">6.2.9.</span> <span class="nav-text">API文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">6.2.10.</span> <span class="nav-text">配置管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B6%E5%93%81%E4%BB%93%E5%BA%93"><span class="nav-number">6.2.11.</span> <span class="nav-text">制品仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E4%BB%93%E5%BA%93"><span class="nav-number">6.2.12.</span> <span class="nav-text">容器仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E6%89%AB%E6%8F%8F"><span class="nav-number">6.2.13.</span> <span class="nav-text">静态代码扫描</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">6.2.14.</span> <span class="nav-text">可视化微服务管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%8B%E5%8A%9B%E5%BC%95%E6%93%8E-1"><span class="nav-number">6.2.15.</span> <span class="nav-text">压力引擎</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E7%9B%91%E6%8E%A7"><span class="nav-number">6.2.16.</span> <span class="nav-text">资源监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%AF%E8%A7%86%E5%8C%96%E7%9B%91%E6%8E%A7"><span class="nav-number">6.2.17.</span> <span class="nav-text">服务可视化监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%91%8A%E8%AD%A6"><span class="nav-number">6.2.18.</span> <span class="nav-text">自定义告警</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E5%BF%83%E5%BE%97"><span class="nav-number">7.</span> <span class="nav-text">经验心得</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="nav-number">8.</span> <span class="nav-text">未来展望</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

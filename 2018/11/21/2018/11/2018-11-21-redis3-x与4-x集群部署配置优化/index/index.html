@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档http:&#x2F;&#x2F;www.redis.cn&#x2F;topics&#x2F;cluster-spec.html  键分布模型键空间被分割为 16384 槽（slot），事实上集群的最大节点数量是 16384 个。（然而建议最大节点数量设置在1000这个数量级上） 所有的主节点都负责 16384 个哈希槽中的一部分。当集群处于稳定状态时，集群中没有在执行重配置（reconfiguration）操作，每个哈希槽都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis3.x与4.x集群部署配置优化">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis3-x%E4%B8%8E4-x%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档http:&#x2F;&#x2F;www.redis.cn&#x2F;topics&#x2F;cluster-spec.html  键分布模型键空间被分割为 16384 槽（slot），事实上集群的最大节点数量是 16384 个。（然而建议最大节点数量设置在1000这个数量级上） 所有的主节点都负责 16384 个哈希槽中的一部分。当集群处于稳定状态时，集群中没有在执行重配置（reconfiguration）操作，每个哈希槽都">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-21T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.278Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis3-x%E4%B8%8E4-x%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Redis3.x与4.x集群部署配置优化 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis3-x%E4%B8%8E4-x%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis3.x与4.x集群部署配置优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-21 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-21T08:00:00+08:00">2018-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><p><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/cluster-spec.html">http://www.redis.cn/topics/cluster-spec.html</a></p>
+</blockquote>
+<h3 id="键分布模型"><a href="#键分布模型" class="headerlink" title="键分布模型"></a>键分布模型</h3><p>键空间被分割为 16384 槽（slot），事实上集群的最大节点数量是 16384 个。（然而建议最大节点数量设置在1000这个数量级上） 所有的主节点都负责 16384 个哈希槽中的一部分。当集群处于稳定状态时，集群中没有在执行重配置（reconfiguration）操作，每个哈希槽都只由一个节点进行处理（不过主节点可以有一个或多个从节点，可以在网络断线或节点失效时替换掉主节点）。 以下是用来把键映射到哈希槽的算法（下一段哈希标签例外就是按照这个规则）： HASH_SLOT &#x3D; CRC16(key) mod 16384 其中，CRC16的定义如下： 名称：XMODEM（也可以称为 ZMODEM 或 CRC-16&#x2F;ACORN） 输出长度：16 bit 多项数（poly）：1021（即是 x16 + x12 + x5 + 1 ） 初始化：0000 反射输入字节（Reflect Input byte）：False 反射输入CRC（Reflect Output CRC）：False 用于输出CRC的异或常量（Xor constant to output CRC）：0000 该算法对于输入”123456789”的输出：31C3 CRC16的16位输出中的14位会被使用（这也是为什么上面的式子中有一个对 16384 取余的操作）。 在我们的测试中，CRC16能相当好地把不同的键均匀地分配到 16384 个槽中。 注意： 在本文档的附录A中有CRC16算法的实现。 Redis499问题根本原因是redis发生了阻塞，是linux系统环境（CPU&#x2F;内存&#x2F;IO）、Redis配置、客户端使用多方综合导致，由于大数据部门使用量巨大，需要持续优化验证。</p>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h4 id="Redis优化相关"><a href="#Redis优化相关" class="headerlink" title="Redis优化相关"></a>Redis优化相关</h4><p>1、单个redis实例 内存控制在10GB以内，fork耗时每GB在20ms左右，10GB在200ms左右（latest_fork_usec:287905），需要配置maxmemory，最大内存的70%左右 2、降低fork操作频率，适度放宽rdb&#x2F;aof自动触发时机（默认只开启rdb持久化且每分钟有1万key变更就触发rdb持久化） 3、repl-timeout默认60s，如果rdb（目前rdb文件压缩后有3G多，不压缩有10GB左右，默认开启压缩，目前量至少需要2-3分钟才能同步完成）60S内数据没有同步到从节点，主节点会认为从节点故障并中断复制连接 4、客户端尽量避免使用高算法复杂度的命令，可以通过info commandstats查看 可能还有其他需要关注的点，后续了解后再补充</p>
+<h4 id="Linux配置优化相关（只适用redis服务器）"><a href="#Linux配置优化相关（只适用redis服务器）" class="headerlink" title="Linux配置优化相关（只适用redis服务器）"></a>Linux配置优化相关（只适用redis服务器）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">1、关闭THP</span><br><span class="line">临时</span><br><span class="line">echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span><br><span class="line">永久</span><br><span class="line">/etc/rc.local</span><br><span class="line">if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then</span><br><span class="line">echo never &gt; /sys/kernel/mm/redhat_transparent_hugepage/enabled</span><br><span class="line">fi</span><br><span class="line">2、内存分配策略</span><br><span class="line">临时</span><br><span class="line">echo 1 &gt; /proc/sys/vm/overcommit_memory （默认0）</span><br><span class="line">永久</span><br><span class="line">echo &quot;vm.overcommit_memory=1&quot; &gt;&gt;/etc/sysctl.conf</span><br><span class="line">3、交换分区策略</span><br><span class="line">临时</span><br><span class="line">echo 10 &gt;  /proc/sys/vm/swappiness （默认60）</span><br><span class="line">永久</span><br><span class="line">echo &quot;vm.swappiness=10&quot;  &gt;&gt;/etc/sysctl.conf</span><br><span class="line"></span><br><span class="line">4、分盘存储</span><br><span class="line">单机多实例情况下，不同实例RDB/AOF文件分盘存储（2实例虚拟机最好挂载2块盘）</span><br><span class="line">运营添加业务监控：应用方加入异常报警，发生阻塞时线上应用会最先感知到</span><br><span class="line">运维部署CacheCloud监控集群状态，便于发现定位问题</span><br></pre></td></tr></table></figure>
+
+<h3 id="补充资料"><a href="#补充资料" class="headerlink" title="补充资料"></a>补充资料</h3><h4 id="查看状态"><a href="#查看状态" class="headerlink" title="查看状态"></a>查看状态</h4><p>redis-cli -c -p 7004 info persistence redis-cli -c -p 7004 info replication redis-cli -c -p 7004 info commandstats redis-cli -c -p 7004 info stats redis-cli -c -p 7004 –stat</p>
+<h4 id="集群客户端"><a href="#集群客户端" class="headerlink" title="集群客户端"></a>集群客户端</h4><p>使用最多的时java客户端, Jedis 最近添加了对集群的支持, 详细请查看项目README中Jedis Cluster部分. StackExchange.Redis 提供对 C# 的支持(并且包括大部分 .NET 下面的语言，比如： VB, F#等等) thunk-redis 提供对 Node.js 和 io.js的支持。 Redis unstable 分支中的 redis-cli 程序实现了非常基本的集群支持， 可以使用命令 redis-cli -c 来启动。 redis-cli 对集群的支持是非常基本的， 所以它总是依靠 Redis 集群节点来将它转向（redirect）至正确的节点。一个真正的（serious）集群客户端应该做得比这更好： 它应该用缓存记录起哈希槽与节点地址之间的映射（map）， 从而直接将命令发送到正确的节点上面。这种映射只会在集群的配置出现某些修改时变化， 比如说， 在一次故障转移（failover）之后， 或者系统管理员通过添加节点或移除节点来修改了集群的布局（layout）之后， 诸如此类。 CONFIG SET SAVE “900 1 300 10”. Redis 持久化 Redis 提供了不同级别的持久化方式: RDB持久化方式能够在指定的时间间隔能对你的数据进行快照存储. AOF持久化方式记录每次对服务器写的操作,当服务器重启的时候会重新执行这些命令来恢复原始的数据,AOF命令以redis协议追加保存每次写的操作到文件末尾.Redis还能对AOF文件进行后台重写,使得AOF文件的体积不至于过大. 如果你只希望你的数据在服务器运行的时候存在,你也可以不使用任何持久化方式. 你也可以同时开启两种持久化方式, 在这种情况下, 当redis重启的时候会优先载入AOF文件来恢复原始的数据,因为在通常情况下AOF文件保存的数据集要比RDB文件保存的数据集要完整. 最重要的事情是了解RDB和AOF持久化方式的不同,让我们以RDB持久化方式开始: RDB的优点 RDB是一个非常紧凑的文件,它保存了某个时间点得数据集,非常适用于数据集的备份,比如你可以在每个小时报保存一下过去24小时内的数据,同时每天保存过去30天的数据,这样即使出了问题你也可以根据需求恢复到不同版本的数据集. RDB是一个紧凑的单一文件,很方便传送到另一个远端数据中心或者亚马逊的S3（可能加密），非常适用于灾难恢复. RDB在保存RDB文件时父进程唯一需要做的就是fork出一个子进程,接下来的工作全部由子进程来做，父进程不需要再做其他IO操作，所以RDB持久化方式可以最大化redis的性能. 与AOF相比,在恢复大的数据集的时候，RDB方式会更快一些. RDB的缺点 如果你希望在redis意外停止工作（例如电源中断）的情况下丢失的数据最少的话，那么RDB不适合你.虽然你可以配置不同的save时间点(例如每隔5分钟并且对数据集有100个写的操作),是Redis要完整的保存整个数据集是一个比较繁重的工作,你通常会每隔5分钟或者更久做一次完整的保存,万一在Redis意外宕机,你可能会丢失几分钟的数据. RDB 需要经常fork子进程来保存数据集到硬盘上,当数据集比较大的时候,fork的过程是非常耗时的,可能会导致Redis在一些毫秒级内不能响应客户端的请求.如果数据集巨大并且CPU性能不是很好的情况下,这种情况会持续1秒,AOF也需要fork,但是你可以调节重写日志文件的频率来提高数据集的耐久度. AOF 优点 使用AOF 会让你的Redis更加耐久: 你可以使用不同的fsync策略：无fsync,每秒fsync,每次写的时候fsync.使用默认的每秒fsync策略,Redis的性能依然很好(fsync是由后台线程进行处理的,主线程会尽力处理客户端请求),一旦出现故障，你最多丢失1秒的数据. AOF文件是一个只进行追加的日志文件,所以不需要写入seek,即使由于某些原因(磁盘空间已满，写的过程中宕机等等)未执行完整的写入命令,你也也可使用redis-check-aof工具修复这些问题. Redis 可以在 AOF 文件体积变得过大时，自动地在后台对 AOF 进行重写： 重写后的新 AOF 文件包含了恢复当前数据集所需的最小命令集合。 整个重写操作是绝对安全的，因为 Redis 在创建新 AOF 文件的过程中，会继续将命令追加到现有的 AOF 文件里面，即使重写过程中发生停机，现有的 AOF 文件也不会丢失。 而一旦新 AOF 文件创建完毕，Redis 就会从旧 AOF 文件切换到新 AOF 文件，并开始对新 AOF 文件进行追加操作。 AOF 文件有序地保存了对数据库执行的所有写入操作， 这些写入操作以 Redis 协议的格式保存， 因此 AOF 文件的内容非常容易被人读懂， 对文件进行分析（parse）也很轻松。 导出（export） AOF 文件也非常简单： 举个例子， 如果你不小心执行了 FLUSHALL 命令， 但只要 AOF 文件未被重写， 那么只要停止服务器， 移除 AOF 文件末尾的 FLUSHALL 命令， 并重启 Redis ， 就可以将数据集恢复到 FLUSHALL 执行之前的状态。 AOF 缺点 对于相同的数据集来说，AOF 文件的体积通常要大于 RDB 文件的体积。 根据所使用的 fsync 策略，AOF 的速度可能会慢于 RDB 。 在一般情况下， 每秒 fsync 的性能依然非常高， 而关闭 fsync 可以让 AOF 的速度和 RDB 一样快， 即使在高负荷之下也是如此。 不过在处理巨大的写入载入时，RDB 可以提供更有保证的最大延迟时间（latency）。</p>
+<h3 id="部署节点"><a href="#部署节点" class="headerlink" title="部署节点"></a>部署节点</h3><p>echo never &gt; &#x2F;sys&#x2F;kernel&#x2F;mm&#x2F;redhat_transparent_hugepage&#x2F;enabled echo “vm.overcommit_memory&#x3D;1” &gt;&gt;&#x2F;etc&#x2F;sysctl.conf echo “vm.swappiness&#x3D;10” &gt;&gt;&#x2F;etc&#x2F;sysctl.conf yum -y install tcl-devel wget <a target="_blank" rel="noopener" href="http://download.redis.io/releases/redis-3.2.9.tar.gz">http://download.redis.io/releases/redis-3.2.9.tar.gz</a> tar zxvf redis-3.2.9.tar.gz cd redis-3.2.9 make make test make install sh .&#x2F;utils&#x2F;install_server.sh &#x2F;data&#x2F;redis&#x2F;redis_7001.log &#x2F;data&#x2F;redis&#x2F;7001 Selected config: Port : 7001 Config file : &#x2F;etc&#x2F;redis&#x2F;7001.conf Log file : &#x2F;data&#x2F;redis&#x2F;redis_7001.log Data dir : &#x2F;data&#x2F;redis&#x2F;7001 Executable : &#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis-server Cli Executable : &#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis-cli</p>
+<h3 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a>集群管理</h3><p>wget <a target="_blank" rel="noopener" href="https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.4.tar.gz">https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.4.tar.gz</a> tar -xzvf ruby-2.3.4.tar.gz cd ruby-2.3.4 .&#x2F;configure –disable-install-rdoc make &amp;&amp; make install &#x2F;usr&#x2F;local&#x2F;bin&#x2F;ruby &#x2F;usr&#x2F;local&#x2F;bin&#x2F;gem gem sources –add <a target="_blank" rel="noopener" href="https://ruby.taobao.org/">https://ruby.taobao.org/</a> –remove <a target="_blank" rel="noopener" href="https://rubygems.org/">https://rubygems.org/</a> gem install redis [root@redisep69 ruby-2.3.4]# gem install redis Fetching: redis-3.3.3.gem (100%) Successfully installed redis-3.3.3 Parsing documentation for redis-3.3.3 Installing ri documentation for redis-3.3.3 Done installing documentation for redis after 1 seconds 1 gem installed</p>
+<h3 id="集群节点配置"><a href="#集群节点配置" class="headerlink" title="集群节点配置"></a>集群节点配置</h3><p>[root@redisep69 etc]# cat &#x2F;etc&#x2F;redis&#x2F;7001.conf20170821 bind 192.168.188.69 protected-mode no port 7001 tcp-backlog 511 timeout 0 tcp-keepalive 300 daemonize yes supervised no pidfile &#x2F;var&#x2F;run&#x2F;redis_7001.pid loglevel notice logfile &#x2F;data&#x2F;redis&#x2F;redis_7001.log databases 16 save 900 100 save 300 1000 save 60 10000 stop-writes-on-bgsave-error yes rdbcompression yes rdbchecksum yes dbfilename dump.rdb dir &#x2F;data&#x2F;redis&#x2F;7001 slave-serve-stale-data yes slave-read-only yes repl-diskless-sync no repl-diskless-sync-delay 5 repl-timeout 300 repl-disable-tcp-nodelay no slave-priority 100 maxclients 40000 maxmemory 20gb appendonly no appendfilename “appendonly.aof” appendfsync everysec no-appendfsync-on-rewrite no auto-aof-rewrite-percentage 100 auto-aof-rewrite-min-size 64mb aof-load-truncated yes lua-time-limit 5000 cluster-enabled yes cluster-config-file nodes-7001.conf cluster-node-timeout 10000 slowlog-log-slower-than 10000 slowlog-max-len 128 latency-monitor-threshold 0 notify-keyspace-events “” hash-max-ziplist-entries 512 hash-max-ziplist-value 64 list-max-ziplist-size -2 list-compress-depth 0 set-max-intset-entries 512 zset-max-ziplist-entries 128 zset-max-ziplist-value 64 hll-sparse-max-bytes 3000 activerehashing yes client-output-buffer-limit normal 0 0 0 client-output-buffer-limit slave 256mb 64mb 60 client-output-buffer-limit pubsub 32mb 8mb 60 hz 10 aof-rewrite-incremental-fsync yes</p>
+<h3 id="加入集群"><a href="#加入集群" class="headerlink" title="加入集群"></a>加入集群</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">[root@redisep69 bin]# redis-trib.rb create --replicas 1 192.168.188.69:7001 192.168.188.70:7002 192.168.188.71:7003 192.168.188.72:7004 192.168.188.73:7005  192.168.188.74:7006</span><br><span class="line">&gt;&gt;&gt; Creating cluster</span><br><span class="line">&gt;&gt;&gt; Performing hash slots allocation on 6 nodes...</span><br><span class="line">Using 3 masters:</span><br><span class="line">192.168.188.69:7001</span><br><span class="line">192.168.188.70:7002</span><br><span class="line">192.168.188.71:7003</span><br><span class="line">Adding replica 192.168.188.72:7004 to 192.168.188.69:7001</span><br><span class="line">Adding replica 192.168.188.73:7005 to 192.168.188.70:7002</span><br><span class="line">Adding replica 192.168.188.74:7006 to 192.168.188.71:7003</span><br><span class="line">M: b44e8f7e4505180f9969ecd5fee1b15f5dc3e045 192.168.188.69:7001</span><br><span class="line">slots:0-5460 (5461 slots) master</span><br><span class="line">M: aec4598d4905792ec9e5d8ab7ca403d250a2e89f 192.168.188.70:7002</span><br><span class="line">slots:5461-10922 (5462 slots) master</span><br><span class="line">M: d3e940f440dc5b33969575924bcc416e4658cd0b 192.168.188.71:7003</span><br><span class="line">slots:10923-16383 (5461 slots) master</span><br><span class="line">S: 24df5294bab6cce79fb1e0a134a4f8f761f30006 192.168.188.72:7004</span><br><span class="line">replicates b44e8f7e4505180f9969ecd5fee1b15f5dc3e045</span><br><span class="line">S: e9fe9a686aacb76d16b28460ec17f3f79098dc22 192.168.188.73:7005</span><br><span class="line">replicates aec4598d4905792ec9e5d8ab7ca403d250a2e89f</span><br><span class="line">S: 57015121d70c9f89b01cca162a25397f27ba3171 192.168.188.74:7006</span><br><span class="line">replicates d3e940f440dc5b33969575924bcc416e4658cd0b</span><br><span class="line">Can I set the above configuration? (type &#x27;yes&#x27; to accept): yes</span><br><span class="line">&gt;&gt;&gt; Nodes configuration updated</span><br><span class="line">&gt;&gt;&gt; Assign a different config epoch to each node</span><br><span class="line">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster</span><br><span class="line">Waiting for the cluster to join.....</span><br><span class="line">&gt;&gt;&gt; Performing Cluster Check (using node 192.168.188.69:7001)</span><br><span class="line">M: b44e8f7e4505180f9969ecd5fee1b15f5dc3e045 192.168.188.69:7001</span><br><span class="line">slots:0-5460 (5461 slots) master</span><br><span class="line">1 additional replica(s)</span><br><span class="line">M: aec4598d4905792ec9e5d8ab7ca403d250a2e89f 192.168.188.70:7002</span><br><span class="line">slots:5461-10922 (5462 slots) master</span><br><span class="line">1 additional replica(s)</span><br><span class="line">S: 24df5294bab6cce79fb1e0a134a4f8f761f30006 192.168.188.72:7004</span><br><span class="line">slots: (0 slots) slave</span><br><span class="line">replicates b44e8f7e4505180f9969ecd5fee1b15f5dc3e045</span><br><span class="line">S: e9fe9a686aacb76d16b28460ec17f3f79098dc22 192.168.188.73:7005</span><br><span class="line">slots: (0 slots) slave</span><br><span class="line">replicates aec4598d4905792ec9e5d8ab7ca403d250a2e89f</span><br><span class="line">S: 57015121d70c9f89b01cca162a25397f27ba3171 192.168.188.74:7006</span><br><span class="line">slots: (0 slots) slave</span><br><span class="line">replicates d3e940f440dc5b33969575924bcc416e4658cd0b</span><br><span class="line">M: d3e940f440dc5b33969575924bcc416e4658cd0b 192.168.188.71:7003</span><br><span class="line">slots:10923-16383 (5461 slots) master</span><br><span class="line">1 additional replica(s)</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line">&gt;&gt;&gt; Check for open slots...</span><br><span class="line">&gt;&gt;&gt; Check slots coverage...</span><br><span class="line">[OK] All 16384 slots covered.</span><br><span class="line">保存节点配置到硬盘（默认会保存）</span><br><span class="line">[root@redisep69 bin]# redis-cli -c -h 192.168.188.69 -p 7001</span><br><span class="line">192.168.188.69:7001&gt; CLUSTER SAVECONFIG</span><br><span class="line">OK</span><br><span class="line">192.168.188.69:7001&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@redisep69 etc]# redis-benchmark -d 100  -n 2000000 -t get,set  -q  -h 192.168.188.69 -p 7001</span><br><span class="line">SET: 120685.49 requests per second</span><br><span class="line">GET: 152753.38 requests per second</span><br><span class="line">[root@redisep69 etc]# redis-benchmark -d 10  -n 2000000 -t get,set  -q  -h 192.168.188.69 -p 7001</span><br><span class="line">SET: 148754.19 requests per second</span><br><span class="line">GET: 126887.45 requests per second</span><br><span class="line">[root@redisep69 etc]# redis-benchmark -d 1  -n 2000000 -t get,set  -q  -h 192.168.188.69 -p 7001</span><br><span class="line">SET: 141522.78 requests per second</span><br><span class="line">GET: 158516.30 requests per second</span><br><span class="line">[root@redisep71 ~]# redis-benchmark -d 100  -n 2000000 -t get,set  -q  -h 192.168.188.71 -p 7003</span><br><span class="line">SET: 176928.52 requests per second</span><br></pre></td></tr></table></figure>
+
+<h3 id="三节点集群注意事项"><a href="#三节点集群注意事项" class="headerlink" title="三节点集群注意事项"></a>三节点集群注意事项</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">REDIS3节点集群默认会有一组主从在同一虚拟机上，需要手工调整，架构主-从为7001-7006  7002-7004  7003-7005，以下是调整主从例子。</span><br><span class="line">[root@redis-108 ~]# redis-cli -c -h 172.17.6.110 -p 7006</span><br><span class="line">172.17.6.110:7006&gt; CLUSTER REPLICATE 560eca92df8080db9e0b3d8cf65ac1ed00c30dd0</span><br><span class="line">OK</span><br><span class="line">172.17.6.110:7006&gt; exit</span><br><span class="line">[root@redis-108 ~]# redis-cli -c -h 172.17.6.109 -p 7005</span><br><span class="line">172.17.6.109:7005&gt; CLUSTER REPLICATE 33d3ee604bc6136283038db12967c0dfb09e48a1</span><br><span class="line">OK</span><br><span class="line">172.17.6.109:7005&gt; CLUSTER SAVECONFIG</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加zabbix监控方法"><a href="#添加zabbix监控方法" class="headerlink" title="添加zabbix监控方法"></a>添加zabbix监控方法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">zabbix添加redis模版方法</span><br><span class="line">第一步</span><br><span class="line">vim /usr/local/zabbix/etc/zabbix_agentd.conf</span><br><span class="line">UserParameter=redis.discovery,/usr/local/zabbix/etc/redis_port.sh</span><br><span class="line">UserParameter=redis_stats[*],redis-cli -h 172.17.6.108 -a redis_passwd -p $1 info|grep $2|cut -d : -f2</span><br><span class="line"></span><br><span class="line">第二步</span><br><span class="line">visudo</span><br><span class="line">Defaults:zabbix  !requiretty</span><br><span class="line">zabbix ALL=(root)  NOPASSWD:/bin/netstat</span><br><span class="line">具体sh脚本如下</span><br><span class="line">cat /usr/local/zabbix/etc/redis_port.sh</span><br><span class="line"></span><br><span class="line">#!/bin/bash</span><br><span class="line">#Fucation:mysql low-level discovery</span><br><span class="line">#Script_name redis_low_discovery.sh</span><br><span class="line">redis() &#123;</span><br><span class="line">port=($(sudo netstat -tpln | awk -F &quot;[ :]+&quot; &#x27;/redis/ &amp;&amp; /0.0.0.0/ &#123;print $5&#125;&#x27;))</span><br><span class="line">printf &#x27;&#123;\n&#x27;</span><br><span class="line">printf &#x27;\t&quot;data&quot;:[\n&#x27;</span><br><span class="line">for key in $&#123;!port[@]&#125;</span><br><span class="line">do</span><br><span class="line">if [[ &quot;$&#123;#port[@]&#125;&quot; -gt 1 &amp;&amp; &quot;$&#123;key&#125;&quot; -ne &quot;$(($&#123;#port[@]&#125;-1))&quot; ]];then</span><br><span class="line">socket=`ps aux|grep $&#123;port[$&#123;key&#125;]&#125;|grep -v grep|awk -F &#x27;=&#x27; &#x27;&#123;print $10&#125;&#x27;|cut -d &#x27; &#x27; -f 1`</span><br><span class="line">printf &#x27;\t &#123;\n&#x27;</span><br><span class="line">printf &quot;\t\t\t\&quot;&#123;#REDISPORT&#125;\&quot;:\&quot;$&#123;port[$&#123;key&#125;]&#125;\&quot;&#125;,\n&quot;</span><br><span class="line">else [[ &quot;$&#123;key&#125;&quot; -eq &quot;(($&#123;#port[@]&#125;-1))&quot; ]]</span><br><span class="line">socket=`ps aux|grep $&#123;port[$&#123;key&#125;]&#125;|grep -v grep|awk -F &#x27;=&#x27; &#x27;&#123;print $10&#125;&#x27;|cut -d &#x27; &#x27; -f 1`</span><br><span class="line">printf &#x27;\t &#123;\n&#x27;</span><br><span class="line">printf &quot;\t\t\t\&quot;&#123;#REDISPORT&#125;\&quot;:\&quot;$&#123;port[$&#123;key&#125;]&#125;\&quot;\n\t &#125;\n&quot;</span><br><span class="line">fi</span><br><span class="line">done</span><br><span class="line">printf &#x27;\t ]\n&#x27;</span><br><span class="line">printf &#x27;&#125;\n&#x27;</span><br><span class="line">&#125;</span><br><span class="line">redis  $1</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/21/2018/11/2018-11-21-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/index/" rel="prev" title="从零开始创建自己的博客">
+      <i class="fa fa-chevron-left"></i> 从零开始创建自己的博客
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/21/2018/11/2018-11-21-openresty-codis%E9%9B%86%E7%BE%A4%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F/index/" rel="next" title="OpenResty Codis集群缓存系统">
+      OpenResty Codis集群缓存系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%AE%E5%88%86%E5%B8%83%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">键分布模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis%E4%BC%98%E5%8C%96%E7%9B%B8%E5%85%B3"><span class="nav-number">3.1.</span> <span class="nav-text">Redis优化相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E7%9B%B8%E5%85%B3%EF%BC%88%E5%8F%AA%E9%80%82%E7%94%A8redis%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">Linux配置优化相关（只适用redis服务器）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">补充资料</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%8A%B6%E6%80%81"><span class="nav-number">4.1.</span> <span class="nav-text">查看状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">4.2.</span> <span class="nav-text">集群客户端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E8%8A%82%E7%82%B9"><span class="nav-number">5.</span> <span class="nav-text">部署节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">集群管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">7.</span> <span class="nav-text">集群节点配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4"><span class="nav-number">8.</span> <span class="nav-text">加入集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">9.</span> <span class="nav-text">压力测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%8A%82%E7%82%B9%E9%9B%86%E7%BE%A4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">10.</span> <span class="nav-text">三节点集群注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0zabbix%E7%9B%91%E6%8E%A7%E6%96%B9%E6%B3%95"><span class="nav-number">11.</span> <span class="nav-text">添加zabbix监控方法</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

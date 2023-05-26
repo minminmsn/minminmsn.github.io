@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简介 TCPCOPY 是一个 tcp 流量的实时复制工具，其1.0版本由网易工程师 @tcpcopy 开发和维护。一般用来将生产环境的线上流量实时复制到测试环境进行测试。例如新系统上线前，如果我们希望进行一些基本的压力测试，那么我们可以直接利用 tcpcopy 来复制线上的流量过来对系统进行测试，这样的好处是测试数据接近真实水平，且实施起来相对简单。  一、架构   二、安装1234567891">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCPCOPY 1.0 部署测试使用">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/30/2018/11/2018-11-30-tcpcopy-1-0-%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95%E4%BD%BF%E7%94%A8/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="简介 TCPCOPY 是一个 tcp 流量的实时复制工具，其1.0版本由网易工程师 @tcpcopy 开发和维护。一般用来将生产环境的线上流量实时复制到测试环境进行测试。例如新系统上线前，如果我们希望进行一些基本的压力测试，那么我们可以直接利用 tcpcopy 来复制线上的流量过来对系统进行测试，这样的好处是测试数据接近真实水平，且实施起来相对简单。  一、架构   二、安装1234567891">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c00a84e88627.gif">
+<meta property="article:published_time" content="2018-11-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.428Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="tcpcopy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/5c00a84e88627.gif">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/30/2018/11/2018-11-30-tcpcopy-1-0-%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95%E4%BD%BF%E7%94%A8/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>TCPCOPY 1.0 部署测试使用 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/30/2018/11/2018-11-30-tcpcopy-1-0-%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95%E4%BD%BF%E7%94%A8/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TCPCOPY 1.0 部署测试使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-30 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-30T08:00:00+08:00">2018-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>简介 TCPCOPY 是一个 tcp 流量的实时复制工具，其1.0版本由网易工程师 @tcpcopy 开发和维护。一般用来将生产环境的线上流量实时复制到测试环境进行测试。例如新系统上线前，如果我们希望进行一些基本的压力测试，那么我们可以直接利用 tcpcopy 来复制线上的流量过来对系统进行测试，这样的好处是测试数据接近真实水平，且实施起来相对简单。</p>
+</blockquote>
+<h3 id="一、架构"><a href="#一、架构" class="headerlink" title="一、架构"></a>一、架构</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/11/30/5c00a84e88627.gif"><img src="/images/5c00a84e88627.gif"></a></p>
+</blockquote>
+<h3 id="二、安装"><a href="#二、安装" class="headerlink" title="二、安装"></a>二、安装</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line">测试中用到的3台服务器信息如下：</span><br><span class="line">线上服务器 online server         内网IP地址 172.16.0.8/24    外网IP 223.202.0.8/28</span><br><span class="line">测试服务器 test server        内网IP地址 172.16.0.230/24   外网IP 223.202.0.13/28</span><br><span class="line">辅助服务器 assistant server      内网IP地址 172.16.0.219/24   外网IP 223.202.1.76/24</span><br><span class="line">172.16.0.8是线上服务器，172.16.0.230和172.17.0.219是测试环境。我们在172.17.0.8上运行tcpcopy把线上流量拷贝到172.17.0.230，在172.17.0.230上我们通过路由将应答转向</span><br><span class="line">172.16.0.219，在172.16.0.219上把应答丢弃。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">第一步，在 online server 172.16.0.8上安装并运行 tcpcopy daemon :</span><br><span class="line">我们从github上下载1.0版本的源码包；</span><br><span class="line">wget https://github.com/session-replay-tools/tcpcopy/archive/1.0.0.tar.gz -O tcpcopy-1.0.0.tar.gz</span><br><span class="line">安装依赖包；</span><br><span class="line">yum -y install libpcap-devel</span><br><span class="line">解压编译和安装；</span><br><span class="line">tar zxvf tcpcopy-1.0.0.tar.gz</span><br><span class="line">cd tcpcopy-1.0.0</span><br><span class="line">./configure （默认raw socket方式抓包）</span><br><span class="line">make </span><br><span class="line">make install</span><br><span class="line">最后运行 tcpcopy；</span><br><span class="line">/usr/local/tcpcopy/sbin/tcpcopy -x 80-172.16.0.230:80 -s 172.16.0.219 -c 192.168.100.x -d -C 4 -l tcpcopy.log  -P /var/run/tcpcopy.pid</span><br><span class="line"></span><br><span class="line">指令说明：</span><br><span class="line">-x 80-172.16.0.230:80将本机上80端口的流量复制到172.16.0.230（测试服务器）的80端口</span><br><span class="line">-s指定intercept进程所在的服务器172.16.0.219。（丢包服务器）</span><br><span class="line">-c修改请求的host地址为192.168.100.x，以便在230测试服务器上设置路由（设置路由是为了将应答转向丢219包服务器）</span><br><span class="line">-C 开启4个进程</span><br><span class="line">-d 以daemon形式运行</span><br><span class="line">-l 记录日志</span><br><span class="line">-P 记录pid</span><br><span class="line">其他参数可以通过/usr/local/tcpcopy/sbin/tcpcopy -h查看</span><br><span class="line"></span><br><span class="line">成功运行后可以观察到的网路连接状态：</span><br><span class="line">#ss -an|grep 172.16.0.219</span><br><span class="line">ESTAB      0      0                172.16.0.8:49034         172.16.0.219:36524 </span><br><span class="line">ESTAB      0      0                172.16.0.8:49035         172.16.0.219:36524 </span><br><span class="line">ESTAB      0      0                172.16.0.8:49032         172.16.0.219:36524 </span><br><span class="line">ESTAB      0      0                172.16.0.8:49033         172.16.0.219:36524 </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">第二步，在 auxiliary server 172.16.0.219上安装并运行 intercept daemon :</span><br><span class="line">从github上下载1.0版本的源码包；</span><br><span class="line">wget https://github.com/session-replay-tools/intercept/archive/1.0.0.tar.gz -O intercept-1.0.0.tar.gz</span><br><span class="line">安装依赖包；</span><br><span class="line">yum -y install libpcap-devel（CentOS6系统直接yum安装即可1.4版本）</span><br><span class="line">注意CentOS5系统libpcap-devel版本是libpcap-devel-0.9.4-15.el5，intercept-1.0需要libcap-devel1.4以上版本此时需要源码包安装</span><br><span class="line">yum remove libpcap</span><br><span class="line">wget http://www.tcpdump.org/release/libpcap-1.4.0.tar.gz</span><br><span class="line">tar zxvf libpcap-1.4.0.tar.gz</span><br><span class="line">cd libpcap-1.4.0</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">解压编译和安装；</span><br><span class="line">tar zxvf intercept-1.0.0.tar.gz</span><br><span class="line">cd intercept-1.0.0</span><br><span class="line">./configure （默认raw socket方式抓包）</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line">最后运行 intercept；</span><br><span class="line">/usr/local/intercept/sbin/intercept -i eth1 -l intercept.log -P /var/run/intercept.pid -F &#x27;tcp and src port 80&#x27; -d</span><br><span class="line"></span><br><span class="line">指令说明：</span><br><span class="line">-i 监控网卡接口</span><br><span class="line">-l 记录日志</span><br><span class="line">-F 监控的协议和端口</span><br><span class="line">-P 记录pid</span><br><span class="line">-d 以daemon形式运行</span><br><span class="line">其他参数可以通过/usr/local/intercept/sbin/intercept -h查看</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">成功运行后可以观察到的网路连接状态：</span><br><span class="line"># ss -an |grep 36524</span><br><span class="line">LISTEN     0      5                         *:36524                    *:*     </span><br><span class="line">ESTAB      0      66             172.16.0.219:36524           172.16.0.8:49034 </span><br><span class="line">ESTAB      0      0              172.16.0.219:36524           172.16.0.8:49035 </span><br><span class="line">ESTAB      0      66             172.16.0.219:36524           172.16.0.8:49032 </span><br><span class="line">ESTAB      0      0              172.16.0.219:36524           172.16.0.8:49033 </span><br><span class="line"></span><br><span class="line">第三步，在 test server 172.16.0.230上设置一条路由 :</span><br><span class="line">[root@bogon ~]# route add -net 192.168.100.0 netmask 255.255.255.0 gw 172.16.0.219</span><br><span class="line">成功运行测试时可以观察到的网络连接状态：</span><br><span class="line"># ss -an |head</span><br><span class="line">State      Recv-Q Send-Q        Local Address:Port          Peer Address:Port</span><br><span class="line">LISTEN     0      0                 127.0.0.1:199                      *:*    </span><br><span class="line">LISTEN     512    0                         *:80                       *:*    </span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.1:62602</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.4:54595</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.3:53566</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.6:49260</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.8:57598</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.7:64454</span><br><span class="line">ESTAB   0      0              172.16.0.230:80           192.168.100.1:63081</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://blog.csdn.net/wangbin579/article/details/8949315</span><br><span class="line">http://blog.csdn.net/wangbin579/article/details/8950282</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tcpcopy/" rel="tag"># tcpcopy</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/27/2018/11/2018-11-27-promethousalertmanagergrafana%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/index/" rel="prev" title="Promethous+Alertmanager+Grafana监控体系">
+      <i class="fa fa-chevron-left"></i> Promethous+Alertmanager+Grafana监控体系
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/03/2018/12/2018-12-03-%E7%A6%85%E7%9A%84%E8%A1%8C%E5%9B%8A%E8%B7%AF%E7%BA%BF%E5%9B%BE/index/" rel="next" title="禅的行囊路线图">
+      禅的行囊路线图 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">一、架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">二、安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">参考链接：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

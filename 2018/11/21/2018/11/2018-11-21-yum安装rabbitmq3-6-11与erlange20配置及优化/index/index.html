@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="RabbitMQ简介AMQP，即Advanced Message Queuing Protocol，高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。消息中间件主要用于组件之间的解耦，消息的发送者无需知道消息使用者的存在，反之亦然。 AMQP的主要特征是面向消息、队列、路由（包括点对点和发布&#x2F;订阅）、可靠性、安全。 RabbitMQ是一个开源的AMQP实现，服务器端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yum安装RabbitMQ3.6.11与Erlange20配置及优化">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-yum%E5%AE%89%E8%A3%85rabbitmq3-6-11%E4%B8%8Eerlange20%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="RabbitMQ简介AMQP，即Advanced Message Queuing Protocol，高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。消息中间件主要用于组件之间的解耦，消息的发送者无需知道消息使用者的存在，反之亦然。 AMQP的主要特征是面向消息、队列、路由（包括点对点和发布&#x2F;订阅）、可靠性、安全。 RabbitMQ是一个开源的AMQP实现，服务器端">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-21T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.303Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="rabbitmq">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-yum%E5%AE%89%E8%A3%85rabbitmq3-6-11%E4%B8%8Eerlange20%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Yum安装RabbitMQ3.6.11与Erlange20配置及优化 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-yum%E5%AE%89%E8%A3%85rabbitmq3-6-11%E4%B8%8Eerlange20%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Yum安装RabbitMQ3.6.11与Erlange20配置及优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-21 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-21T08:00:00+08:00">2018-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h3 id="RabbitMQ简介"><a href="#RabbitMQ简介" class="headerlink" title="RabbitMQ简介"></a>RabbitMQ简介</h3><p>AMQP，即Advanced Message Queuing Protocol，高级消息队列协议，是应用层协议的一个开放标准，为面向消息的中间件设计。消息中间件主要用于组件之间的解耦，消息的发送者无需知道消息使用者的存在，反之亦然。 AMQP的主要特征是面向消息、队列、路由（包括点对点和发布&#x2F;订阅）、可靠性、安全。 RabbitMQ是一个开源的AMQP实现，服务器端用Erlang语言编写，支持多种客户端，如：Python、Ruby、.NET、Java、JMS、C、PHP、ActionScript、XMPP、STOMP等，支持AJAX。用于在分布式系统中存储转发消息，在易用性、扩展性、高可用性等方面表现不俗。</p>
+</blockquote>
+<h3 id="官网的配置"><a href="#官网的配置" class="headerlink" title="官网的配置"></a>官网的配置</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.rabbitmq.com/production-checklist.html">http://www.rabbitmq.com/production-checklist.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/configure.html">http://www.rabbitmq.com/configure.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/memory.html">http://www.rabbitmq.com/memory.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/production-checklist.html#resource-limits-ram">http://www.rabbitmq.com/production-checklist.html#resource-limits-ram</a></p>
+</blockquote>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/crazylqy/p/6567253.html">http://www.cnblogs.com/crazylqy/p/6567253.html</a> <a target="_blank" rel="noopener" href="http://wangqingpei557.blog.51cto.com/1009349/1881540">http://wangqingpei557.blog.51cto.com/1009349/1881540</a></p>
+</blockquote>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><blockquote>
+<p>ConnectionFactory、Connection、Channel ConnectionFactory、Connection、Channel都是RabbitMQ对外提供的API中最基本的对象。Connection是RabbitMQ的socket链接，它封装了socket协议相关部分逻辑。ConnectionFactory为Connection的制造工厂。 Channel是我们与RabbitMQ打交道的最重要的一个接口，我们大部分的业务操作是在Channel这个接口中完成的，包括定义Queue、定义Exchange、绑定Queue与Exchange、发布消息等。 Queue Queue（队列）是RabbitMQ的内部对象，用于存储消息。 RabbitMQ中的消息都只能存储在Queue中，生产者生产消息并最终投递到Queue中，消费者可以从Queue中获取消息并消费。 多个消费者可以订阅同一个Queue，这时Queue中的消息会被平均分摊给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理。 Message acknowledgment 在实际应用中，可能会发生消费者收到Queue中的消息，但没有处理完成就宕机（或出现其他意外）的情况，这种情况下就可能会导致消息丢失。为了避免这种情况发生，我们可以要求消费者在消费完消息后发送一个回执给RabbitMQ，RabbitMQ收到消息回执（Message acknowledgment）后才将该消息从Queue中移除；如果RabbitMQ没有收到回执并检测到消费者的RabbitMQ连接断开，则RabbitMQ会将该消息发送给其他消费者（如果存在多个消费者）进行处理。这里不存在timeout概念，一个消费者处理消息时间再长也不会导致该消息被发送给其他消费者，除非它的RabbitMQ连接断开。 这里会产生另外一个问题，如果我们的开发人员在处理完业务逻辑后，忘记发送回执给RabbitMQ，这将会导致严重的bug——Queue中堆积的消息会越来越多；消费者重启后会重复消费这些消息并重复执行业务逻辑… 另外pub message是没有ack的。 Message durability 如果我们希望即使在RabbitMQ服务重启的情况下，也不会丢失消息，我们可以将Queue与Message都设置为可持久化的（durable），这样可以保证绝大部分情况下我们的RabbitMQ消息不会丢失。但依然解决不了小概率丢失事件的发生（比如RabbitMQ服务器已经接收到生产者的消息，但还没来得及持久化该消息时RabbitMQ服务器就断电了），如果我们需要对这种小概率事件也要管理起来，那么我们要用到事务。 Prefetch count 前面我们讲到如果有多个消费者同时订阅同一个Queue中的消息，Queue中的消息会被平摊给多个消费者。这时如果每个消息的处理时间不同，就有可能会导致某些消费者一直在忙，而另外一些消费者很快就处理完手头工作并一直空闲的情况。我们可以通过设置prefetchCount来限制Queue每次发送给每个消费者的消息数，比如我们设置prefetchCount&#x3D;1，则Queue每次给每个消费者发送一条消息；消费者处理完这条消息后Queue会再给该消费者发送一条消息。 Exchange 在上一节我们看到生产者将消息投递到Queue中，实际上这在RabbitMQ中这种事情永远都不会发生。实际的情况是，生产者将消息发送到Exchange，由Exchange将消息路由到一个或多个Queue中（或者丢弃）。 Exchange是按照什么逻辑将消息路由到Queue的？这个将在Binding一节介绍。 RabbitMQ中的Exchange有四种类型，不同的类型有着不同的路由策略，这将在Exchange Types一节介绍。 Routing key 生产者在将消息发送给Exchange的时候，一般会指定一个routing key，来指定这个消息的路由规则，而这个routing key需要与Exchange Type及binding key联合使用才能最终生效。 在Exchange Type与binding key固定的情况下（在正常使用时一般这些内容都是固定配置好的），我们的生产者就可以在发送消息给Exchange时，通过指定routing key来决定消息流向哪里。 RabbitMQ为routing key设定的长度限制为255 bytes。 Binding RabbitMQ中通过Binding将Exchange与Queue关联起来，这样RabbitMQ就知道如何正确地将消息路由到指定的Queue了。</p>
+</blockquote>
+<h3 id="部署配置"><a href="#部署配置" class="headerlink" title="部署配置"></a>部署配置</h3><p>1、安装erlang 下载rpm仓库：wget <a target="_blank" rel="noopener" href="http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm">http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm</a> 安装rpm仓库 rpm -Uvh erlang-solutions-1.0-1.noarch.rpm 安装erlang yum -y install erlang</p>
+<p>2、安装rabbitmq wget <a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq/_v3/_6/_11/rabbitmq-server-3.6.11-1.el6.noarch.rpm">https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq\_v3\_6\_11/rabbitmq-server-3.6.11-1.el6.noarch.rpm</a> rpm –import <a target="_blank" rel="noopener" href="https://www.rabbitmq.com/rabbitmq-release-signing-key.asc">https://www.rabbitmq.com/rabbitmq-release-signing-key.asc</a> yum install rabbitmq-server-3.6.11-1.noarch.rpm yum install rabbitmq-server-3.6.11-1.el6.noarch.rpm Installed: rabbitmq-server.noarch 0:3.6.11-1.el6 Dependency Installed: socat.x86_64 0:1.7.2.3-1.el6</p>
+<p>3、启动 mkdir -p &#x2F;data&#x2F;rabbitmq&#x2F;data mkdir -p &#x2F;data&#x2F;rabbitmq&#x2F;log chown rabbitmq:rabbitmq &#x2F;data&#x2F;rabbitmq&#x2F; -R &#x2F;etc&#x2F;init.d&#x2F;rabbitmq-server restart</p>
+<p>4、添加帐号 rabbitmqctl add_user rabbitmq76 RMQXXXXXXXXX rabbitmqctl set_user_tags rabbitmq76 administrator rabbitmqctl set_permissions -p &#x2F; rabbitmq76 “.<em>“ “.</em>“ “.*“</p>
+<p>5、加入集群</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">[root@rabbitmq76 etc]# cat /etc/hosts</span><br><span class="line">127.0.0.1  localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1        localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">192.168.188.76 rabbitmq76</span><br><span class="line">192.168.188.77 rabbitmq77</span><br><span class="line">192.168.188.78 rabbitmq78</span><br><span class="line">192.168.188.79 rabbitmq79</span><br><span class="line">192.168.188.80 rabbitmq80</span><br><span class="line"></span><br><span class="line">scp -P10001 .erlang.cookie 192.168.188.77:$PWD</span><br><span class="line">scp -P10001 .erlang.cookie 192.168.188.78:$PWD</span><br><span class="line">scp -P10001 .erlang.cookie 192.168.188.79:$PWD</span><br><span class="line">scp -P10001 .erlang.cookie 192.168.188.80:$PWD</span><br><span class="line"></span><br><span class="line">[root@rabbitmq77 ~]# rabbitmqctl stop_app</span><br><span class="line">Stopping rabbit application on node rabbit@rabbitmq77</span><br><span class="line">[root@rabbitmq77 ~]#  rabbitmqctl join_cluster rabbit@rabbitmq76</span><br><span class="line">Clustering node rabbit@rabbitmq77 with rabbit@rabbitmq76</span><br><span class="line">[root@rabbitmq77 ~]# rabbitmqctl start_app</span><br><span class="line">Starting node rabbit@rabbitmq77</span><br><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br><span class="line">[root@rabbitmq76 etc]# rabbitmqctl cluster_status</span><br><span class="line">Cluster status of node rabbit@rabbitmq76</span><br><span class="line">[&#123;nodes,[&#123;disc,[rabbit@rabbitmq76,rabbit@rabbitmq77,rabbit@rabbitmq78,</span><br><span class="line">rabbit@rabbitmq79,rabbit@rabbitmq80]&#125;]&#125;,</span><br><span class="line">&#123;running_nodes,[rabbit@rabbitmq80,rabbit@rabbitmq79,rabbit@rabbitmq78,</span><br><span class="line">rabbit@rabbitmq77,rabbit@rabbitmq76]&#125;,</span><br><span class="line">&#123;cluster_name,&lt;&lt;&quot;rabbit@rabbitmq76&quot;&gt;&gt;&#125;,</span><br><span class="line">&#123;partitions,[]&#125;,</span><br><span class="line">&#123;alarms,[&#123;rabbit@rabbitmq80,[]&#125;,</span><br><span class="line">&#123;rabbit@rabbitmq79,[]&#125;,</span><br><span class="line">&#123;rabbit@rabbitmq78,[]&#125;,</span><br><span class="line">&#123;rabbit@rabbitmq77,[]&#125;,</span><br><span class="line">&#123;rabbit@rabbitmq76,[]&#125;]&#125;]</span><br></pre></td></tr></table></figure>
+
+<p>6、设置镜像队列策略 可以参考 <a target="_blank" rel="noopener" href="http://blog.csdn.net/zheng911209/article/details/49949303">http://blog.csdn.net/zheng911209/article/details/49949303</a> 在任意一个节点上执行下面的命令 rabbitmqctl set_policy ha-all “^” ‘{“ha-mode”:”all”}’ 剩下的可以在web上操作</p>
+<p>1），首先创建vhost，例如testapp 2），其次创建user，例如testapp,tags设置None，vhosts选择testapp ，设置好密码 3），配置police</p>
+<p>选择要应用策略的vhost name:起个有意义的名称，比如我们写的ha-all(表示在所有节点建立镜像) pattern:为正则表达式，是要匹配的exchange和queue的名称，比要匹配所有exchange或者queue的话，可以直接写 ‘^’，表示任意名称开头的，如果要指定以ha-开发的exchange和queue的话 可以使用 ‘^ha-‘ applyto:是表示策略应用的范围，比如 exchange或者queue还是两者都应用。 priority:优先级，是只在exchange转发时优先级高的会优先转发。 definition: 下面有提示，点击就可以definition的定义表单上去，值的话，点击下面定义后面跟的？号就可以看到可选值。通常会加两项定义： ha-mode:all　　在集群所有节点中创建镜像exchange或者queue ha-sync-mode:automatic 自动同步到镜像节点 4），创建exchange，例如testapp-exchange 5），配置queues，例如testapp-queues 6），绑定exchange与queues，例如testapp-exchange和testapp-queues.key绑定</p>
+<p>7、优化配置等 官网的配置 <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/production-checklist.html">http://www.rabbitmq.com/production-checklist.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/configure.html">http://www.rabbitmq.com/configure.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/memory.html">http://www.rabbitmq.com/memory.html</a> <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/production-checklist.html#resource-limits-ram">http://www.rabbitmq.com/production-checklist.html#resource-limits-ram</a></p>
+<p>线上优化后配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@rabbitmq76 rabbitmq]# cat rabbitmq.conf</span><br><span class="line">[</span><br><span class="line">&#123;rabbit,</span><br><span class="line">[</span><br><span class="line">&#123;loopback_users, []&#125;,</span><br><span class="line">&#123;vm_memory_high_watermark, 0.40&#125;,                      #最大使用内存40%，erlang开始GC</span><br><span class="line">&#123;vm_memory_high_watermark_paging_ratio, 0.8&#125;,  #32G内存，32*0.8*0.2时开始持久化磁盘</span><br><span class="line">&#123;disk_free_limit, &quot;10GB&quot;&#125;,                          #磁盘使用量剩余10G时，不收发消息</span><br><span class="line">&#123;hipe_compile, true&#125;,                                 #开启hipe，提高erlang性能</span><br><span class="line">&#123;collect_statistics_interval, 10000&#125;,           #统计刷新时间默认5秒，改成10秒</span><br><span class="line">&#123;cluster_partition_handling, autoheal&#125;        #网络优化参数，不稳定时用这个选项</span><br><span class="line">]</span><br><span class="line">&#125;</span><br><span class="line">].</span><br><span class="line"></span><br><span class="line">[root@rabbitmq76 rabbitmq]# cat rabbitmq-env.conf</span><br><span class="line">RABBITMQ_NODENAME=rabbit@rabbitmq76             #节点名字，全局唯一</span><br><span class="line">RABBITMQ_MNESIA_BASE=/data/rabbitmq/data        #消息落地存放位置</span><br><span class="line">RABBITMQ_LOG_BASE=/data/rabbitmq/log            #日志位置</span><br><span class="line">RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=&quot;+A 128&quot;    #默认65，server线程</span><br><span class="line">另外系统参数需要留有swap空间，及打开文件数rabbitmq启动进程至少需要5万，yum安装时rabbitmq启动，源码安装时root启动</span><br><span class="line"></span><br><span class="line">[root@rabbitmq76 rabbitmq]# cat /etc/security/limits.conf</span><br><span class="line">* soft  nofile 65536</span><br><span class="line">* hard  nofile 131072</span><br><span class="line">* soft  nproc 10240</span><br><span class="line">* hard  nproc 20480</span><br></pre></td></tr></table></figure>
+
+<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><h4 id="内存控制："><a href="#内存控制：" class="headerlink" title="内存控制："></a>内存控制：</h4><p>vm_memory_high_watermark 该值为内存阈值，默认为0.4。意思为物理内存的40%。40%的内存并不是内存的最大的限制，它是一个发布的节制，当达到40%时Erlang会做GC。最坏的情况是使用 内存80%。如果把该值配置为0，将关闭所有的publishing 。 rabbitmqctl set_vm_memory_high_watermark 0 Paging 内存阈值，该值为默认为0.5，该值为vm_memory_high_watermark的20%时，将把内存数据写到磁盘。 如机器内存16G，当RABBITMQ占用内存1.28G（16_0.4_0.2）时把内存数据放到磁盘。</p>
+<h3 id="硬盘控制："><a href="#硬盘控制：" class="headerlink" title="硬盘控制："></a>硬盘控制：</h3><p>当RabbitMQ的磁盘空闲空间小于50M（默认），生产者将被BLOCK, 如果采用集群模式，磁盘节点空闲空间小于50M将导致其他节点的生产者都被block 可以通过disk_free_limit来对进行配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Memory</span><br><span class="line">By default, RabbitMQ will not accept any new messages when it detects that it&#x27;s using more than 40% of the available memory (as reported by the OS):</span><br><span class="line">&#123;vm_memory_high_watermark, 0.4&#125;. This is a safe default and care should be taken when modifying this value, even when the host is a dedicated RabbitMQ node.</span><br><span class="line">The OS and file system use system memory to speed up operations for all system processes. Failing to leave enough free system memory for this purpose will have an</span><br><span class="line">adverse effect on system performance due to OS swapping, and can even result in RabbitMQ process termination.</span><br><span class="line">A few recommendations when adjusting the default  vm_memory_high_watermark:</span><br><span class="line">Nodes hosting RabbitMQ should have at least 128MB of memory available at all times.</span><br><span class="line">The recommended vm_memory_high_watermark range is  0.40 to 0.66</span><br><span class="line">Values above 0.7 are not recommended. The OS and file system must be left with at least 30% of the memory, otherwise performance may degrade severely due to paging.</span><br><span class="line">As with every tuning, benchmarking and measuring are required to find the best setting for your environment and workload.</span><br><span class="line"></span><br><span class="line">Disk Space</span><br><span class="line">The current 50MB disk_free_limit default works very well for development and tutorials. Production deployments require a much greater safety margin. Insufficient disk</span><br><span class="line">space will lead to node failures and may result in data loss as all disk writes will fail.</span><br><span class="line">Why is the default 50MB then? Development environments sometimes use really small partitions to host  /var/lib, for example, which means nodes go into resource alarm</span><br><span class="line">state right after booting. The very low default ensures that RabbitMQ works out of the box for everyone. As for production deployments, we recommend the following:</span><br><span class="line">&#123;disk_free_limit, &#123;mem_relative, 1.0&#125;&#125; is the minimum recommended value and it translates to the total amount of memory available. For example, on a host dedicated to</span><br><span class="line">RabbitMQ with 4GB of system memory, if available disk space drops below 4GB, all publishers will be blocked and no new messages will be accepted. Queues will need to</span><br><span class="line">be drained, normally by consumers, before publishing will be allowed to resume.</span><br><span class="line">&#123;disk_free_limit, &#123;mem_relative, 1.5&#125;&#125; is a safer production value. On a RabbitMQ node with 4GB of memory, if available disk space drops below 6GB, all new messages</span><br><span class="line">will be blocked until the disk alarm clears. If RabbitMQ needs to flush to disk 4GB worth of data, as can sometimes be the case during shutdown, there will be</span><br><span class="line">sufficient disk space available for RabbitMQ to start again. In this specific example, RabbitMQ will start and immediately block all publishers since 2GB is well under</span><br><span class="line">the required 6GB.</span><br><span class="line">&#123;disk_free_limit, &#123;mem_relative, 2.0&#125;&#125; is the most conservative production value, we cannot think of any reason to use anything higher.If you want full confidence in</span><br><span class="line">RabbitMQ having all the disk space that it needs, at all times, this is the value to use.</span><br><span class="line"></span><br><span class="line">Open File Handles Limit</span><br><span class="line">Operating systems limit maximum number of concurrently open file handles, which includes network sockets. Make sure that you have limits set high enough to allow for</span><br><span class="line">expected number of concurrent connections and queues.</span><br><span class="line">Make sure your environment allows for at least 50K open file descriptors for effective RabbitMQ user, including in development environments.</span><br><span class="line">As a rule of thumb, multiple the 95th percentile number of concurrent connections by 2 and add total number of queues to calculate recommended open file handle limit.</span><br><span class="line">Values as high as 500K are not inadequate and won&#x27;t consume a lot of hardware resources, and therefore are recommended for production setups. See Networking guide for</span><br><span class="line">more information.</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/18/2018/11/2018-11-18-%E4%BD%A0%E6%B2%A1%E6%9C%89%E7%90%86%E7%94%B1%E4%B8%8D%E7%9B%B8%E4%BF%A1%E8%87%AA%E5%B7%B1/index/" rel="prev" title="你没有理由不相信自己">
+      <i class="fa fa-chevron-left"></i> 你没有理由不相信自己
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/21/2018/11/2018-11-21-redis%E9%9B%86%E7%BE%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/index/" rel="next" title="Redis集群性能问题深度分析">
+      Redis集群性能问题深度分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E7%BD%91%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">官网的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">3.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">4.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">部署配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E6%B3%A8"><span class="nav-number">6.</span> <span class="nav-text">备注</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6%EF%BC%9A"><span class="nav-number">6.1.</span> <span class="nav-text">内存控制：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E7%9B%98%E6%8E%A7%E5%88%B6%EF%BC%9A"><span class="nav-number">7.</span> <span class="nav-text">硬盘控制：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

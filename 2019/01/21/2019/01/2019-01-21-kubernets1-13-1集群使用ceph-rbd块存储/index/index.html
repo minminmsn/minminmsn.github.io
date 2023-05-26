@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档12345678https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;examples&#x2F;tree&#x2F;master&#x2F;staging&#x2F;volumes&#x2F;rbdhttp:&#x2F;&#x2F;docs.ceph.com&#x2F;docs&#x2F;mimic&#x2F;rados&#x2F;operations&#x2F;pools&#x2F;https:&#x2F;&#x2F;blog.csdn.net&#x2F;aixiaoyang168&#x2F;article&#x2F;details&#x2F;78999851 ht">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernets1.13.1集群使用ceph rbd块存储">
+<meta property="og:url" content="https://minminmsn.github.io/2019/01/21/2019/01/2019-01-21-kubernets1-13-1%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档12345678https:&#x2F;&#x2F;github.com&#x2F;kubernetes&#x2F;examples&#x2F;tree&#x2F;master&#x2F;staging&#x2F;volumes&#x2F;rbdhttp:&#x2F;&#x2F;docs.ceph.com&#x2F;docs&#x2F;mimic&#x2F;rados&#x2F;operations&#x2F;pools&#x2F;https:&#x2F;&#x2F;blog.csdn.net&#x2F;aixiaoyang168&#x2F;article&#x2F;details&#x2F;78999851 ht">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-01-21T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.027Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="ceph">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/01/21/2019/01/2019-01-21-kubernets1-13-1%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>kubernets1.13.1集群使用ceph rbd块存储 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/01/21/2019/01/2019-01-21-kubernets1-13-1%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernets1.13.1集群使用ceph rbd块存储
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-21 08:00:00" itemprop="dateCreated datePublished" datetime="2019-01-21T08:00:00+08:00">2019-01-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/kubernetes/examples/tree/master/staging/volumes/rbd</span><br><span class="line">http://docs.ceph.com/docs/mimic/rados/operations/pools/</span><br><span class="line">https://blog.csdn.net/aixiaoyang168/article/details/78999851 </span><br><span class="line">https://www.cnblogs.com/keithtt/p/6410302.html</span><br><span class="line">https://kubernetes.io/docs/concepts/storage/volumes/</span><br><span class="line">https://kubernetes.io/docs/concepts/storage/persistent-volumes/</span><br><span class="line">https://blog.csdn.net/wenwenxiong/article/details/78406136</span><br><span class="line">http://www.mamicode.com/info-detail-1701743.html</span><br></pre></td></tr></table></figure>
+
+<h3 id="文档目录"><a href="#文档目录" class="headerlink" title="文档目录"></a><strong>文档目录</strong></h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/kubernetes/kubernetes1.13.1%2Betcd3.3.10%2Bflanneld0.10%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2.md">kubernetes1.13.1+etcd3.3.10+flanneld0.10集群部署</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/kubernetes-dashboard-amd64/Kubernetes1.13.1%E9%83%A8%E7%BD%B2Kuberneted-dashboard%20v1.10.1.md">kubernetes1.13.1部署kuberneted-dashboard v1.10.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/coredns/kubernetes1.13.1%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2coredns.md">kubernetes1.13.1部署coredns</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/ingress-nginx/kubernetes1.13.1%E9%83%A8%E7%BD%B2ingress-nginx%E5%B9%B6%E9%85%8D%E7%BD%AEhttps%E8%BD%AC%E5%8F%91dashboard.md">kubernetes1.13.1部署ingress-nginx并配置https转发dashboard</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/metrics-server/kubernetes1.13.1%E9%83%A8%E7%BD%B2metrics-server0.3.1.md">kubernetes1.13.1部署metrics-server0.3.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/volumes/rbd/k8s%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph%20rbd%E5%9D%97%E5%AD%98%E5%82%A8.md">kubernetes1.13.1集群使用ceph rbd存储块</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/minminmsn/k8s1.13/blob/master/jenkins/k8s1.13.1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph%20rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins.md">kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins</a></li>
+</ul>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p>ceph支持对象存储，文件系统及块存储，是三合一存储类型，kubernetes的样例中有cephfs与rbd两种使用方式的介绍，cephfs需要node节点安装ceph才能支持，rbd需要node节点安装ceph-common才支持。 使用上的区别如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Volume Plugin   ReadWriteOnce   ReadOnlyMany    ReadWriteMany</span><br><span class="line">CephFS              ✓               ✓               ✓</span><br><span class="line">RBD                 ✓               ✓               -</span><br></pre></td></tr></table></figure>
+
+<h3 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a><strong>基本环境</strong></h3><p>k81集群1.13.1版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ~]# kubectl get nodes</span><br><span class="line">NAME        STATUS   ROLES    AGE   VERSION</span><br><span class="line">10.2.8.34   Ready    &lt;none&gt;   24d   v1.13.1</span><br><span class="line">10.2.8.65   Ready    &lt;none&gt;   24d   v1.13.1</span><br></pre></td></tr></table></figure>
+
+<p>ceph集群 luminous版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# ceph -s</span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum ceph01,ceph02,ceph03</span><br><span class="line">    mgr: ceph03(active), standbys: ceph02, ceph01</span><br><span class="line">    osd: 24 osds: 24 up, 24 in</span><br><span class="line">    rgw: 3 daemons active</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a><strong>操作步骤</strong></h3><h4 id="一、ceph集群创建ceph池及镜像"><a href="#一、ceph集群创建ceph池及镜像" class="headerlink" title="一、ceph集群创建ceph池及镜像"></a><strong>一、ceph集群创建ceph池及镜像</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# ceph osd pool create rbd-k8s 1024 1024 </span><br><span class="line">For better initial performance on pools expected to store a large number of objects, consider supplying the expected_num_objects parameter when creating the pool.</span><br><span class="line"></span><br><span class="line">[root@ceph01 ~]# ceph osd lspools </span><br><span class="line">1 rbd-es,2 .rgw.root,3 default.rgw.control,4 default.rgw.meta,5 default.rgw.log,6 default.rgw.buckets.index,7 default.rgw.buckets.data,8 default.rgw.buckets.non-ec,9 rbd-k8s,</span><br><span class="line"></span><br><span class="line">[root@ceph01 ~]# rbd create rbd-k8s/cephimage1 --size 10240</span><br><span class="line">[root@ceph01 ~]# rbd create rbd-k8s/cephimage2 --size 20480</span><br><span class="line">[root@ceph01 ~]# rbd create rbd-k8s/cephimage3 --size 40960</span><br><span class="line">[root@ceph01 ~]# rbd list rbd-k8s</span><br><span class="line">cephimage1</span><br><span class="line">cephimage2</span><br><span class="line">cephimage3</span><br></pre></td></tr></table></figure>
+
+<h4 id="二、k8s集群使用ceph-rbd块存储"><a href="#二、k8s集群使用ceph-rbd块存储" class="headerlink" title="二、k8s集群使用ceph rbd块存储"></a><strong>二、k8s集群使用ceph rbd块存储</strong></h4><p><strong>1、下载样例</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ~]# git clone https://github.com/kubernetes/examples.git</span><br><span class="line">Cloning into &#x27;examples&#x27;...</span><br><span class="line">remote: Enumerating objects: 11475, done.</span><br><span class="line">remote: Total 11475 (delta 0), reused 0 (delta 0), pack-reused 11475</span><br><span class="line">Receiving objects: 100% (11475/11475), 16.94 MiB | 6.00 MiB/s, done.</span><br><span class="line">Resolving deltas: 100% (6122/6122), done.</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 ~]# cd examples/staging/volumes/rbd</span><br><span class="line">[root@elasticsearch01 rbd]# ls</span><br><span class="line">rbd-with-secret.yaml  rbd.yaml  README.md  secret</span><br><span class="line">[root@elasticsearch01 rbd]# cp -a ./rbd /k8s/yaml/volumes/</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、k8s集群节点安装ceph客户端</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ceph]# yum  install ceph-common</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、修改rbd-with-secret.yaml配置文件</strong> 修改后配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# cat rbd-with-secret.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: rbd2</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - image: kubernetes/pause</span><br><span class="line">      name: rbd-rw</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - name: rbdpd</span><br><span class="line">        mountPath: /mnt/rbd</span><br><span class="line">  volumes:</span><br><span class="line">    - name: rbdpd</span><br><span class="line">      rbd:</span><br><span class="line">        monitors:</span><br><span class="line">        - &#x27;10.0.4.10:6789&#x27;</span><br><span class="line">        - &#x27;10.0.4.13:6789&#x27;</span><br><span class="line">        - &#x27;10.0.4.15:6789&#x27;</span><br><span class="line">        pool: rbd-k8s</span><br><span class="line">        image: cephimage1</span><br><span class="line">        fsType: ext4</span><br><span class="line">        readOnly: true</span><br><span class="line">        user: admin</span><br><span class="line">        secretRef:</span><br><span class="line">          name: ceph-secret</span><br></pre></td></tr></table></figure>
+
+<p>如下参数根据实际情况修改： monitors：这是 Ceph集群的monitor 监视器，Ceph 集群可以配置多个 monitor，本配置3个mon pool：这是Ceph集群中存储数据进行归类区分使用，这里用的pool为rbd-ceph image：这是Ceph 块设备中的磁盘映像文件，这里用的是cephimage1 fsType：文件系统类型，默认使用 ext4 即可 readOnly：是否为只读，这里测试使用只读即可 user：这是Ceph Client访问Ceph存储集群所使用的用户名，这里我们使用admin 即可 keyring：这是Ceph集群认证需要的密钥环，搭建Ceph存储集群时生成的ceph.client.admin.keyring imageformat：这是磁盘映像文件格式，可以使用 2，或者老一些的1，内核版本比较低的使用1 imagefeatures： 这是磁盘映像文件的特征，需要uname -r查看集群系统内核所支持的特性，这里Ceontos7.4内核版本为3.10.0-693.el7.x86_64只支持layering</p>
+<p><strong>4、使用ceph认证秘钥</strong> 在集群中使用secret更方便易于扩展且安全</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# cat /etc/ceph/ceph.client.admin.keyring </span><br><span class="line">[client.admin]</span><br><span class="line">    key = AQBHVp9bPirBCRAAUt6Mjw5PUjiy/RDHyHZrUw==</span><br><span class="line"></span><br><span class="line">[root@ceph01 ~]# grep key /etc/ceph/ceph.client.admin.keyring |awk &#x27;&#123;printf &quot;%s&quot;, $NF&#125;&#x27;|base64</span><br><span class="line">QVFCSFZwOWJQaXJCQ1JBQVV0Nk1qdzVQVWppeS9SREh5SFpyVXc9PQ==</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、创建ceph-secret</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# cat secret/ceph-secret.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: ceph-secret</span><br><span class="line">type: &quot;kubernetes.io/rbd&quot;</span><br><span class="line">data:</span><br><span class="line">  key: QVFCSFZwOWJQaXJCQ1JBQVV0Nk1qdzVQVWppeS9SREh5SFpyVXc9PQ==</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl create -f secret/ceph-secret.yaml </span><br><span class="line">secret/ceph-secret created</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、创建pod测试rbd</strong> 按照官网的案例直接创建即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# kubectl create -frbd-with-secret.yaml </span><br></pre></td></tr></table></figure>
+
+<p>但是生产环境中不直接使用volumes，他会随着pods的创建儿创建，删除而删除，数据得不到保存，如果需要数据不丢失，需要借助pv和pvc实现</p>
+<p><strong>7、创建ceph-pv</strong> 注意rbd是读写一次，只读多次，目前还不支持读写多次，我们日常使用rbd映射磁盘时也是一个image只挂载一个客户端上；cephfs可以支持读写多次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# cat rbd-pv.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: ceph-rbd-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 20Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  rbd:</span><br><span class="line">    monitors:</span><br><span class="line">      - &#x27;10.0.4.10:6789&#x27;</span><br><span class="line">      - &#x27;10.0.4.13:6789&#x27;</span><br><span class="line">      - &#x27;10.0.4.15:6789&#x27;</span><br><span class="line">    pool: rbd-k8s</span><br><span class="line">    image: cephimage2</span><br><span class="line">    user: admin</span><br><span class="line">    secretRef:</span><br><span class="line">      name: ceph-secret</span><br><span class="line">    fsType: ext4</span><br><span class="line">    readOnly: false</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl create -f rbd-pv.yaml </span><br><span class="line">persistentvolume/ceph-rbd-pv created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl get pv</span><br><span class="line">NAME          CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE</span><br><span class="line">ceph-rbd-pv   20Gi       RWO            Recycle          Available  </span><br></pre></td></tr></table></figure>
+
+<p><strong>8、创建ceph-pvc</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# cat rbd-pv-claim.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: ceph-rbd-pv-claim</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 10Gi</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl create -f rbd-pv-claim.yaml </span><br><span class="line">persistentvolumeclaim/ceph-rbd-pv-claim created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl get pvc</span><br><span class="line">NAME                STATUS   VOLUME        CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">ceph-rbd-pv-claim   Bound    ceph-rbd-pv   20Gi       RWO                           6s</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl get pv</span><br><span class="line">NAME          CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                       STORAGECLASS   REASON   AGE</span><br><span class="line">ceph-rbd-pv   20Gi       RWO            Recycle          Bound    default/ceph-rbd-pv-claim                           5m28s</span><br></pre></td></tr></table></figure>
+
+<p><strong>9、创建pod通过pv、pvc方式测试rbd</strong> 由于需要格式化挂载rbd，rbd空间比较大10G，需要时间比较久，大概需要几分钟</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# cat rbd-pv-pod.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: ceph-rbd-pv-pod1</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: ceph-rbd-pv-busybox</span><br><span class="line">    image: busybox</span><br><span class="line">    command: [&quot;sleep&quot;, &quot;60000&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: ceph-rbd-vol1</span><br><span class="line">      mountPath: /mnt/ceph-rbd-pvc/busybox</span><br><span class="line">      readOnly: false</span><br><span class="line">  volumes:</span><br><span class="line">  - name: ceph-rbd-vol1</span><br><span class="line">    persistentVolumeClaim:</span><br><span class="line">      claimName: ceph-rbd-pv-claim</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl create -f rbd-pv-pod.yaml </span><br><span class="line">pod/ceph-rbd-pv-pod1 created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl get pods</span><br><span class="line">NAME               READY   STATUS              RESTARTS   AGE</span><br><span class="line">busybox            1/1     Running             432        18d</span><br><span class="line">ceph-rbd-pv-pod1   0/1     ContainerCreating   0          19s</span><br></pre></td></tr></table></figure>
+
+<p>报错如下 MountVolume.WaitForAttach failed for volume “ceph-rbd-pv” : rbd: map failed exit status 6, rbd output: rbd: sysfs write failed RBD image feature set mismatch. Try disabling features unsupported by the kernel with “rbd feature disable”. In some cases useful info is found in syslog - try “dmesg | tail”. rbd: map failed: (6) No such device or address 解决方法 禁用一些特性，这些特性在centos7.4内核上不支持，所以生产环境中k8s及相关ceph最好使用内核版本高的系统做为底层操作系统 rbd feature disable rbd-k8s&#x2F;cephimage2 exclusive-lock object-map fast-diff deep-flatten</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# rbd feature disable rbd-k8s/cephimage2 exclusive-lock object-map fast-diff deep-flatten</span><br></pre></td></tr></table></figure>
+
+<h4 id="三、验证效果"><a href="#三、验证效果" class="headerlink" title="三、验证效果"></a><strong>三、验证效果</strong></h4><p><strong>1、k8s集群端验证</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd]# kubectl get pods -o wide</span><br><span class="line">NAME               READY   STATUS    RESTARTS   AGE     IP            NODE        NOMINATED NODE   READINESS GATES</span><br><span class="line">busybox            1/1     Running   432        18d     10.254.35.3   10.2.8.65   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">ceph-rbd-pv-pod1   1/1     Running   0          3m39s   10.254.35.8   10.2.8.65   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@elasticsearch02 ceph]# df -h |grep rbd</span><br><span class="line">/dev/rbd0                  493G  162G  306G  35% /data</span><br><span class="line">/dev/rbd1                   20G   45M   20G   1% /var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage2</span><br><span class="line">[root@elasticsearch02 ceph]# cd /var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage2</span><br><span class="line">[root@elasticsearch02 rbd-k8s-image-cephimage2]# ls</span><br><span class="line">lost+found</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 rbd]# kubectl exec -ti ceph-rbd-pv-pod1 sh</span><br><span class="line">/ # df -h</span><br><span class="line">Filesystem                Size      Used Available Use% Mounted on</span><br><span class="line">overlay                  49.1G      7.4G     39.1G  16% /</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /dev</span><br><span class="line">tmpfs                     7.8G         0      7.8G   0% /sys/fs/cgroup</span><br><span class="line">/dev/vda1                49.1G      7.4G     39.1G  16% /dev/termination-log</span><br><span class="line">/dev/vda1                49.1G      7.4G     39.1G  16% /etc/resolv.conf</span><br><span class="line">/dev/vda1                49.1G      7.4G     39.1G  16% /etc/hostname</span><br><span class="line">/dev/vda1                49.1G      7.4G     39.1G  16% /etc/hosts</span><br><span class="line">shm                      64.0M         0     64.0M   0% /dev/shm</span><br><span class="line">/dev/rbd1                19.6G     44.0M     19.5G   0% /mnt/ceph-rbd-pvc/busybox</span><br><span class="line">tmpfs                     7.8G     12.0K      7.8G   0% /var/run/secrets/kubernetes.io/serviceaccount</span><br><span class="line">tmpfs                     7.8G         0      7.8G   0% /proc/acpi</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /proc/kcore</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /proc/keys</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /proc/timer_list</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /proc/timer_stats</span><br><span class="line">tmpfs                    64.0M         0     64.0M   0% /proc/sched_debug</span><br><span class="line">tmpfs                     7.8G         0      7.8G   0% /proc/scsi</span><br><span class="line">tmpfs                     7.8G         0      7.8G   0% /sys/firmware</span><br><span class="line">/ # cd /mnt/ceph-rbd-pvc/busybox/</span><br><span class="line">/mnt/ceph-rbd-pvc/busybox # ls</span><br><span class="line">lost+found</span><br><span class="line">/mnt/ceph-rbd-pvc/busybox # touch ceph-rbd-pods</span><br><span class="line">/mnt/ceph-rbd-pvc/busybox # ls</span><br><span class="line">ceph-rbd-pods  lost+found</span><br><span class="line">/mnt/ceph-rbd-pvc/busybox # echo busbox&gt;ceph-rbd-pods </span><br><span class="line">/mnt/ceph-rbd-pvc/busybox # cat ceph-rbd-pods </span><br><span class="line">busbox</span><br><span class="line"></span><br><span class="line">[root@elasticsearch02 ceph]# cd /var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage2</span><br><span class="line">[root@elasticsearch02 rbd-k8s-image-cephimage2]# ls</span><br><span class="line">ceph-rbd-pods  lost+found</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、ceph集群端验证</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# ceph df</span><br><span class="line">GLOBAL:</span><br><span class="line">    SIZE        AVAIL       RAW USED     %RAW USED </span><br><span class="line">    65.9TiB     58.3TiB      7.53TiB         11.43 </span><br><span class="line">POOLS:</span><br><span class="line">    NAME                           ID     USED        %USED     MAX AVAIL     OBJECTS </span><br><span class="line">    rbd-es                         1      1.38TiB      7.08       18.1TiB      362911 </span><br><span class="line">    .rgw.root                      2      1.14KiB         0       18.1TiB           4 </span><br><span class="line">    default.rgw.control            3           0B         0       18.1TiB           8 </span><br><span class="line">    default.rgw.meta               4      46.9KiB         0        104GiB         157 </span><br><span class="line">    default.rgw.log                5           0B         0       18.1TiB         345 </span><br><span class="line">    default.rgw.buckets.index      6           0B         0        104GiB        2012 </span><br><span class="line">    default.rgw.buckets.data       7      1.01TiB      5.30       18.1TiB     2090721 </span><br><span class="line">    default.rgw.buckets.non-ec     8           0B         0       18.1TiB           0 </span><br><span class="line">    rbd-k8s                        9       137MiB         0       18.1TiB          67 </span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ceph/" rel="tag"># ceph</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/18/2019/01/2019-01-18-centos7-5%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%A8%B3%E5%AE%9A%E7%89%88jenkins%E5%B9%B6%E9%85%8D%E7%BD%AEldap%E8%AE%A4%E8%AF%81/index/" rel="prev" title="Centos7.5部署最新稳定版jenkins并配置ldap认证">
+      <i class="fa fa-chevron-left"></i> Centos7.5部署最新稳定版jenkins并配置ldap认证
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/24/2019/01/2019-01-24-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph-rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins/index/" rel="next" title="kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins">
+      kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E7%9B%AE%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">文档目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">3.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="nav-number">4.</span> <span class="nav-text">基本环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="nav-number">5.</span> <span class="nav-text">操作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81ceph%E9%9B%86%E7%BE%A4%E5%88%9B%E5%BB%BAceph%E6%B1%A0%E5%8F%8A%E9%95%9C%E5%83%8F"><span class="nav-number">5.1.</span> <span class="nav-text">一、ceph集群创建ceph池及镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81k8s%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8"><span class="nav-number">5.2.</span> <span class="nav-text">二、k8s集群使用ceph rbd块存储</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%AA%8C%E8%AF%81%E6%95%88%E6%9E%9C"><span class="nav-number">5.3.</span> <span class="nav-text">三、验证效果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

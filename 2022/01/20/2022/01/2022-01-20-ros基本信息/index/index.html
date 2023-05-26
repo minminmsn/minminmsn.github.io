@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="ROS是什么ROS（Robot Operating System，下文简称“ROS”）是一个适用于机器人的开源的元操作系统。它提供了操作系统应有的服务，包括硬件抽象，底层设备控制，常用函数的实现，进程间消息传递，以及包管理。它也提供用于获取、编译、编写、和跨计算机运行代码所需的工具和库函数。 ROS 的主要目标是为机器人研究和开发提供代码复用的支持。ROS是一个分布式的进程（也就是“节点”）框架，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROS基本信息汇总">
+<meta property="og:url" content="https://minminmsn.github.io/2022/01/20/2022/01/2022-01-20-ros%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="ROS是什么ROS（Robot Operating System，下文简称“ROS”）是一个适用于机器人的开源的元操作系统。它提供了操作系统应有的服务，包括硬件抽象，底层设备控制，常用函数的实现，进程间消息传递，以及包管理。它也提供用于获取、编译、编写、和跨计算机运行代码所需的工具和库函数。 ROS 的主要目标是为机器人研究和开发提供代码复用的支持。ROS是一个分布式的进程（也就是“节点”）框架，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-01-20T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.552Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2022/01/20/2022/01/2022-01-20-ros%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>ROS基本信息汇总 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2022/01/20/2022/01/2022-01-20-ros%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ROS基本信息汇总
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-01-20 08:00:00" itemprop="dateCreated datePublished" datetime="2022-01-20T08:00:00+08:00">2022-01-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ai/" itemprop="url" rel="index"><span itemprop="name">ai</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="ROS是什么"><a href="#ROS是什么" class="headerlink" title="ROS是什么"></a><strong>ROS是什么</strong></h3><p>ROS（Robot Operating System，下文简称“ROS”）是一个适用于机器人的开源的元操作系统。它提供了操作系统应有的服务，包括硬件抽象，底层设备控制，常用函数的实现，进程间消息传递，以及包管理。它也提供用于获取、编译、编写、和跨计算机运行代码所需的工具和库函数。 ROS 的主要目标是为机器人研究和开发提供代码复用的支持。ROS是一个分布式的进程（也就是“节点”）框架，这些进程被封装在易于被分享和发布的程序包和功能包中。ROS也支持一种类似于代码储存库的联合系统，这个系统也可以实现工程的协作及发布。这个设计可以使一个工程的开发和实现从文件系统到用户接口完全独立决策（不受ROS限制）。同时，所有的工程都可以被ROS的基础工具整合在一起。</p>
+<h3 id="ROS中的几个常用概念"><a href="#ROS中的几个常用概念" class="headerlink" title="ROS中的几个常用概念"></a><strong>ROS中的几个常用概念</strong></h3><ul>
+<li>Node（节点） 执行一些运算任务的进程，数据传输和处理的程序，可以理解为C++或者Python程序主函数所在的程序。</li>
+<li>Message（消息） 节点之间是通过传送消息进行通讯的，每一个消息都是一个严格的数据结构。即支持标准的数据类型（整型，浮点型，布尔型等等）和原始数组类型。也可以包含任意嵌套的结构和数组（类似于C语言的结构structs）。比如GPS采集到位置消息，温度计采集到的温度等，任何数据都能作为message。</li>
+<li>Topic（主题） 消息是以一种发布&#x2F;订阅的方式进行传递的。一个节点可以在一个给定的主题中发布消息。另外的节点针对某个主题关注与订阅特定类型的数据。可以同时有多个节点发布或者订阅同一个主题的消息。</li>
+<li>Service（服务） 虽然基于话题的发布&#x2F;订阅模型是很灵活的通讯模式，但是它广播式的路径规划对于可以简化节点设计的同步传输模式并不适合。在ROS中，我们称之为一个服务，用一个字符串和一对严格规范的消息定义：一个用于请求，一个用于回应。这类似于web服务器，web服务器是由URIs定义的，同时带有完整定义类型的请求和回复文档。需要注意的是，不像话题，只有一个节点可以以任意独有的名字广播一个服务：只有一个服务可以称之为“分类象征”，比如说，任意一个给出的URI地址只能有一个web服务器。</li>
+<li>Discovery（发现） ROS2里是没有master的，那么各节点之间是怎么知道彼此存在的呢？这就靠一种自动发现的机制——Discovery。什么意思呢？简单来说，当一个节点启动后，首先在网络中发条广播，大声告诉这个世界我来了，其他节点听到之后，也纷纷反馈各自的信息，这样一来二去也就联系上了。当然，万一哪个节点掉线了怎们办？没关系，每个节点都会周期性的发布广播，告诉其他节点他还在线，就算要下线，他也会广播告诉其他节点他要走了，下次再聊。总之，发现（Discovery）可以理解为一种身份声明和响应的机制。</li>
+<li>Package（包） ROS的软件以包的方式组织起来。包包含节点、ROS依赖库、数据套、配置文件、第三方软件、或者任何其他逻辑构成。包的目标是提供一种易于使用的结构以便于软件的重复使用。</li>
+<li>Stack（堆） 堆是包的集合，它提供一个完整的功能，像“navigation stack”。Stack与版本号关联，同时也是如何发行ROS软件方式的关键。</li>
+</ul>
+<h3 id="ROS常用组件"><a href="#ROS常用组件" class="headerlink" title="ROS常用组件"></a><strong>ROS常用组件</strong></h3><ul>
+<li>launch启动文件 通过XML文件实现多节点的配置和启动。</li>
+<li>TF坐标变换 管理机器人系统中繁杂的坐标系变换关系。</li>
+<li>Qt工具箱 提供多种机器人开发的可视化工具，如日志输出、计算图可视化、数据绘图、参数动态配置等功能。</li>
+<li>rviz三维可视化平台 实现机器人开发过程中多种数据的可视化显示，并且可通过插件机制无限扩展。</li>
+<li>gazebo仿真环境 创建仿真环境并实现带有物理属性的机器人仿真。</li>
+<li>rosbag数据记录与回放 记录并回放ROS系统中运行时的所有话题信息，方便后期调试使用。</li>
+</ul>
+<h3 id="ROS常用命令"><a href="#ROS常用命令" class="headerlink" title="ROS常用命令"></a><strong>ROS常用命令</strong></h3><ul>
+<li><p>查看ROS_PACKAGE_PATH环境变量 $ echo $ROS_PACKAGE_PATH &#x2F;opt&#x2F;ros&#x2F;melodic&#x2F;share</p>
+</li>
+<li><p>rosnode 命令 rosnode 显示当前运行的ROS节点信息 rosnode list 获得运行节点列表 rosnode info node-name 获得特定节点的信息 rosnode ping node-name 测试节点是否连通 rosnode ping –all 测试所有节点 rosnode kill node-name 终止节点</p>
+</li>
+<li><p>rostopic 命令 rostopic命令工具能让你获取有关ROS话题的信息。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ rostopic -h</span><br><span class="line">rostopic is a command-line tool for printing information about ROS Topics.</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">    rostopic bw display bandwidth used by topic</span><br><span class="line">    rostopic delay  display delay of topic from timestamp in header</span><br><span class="line">    rostopic echo   print messages to screen</span><br><span class="line">    rostopic find   find topics by type</span><br><span class="line">    rostopic hz display publishing rate of topic    </span><br><span class="line">    rostopic info   print information about active topic</span><br><span class="line">    rostopic list   list active topics</span><br><span class="line">    rostopic pub    publish data to topic</span><br><span class="line">    rostopic type   print topic or field type</span><br><span class="line"></span><br><span class="line">Type rostopic &lt;command&gt; -h for more detailed usage, e.g. &#x27;rostopic echo -h&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>rosbag 命令 rosbag 将ROS系统运行过程中的数据录制到一个.bag文件中，然后可以通过回放数据来重现相似的运行过程.退出录制时按Ctrl-C退出该命令，你应该会看到在当前目录下一个以年份、日期和时间命名并以.bag作为后缀的文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">titan@titan-ubuntu1:~$ rosbag -h</span><br><span class="line">Usage: rosbag &lt;subcommand&gt; [options] [args]</span><br><span class="line"></span><br><span class="line">A bag is a file format in ROS for storing ROS message data. The rosbag command can record, replay and manipulate bags.</span><br><span class="line"></span><br><span class="line">Available subcommands:</span><br><span class="line">   check    Determine whether a bag is playable in the current system, or if it can be migrated.</span><br><span class="line">   compress     Compress one or more bag files.</span><br><span class="line">   decompress   Decompress one or more bag files.</span><br><span class="line">   decrypt      Decrypt one or more bag files.</span><br><span class="line">   encrypt      Encrypt one or more bag files.</span><br><span class="line">   filter   Filter the contents of the bag.</span><br><span class="line">   fix      Repair the messages in a bag file so that it can be played in the current system.</span><br><span class="line">   help  </span><br><span class="line">   info     Summarize the contents of one or more bag files.</span><br><span class="line">   play     Play back the contents of one or more bag files in a time-synchronized fashion.</span><br><span class="line">   record   Record a bag file with the contents of specified topics.</span><br><span class="line">   reindex      Reindexes one or more bag files.</span><br><span class="line"></span><br><span class="line">For additional information, see http://wiki.ros.org/rosbag</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><p><a target="_blank" rel="noopener" href="http://wiki.ros.org/cn/ROS/Tutorials">http://wiki.ros.org/cn/ROS/Tutorials</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/15/2022/01/2022-01-15-%E7%B3%BB%E7%BB%9F%E6%A2%B3%E7%90%86%E4%B8%8E%E4%BA%AE%E7%82%B9%E6%8C%96%E6%8E%98/index/" rel="prev" title="系统梳理与亮点挖掘">
+      <i class="fa fa-chevron-left"></i> 系统梳理与亮点挖掘
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/24/2022/02/2022-02-24-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AD%A6%E4%B9%A0mba/index/" rel="next" title="管理基础信息汇总">
+      管理基础信息汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ROS%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">ROS是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROS%E4%B8%AD%E7%9A%84%E5%87%A0%E4%B8%AA%E5%B8%B8%E7%94%A8%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">ROS中的几个常用概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROS%E5%B8%B8%E7%94%A8%E7%BB%84%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">ROS常用组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROS%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">ROS常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">5.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

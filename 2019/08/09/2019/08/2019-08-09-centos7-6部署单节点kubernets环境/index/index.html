@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="安装服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos7.6部署单节点kubernets环境">
+<meta property="og:url" content="https://minminmsn.github.io/2019/08/09/2019/08/2019-08-09-centos7-6%E9%83%A8%E7%BD%B2%E5%8D%95%E8%8A%82%E7%82%B9kubernets%E7%8E%AF%E5%A2%83/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="安装服务1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-08-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:32.603Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/08/09/2019/08/2019-08-09-centos7-6%E9%83%A8%E7%BD%B2%E5%8D%95%E8%8A%82%E7%82%B9kubernets%E7%8E%AF%E5%A2%83/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Centos7.6部署单节点kubernets环境 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/08/09/2019/08/2019-08-09-centos7-6%E9%83%A8%E7%BD%B2%E5%8D%95%E8%8A%82%E7%82%B9kubernets%E7%8E%AF%E5%A2%83/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Centos7.6部署单节点kubernets环境
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-09 08:00:00" itemprop="dateCreated datePublished" datetime="2019-08-09T08:00:00+08:00">2019-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:32" itemprop="dateModified" datetime="2023-05-26T15:06:32+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cloud/" itemprop="url" rel="index"><span itemprop="name">cloud</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="安装服务"><a href="#安装服务" class="headerlink" title="安装服务"></a><strong>安装服务</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line">[root@172_30_3_8 ~]# yum -y install etcd kubernetes</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirrors.tuna.tsinghua.edu.cn</span><br><span class="line"> * epel: ftp.jaist.ac.jp</span><br><span class="line"> * extras: mirrors.tuna.tsinghua.edu.cn</span><br><span class="line"> * updates: mirror.bit.edu.cn</span><br><span class="line">正在解决依赖关系</span><br><span class="line">--&gt; 正在检查事务</span><br><span class="line">---&gt; 软件包 etcd.x86_64.0.3.3.11-2.el7.centos 将被 安装</span><br><span class="line">---&gt; 软件包 kubernetes.x86_64.0.1.5.2-0.7.git269f928.el7 将被 安装</span><br><span class="line">--&gt; 正在处理依赖关系 kubernetes-node = 1.5.2-0.7.git269f928.el7，它被软件包 kubernetes-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 kubernetes-master = 1.5.2-0.7.git269f928.el7，它被软件包 kubernetes-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">--&gt; 正在检查事务</span><br><span class="line">---&gt; 软件包 kubernetes-master.x86_64.0.1.5.2-0.7.git269f928.el7 将被 安装</span><br><span class="line">--&gt; 正在处理依赖关系 kubernetes-client = 1.5.2-0.7.git269f928.el7，它被软件包 kubernetes-master-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">---&gt; 软件包 kubernetes-node.x86_64.0.1.5.2-0.7.git269f928.el7 将被 安装</span><br><span class="line">--&gt; 正在处理依赖关系 socat，它被软件包 kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 docker，它被软件包 kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 conntrack-tools，它被软件包 kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64 需要</span><br><span class="line">--&gt; 正在检查事务</span><br><span class="line">---&gt; 软件包 conntrack-tools.x86_64.0.1.4.4-4.el7 将被 安装</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.1)(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_cttimeout.so.1(LIBNETFILTER_CTTIMEOUT_1.0)(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_cthelper.so.0(LIBNETFILTER_CTHELPER_1.0)(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_queue.so.1()(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_cttimeout.so.1()(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 libnetfilter_cthelper.so.0()(64bit)，它被软件包 conntrack-tools-1.4.4-4.el7.x86_64 需要</span><br><span class="line">---&gt; 软件包 docker.x86_64.2.1.13.1-96.gitb2f74b2.el7.centos 将被 安装</span><br><span class="line">--&gt; 正在处理依赖关系 docker-common = 2:1.13.1-96.gitb2f74b2.el7.centos，它被软件包 2:docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64 需要</span><br><span class="line">--&gt; 正在处理依赖关系 docker-client = 2:1.13.1-96.gitb2f74b2.el7.centos，它被软件包 2:docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64 需要</span><br><span class="line">---&gt; 软件包 kubernetes-client.x86_64.0.1.5.2-0.7.git269f928.el7 将被 安装</span><br><span class="line">---&gt; 软件包 socat.x86_64.0.1.7.3.2-2.el7 将被 安装</span><br><span class="line">--&gt; 正在检查事务</span><br><span class="line">---&gt; 软件包 docker-client.x86_64.2.1.13.1-96.gitb2f74b2.el7.centos 将被 安装</span><br><span class="line">---&gt; 软件包 docker-common.x86_64.2.1.13.1-96.gitb2f74b2.el7.centos 将被 安装</span><br><span class="line">---&gt; 软件包 libnetfilter_cthelper.x86_64.0.1.0.0-9.el7 将被 安装</span><br><span class="line">---&gt; 软件包 libnetfilter_cttimeout.x86_64.0.1.0.0-6.el7 将被 安装</span><br><span class="line">---&gt; 软件包 libnetfilter_queue.x86_64.0.1.0.2-2.el7_2 将被 安装</span><br><span class="line">--&gt; 解决依赖关系完成</span><br><span class="line"></span><br><span class="line">依赖关系解决</span><br><span class="line"></span><br><span class="line">=======================================================================================================================</span><br><span class="line"> Package                          架构             版本                                         源                大小</span><br><span class="line">=======================================================================================================================</span><br><span class="line">正在安装:</span><br><span class="line"> etcd                             x86_64           3.3.11-2.el7.centos                          extras            10 M</span><br><span class="line"> kubernetes                       x86_64           1.5.2-0.7.git269f928.el7                     extras            36 k</span><br><span class="line">为依赖而安装:</span><br><span class="line"> conntrack-tools                  x86_64           1.4.4-4.el7                                  base             186 k</span><br><span class="line"> docker                           x86_64           2:1.13.1-96.gitb2f74b2.el7.centos            extras            18 M</span><br><span class="line"> docker-client                    x86_64           2:1.13.1-96.gitb2f74b2.el7.centos            extras           3.9 M</span><br><span class="line"> docker-common                    x86_64           2:1.13.1-96.gitb2f74b2.el7.centos            extras            96 k</span><br><span class="line"> kubernetes-client                x86_64           1.5.2-0.7.git269f928.el7                     extras            14 M</span><br><span class="line"> kubernetes-master                x86_64           1.5.2-0.7.git269f928.el7                     extras            25 M</span><br><span class="line"> kubernetes-node                  x86_64           1.5.2-0.7.git269f928.el7                     extras            14 M</span><br><span class="line"> libnetfilter_cthelper            x86_64           1.0.0-9.el7                                  base              18 k</span><br><span class="line"> libnetfilter_cttimeout           x86_64           1.0.0-6.el7                                  base              18 k</span><br><span class="line"> libnetfilter_queue               x86_64           1.0.2-2.el7_2                                base              23 k</span><br><span class="line"> socat                            x86_64           1.7.3.2-2.el7                                base             290 k</span><br><span class="line"></span><br><span class="line">事务概要</span><br><span class="line">=======================================================================================================================</span><br><span class="line">安装  2 软件包 (+11 依赖软件包)</span><br><span class="line"></span><br><span class="line">总下载量：85 M</span><br><span class="line">安装大小：426 M</span><br><span class="line">Downloading packages:</span><br><span class="line">(1/13): conntrack-tools-1.4.4-4.el7.x86_64.rpm                                                  | 186 kB  00:00:00     </span><br><span class="line">(2/13): docker-common-1.13.1-96.gitb2f74b2.el7.centos.x86_64.rpm                                |  96 kB  00:00:00     </span><br><span class="line">(3/13): kubernetes-1.5.2-0.7.git269f928.el7.x86_64.rpm                                          |  36 kB  00:00:00     </span><br><span class="line">(4/13): etcd-3.3.11-2.el7.centos.x86_64.rpm                                                     |  10 MB  00:00:04     </span><br><span class="line">(5/13): kubernetes-master-1.5.2-0.7.git269f928.el7.x86_64.rpm                                   |  25 MB  00:00:07     </span><br><span class="line">(6/13): libnetfilter_cthelper-1.0.0-9.el7.x86_64.rpm                                            |  18 kB  00:00:00     </span><br><span class="line">(7/13): libnetfilter_cttimeout-1.0.0-6.el7.x86_64.rpm                                           |  18 kB  00:00:00     </span><br><span class="line">(8/13): libnetfilter_queue-1.0.2-2.el7_2.x86_64.rpm                                             |  23 kB  00:00:00     </span><br><span class="line">(9/13): socat-1.7.3.2-2.el7.x86_64.rpm                                                          | 290 kB  00:00:00     </span><br><span class="line">(10/13): kubernetes-client-1.5.2-0.7.git269f928.el7.x86_64.rpm                                  |  14 MB  00:00:12     </span><br><span class="line">(11/13): kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64.rpm                                    |  14 MB  00:00:10     </span><br><span class="line">(12/13): docker-client-1.13.1-96.gitb2f74b2.el7.centos.x86_64.rpm                               | 3.9 MB  00:00:15     </span><br><span class="line">(13/13): docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64.rpm                                      |  18 MB  00:00:18     </span><br><span class="line">-----------------------------------------------------------------------------------------------------------------------</span><br><span class="line">总计                                                                                   4.5 MB/s |  85 MB  00:00:18     </span><br><span class="line">Running transaction check</span><br><span class="line">Running transaction test</span><br><span class="line">Transaction test succeeded</span><br><span class="line">Running transaction</span><br><span class="line">警告：RPM 数据库已被非 yum 程序修改。</span><br><span class="line">  正在安装    : 2:docker-common-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                            1/13 </span><br><span class="line">  正在安装    : kubernetes-client-1.5.2-0.7.git269f928.el7.x86_64                                                 2/13 </span><br><span class="line">  正在安装    : kubernetes-master-1.5.2-0.7.git269f928.el7.x86_64                                                 3/13 </span><br><span class="line">  正在安装    : 2:docker-client-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                            4/13 </span><br><span class="line">  正在安装    : 2:docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                                   5/13 </span><br><span class="line">  正在安装    : socat-1.7.3.2-2.el7.x86_64                                                                        6/13 </span><br><span class="line">  正在安装    : libnetfilter_cthelper-1.0.0-9.el7.x86_64                                                          7/13 </span><br><span class="line">  正在安装    : libnetfilter_queue-1.0.2-2.el7_2.x86_64                                                           8/13 </span><br><span class="line">  正在安装    : libnetfilter_cttimeout-1.0.0-6.el7.x86_64                                                         9/13 </span><br><span class="line">  正在安装    : conntrack-tools-1.4.4-4.el7.x86_64                                                               10/13 </span><br><span class="line">  正在安装    : kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64                                                  11/13 </span><br><span class="line">  正在安装    : kubernetes-1.5.2-0.7.git269f928.el7.x86_64                                                       12/13 </span><br><span class="line">  正在安装    : etcd-3.3.11-2.el7.centos.x86_64                                                                  13/13 </span><br><span class="line">  验证中      : 2:docker-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                                   1/13 </span><br><span class="line">  验证中      : libnetfilter_cttimeout-1.0.0-6.el7.x86_64                                                         2/13 </span><br><span class="line">  验证中      : 2:docker-client-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                            3/13 </span><br><span class="line">  验证中      : libnetfilter_queue-1.0.2-2.el7_2.x86_64                                                           4/13 </span><br><span class="line">  验证中      : kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64                                                   5/13 </span><br><span class="line">  验证中      : kubernetes-client-1.5.2-0.7.git269f928.el7.x86_64                                                 6/13 </span><br><span class="line">  验证中      : kubernetes-master-1.5.2-0.7.git269f928.el7.x86_64                                                 7/13 </span><br><span class="line">  验证中      : 2:docker-common-1.13.1-96.gitb2f74b2.el7.centos.x86_64                                            8/13 </span><br><span class="line">  验证中      : libnetfilter_cthelper-1.0.0-9.el7.x86_64                                                          9/13 </span><br><span class="line">  验证中      : etcd-3.3.11-2.el7.centos.x86_64                                                                  10/13 </span><br><span class="line">  验证中      : conntrack-tools-1.4.4-4.el7.x86_64                                                               11/13 </span><br><span class="line">  验证中      : socat-1.7.3.2-2.el7.x86_64                                                                       12/13 </span><br><span class="line">  验证中      : kubernetes-1.5.2-0.7.git269f928.el7.x86_64                                                       13/13 </span><br><span class="line">已安装:</span><br><span class="line">  etcd.x86_64 0:3.3.11-2.el7.centos                    kubernetes.x86_64 0:1.5.2-0.7.git269f928.el7                   </span><br><span class="line"></span><br><span class="line">作为依赖被安装:</span><br><span class="line">  conntrack-tools.x86_64 0:1.4.4-4.el7                       docker.x86_64 2:1.13.1-96.gitb2f74b2.el7.centos           </span><br><span class="line">  docker-client.x86_64 2:1.13.1-96.gitb2f74b2.el7.centos     docker-common.x86_64 2:1.13.1-96.gitb2f74b2.el7.centos    </span><br><span class="line">  kubernetes-client.x86_64 0:1.5.2-0.7.git269f928.el7        kubernetes-master.x86_64 0:1.5.2-0.7.git269f928.el7       </span><br><span class="line">  kubernetes-node.x86_64 0:1.5.2-0.7.git269f928.el7          libnetfilter_cthelper.x86_64 0:1.0.0-9.el7                </span><br><span class="line">  libnetfilter_cttimeout.x86_64 0:1.0.0-6.el7                libnetfilter_queue.x86_64 0:1.0.2-2.el7_2                 </span><br><span class="line">  socat.x86_64 0:1.7.3.2-2.el7                              </span><br><span class="line"></span><br><span class="line">完毕！</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a><strong>验证安装</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@172_30_3_8 ~]# rpm -qa |grep kubernetes</span><br><span class="line">kubernetes-master-1.5.2-0.7.git269f928.el7.x86_64</span><br><span class="line">kubernetes-node-1.5.2-0.7.git269f928.el7.x86_64</span><br><span class="line">kubernetes-client-1.5.2-0.7.git269f928.el7.x86_64</span><br><span class="line">kubernetes-1.5.2-0.7.git269f928.el7.x86_64</span><br><span class="line">[root@172_30_3_8 ~]# rpm -qa |grep etcd</span><br><span class="line">etcd-3.3.11-2.el7.centos.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a><strong>启动服务</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@172_30_3_8 ~]# systemctl start etcd</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start docker</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start kube-apiserver</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start kube-controller-manager</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start kube-scheduler</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start kubelet</span><br><span class="line">[root@172_30_3_8 ~]# systemctl start kube-proxy</span><br><span class="line">[root@172_30_3_8 ~]# </span><br></pre></td></tr></table></figure>
+
+<h3 id="开机自启"><a href="#开机自启" class="headerlink" title="开机自启"></a><strong>开机自启</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@172_30_3_8 ~]# systemctl enable docker</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</span><br><span class="line">[root@172_30_3_8 ~]# systemctl enable etcd</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/etcd.service to /usr/lib/systemd/system/etcd.service.</span><br><span class="line">[root@172_30_3_8 ~]# systemctl enable kube-apiserver</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kube-apiserver.service to /usr/lib/systemd/system/kube-apiserver.service.</span><br><span class="line">[root@172_30_3_8 ~]# systemctl enable kube-controller-manager</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kube-controller-manager.service to /usr/lib/systemd/system/kube-controller-manager.service.</span><br><span class="line">[root@172_30_3_8 ~]# systemctl enable kubelet</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kubelet.service to /usr/lib/systemd/system/kubelet.service.</span><br><span class="line">[root@172_30_3_8 ~]# systemctl enable kube-proxy</span><br><span class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/kube-proxy.service to /usr/lib/systemd/system/kube-proxy.service.</span><br></pre></td></tr></table></figure>
+
+<h3 id="验证服务"><a href="#验证服务" class="headerlink" title="验证服务"></a><strong>验证服务</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@172_30_3_8 kubernetes]# kubectl get nodes</span><br><span class="line">NAME        STATUS    AGE</span><br><span class="line">127.0.0.1   Ready     2m</span><br><span class="line">[root@172_30_3_8 kubernetes]# kubectl get all</span><br><span class="line">NAME             CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">svc/kubernetes   10.254.0.1   &lt;none&gt;        443/TCP   2m</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/08/04/2019/08/2019-08-04-%E4%BD%95%E6%97%B6%E8%AF%BB%E4%BD%95%E4%B9%A6/index/" rel="prev" title="何时读何书">
+      <i class="fa fa-chevron-left"></i> 何时读何书
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/16/2019/08/2019-08-16-%E9%9D%9E%E6%9A%B4%E5%8A%9B%E6%B2%9F%E9%80%9A/index/" rel="next" title="非暴力沟通">
+      非暴力沟通 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">安装服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">验证安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="nav-number">4.</span> <span class="nav-text">开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%9C%8D%E5%8A%A1"><span class="nav-number">5.</span> <span class="nav-text">验证服务</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Apache Ambari是一种基于Web的工具，支持Apache Hadoop集群的供应、管理和监控。Ambari已支持大多数Hadoop组件，包括HDFS、MapReduce、Hive、Pig、 Hbase、Zookeper、Sqoop和Hcatalog等。Apache Ambari 支持HDFS、MapReduce、Hive、Pig、Hbase、Zookeper、Sqoop和Hcatalo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ambari安装部署Hadoop">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/09/2018/12/2018-12-09-ambari%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2hadoop/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="Apache Ambari是一种基于Web的工具，支持Apache Hadoop集群的供应、管理和监控。Ambari已支持大多数Hadoop组件，包括HDFS、MapReduce、Hive、Pig、 Hbase、Zookeper、Sqoop和Hcatalog等。Apache Ambari 支持HDFS、MapReduce、Hive、Pig、Hbase、Zookeper、Sqoop和Hcatalo">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-7b83fbd7afe7850d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-cef5a91c3604aea1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-3cee2d1ffe7f6710.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-941b88b94fba5532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-b360e94f5a2aeaf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-f8c719d5effabdc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-943c9e8d36bb05e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2018-12-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.553Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="ambari">
+<meta property="article:tag" content="hadoop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/7535971-7b83fbd7afe7850d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/09/2018/12/2018-12-09-ambari%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2hadoop/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Ambari安装部署Hadoop | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/09/2018/12/2018-12-09-ambari%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2hadoop/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ambari安装部署Hadoop
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-09 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-09T08:00:00+08:00">2018-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bigdata/" itemprop="url" rel="index"><span itemprop="name">bigdata</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Apache Ambari是一种基于Web的工具，支持Apache Hadoop集群的供应、管理和监控。Ambari已支持大多数Hadoop组件，包括HDFS、MapReduce、Hive、Pig、 Hbase、Zookeper、Sqoop和Hcatalog等。Apache Ambari 支持HDFS、MapReduce、Hive、Pig、Hbase、Zookeper、Sqoop和Hcatalog等的集中管理。也是5个顶级hadoop管理工具之一。Ambari能够安装安全的（基于Kerberos）Hadoop集群，以此实现了对Hadoop 安全的支持，提供了基于角色的用户认证、授权和审计功能，并为用户管理集成了LDAP和Active Directory。</p>
+</blockquote>
+<h4 id="之所以选择Ambari部署hadoop而不是CDH，是因为CDH最新版本只支持Hadoop2-6-X，Ambari最新版本支持Hadoop2-7-3。"><a href="#之所以选择Ambari部署hadoop而不是CDH，是因为CDH最新版本只支持Hadoop2-6-X，Ambari最新版本支持Hadoop2-7-3。" class="headerlink" title="之所以选择Ambari部署hadoop而不是CDH，是因为CDH最新版本只支持Hadoop2.6.X，Ambari最新版本支持Hadoop2.7.3。"></a>之所以选择Ambari部署hadoop而不是CDH，是因为CDH最新版本只支持Hadoop2.6.X，Ambari最新版本支持Hadoop2.7.3。</h4><p>一、安装部署参考官网<a target="_blank" rel="noopener" href="http://ambari.apache.org/">http://ambari.apache.org/</a> 及简书<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/73f9670f71cf">https://www.jianshu.com/p/73f9670f71cf</a> ，主要分以下几步：</p>
+<p>1、节点互信</p>
+<p>2、关闭防火墙、selinux</p>
+<p>3、安装ambari-server</p>
+<p>4、设置ambari-server</p>
+<p>5、图形界面部署hadoop各组件</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-7b83fbd7afe7850d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>二、如下是新增节点步骤： 1、注意密钥为master1节点 prod-hadoop-master-01 &#x2F;root&#x2F;.ssh&#x2F;d_rsa文件</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-cef5a91c3604aea1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>2、注册节点</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-3cee2d1ffe7f6710.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>3、安装服务也可添加后再安装</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-941b88b94fba5532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>4、配置默认即可</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-b360e94f5a2aeaf1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>5、确认下没有变更就开始部署</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-f8c719d5effabdc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>6、安装进度完成即可，也可以登陆首页等待后续安装完成</p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-943c9e8d36bb05e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>三、补充Ambari没有集成组件安装： 1、解决ambari-service、ambari-agent默认安装数据目录在&#x2F;下</p>
+<p>ambari-agent stop mv &#x2F;var&#x2F;lib&#x2F;ambari-agent &#x2F;data&#x2F;disk1&#x2F; ln -s &#x2F;data&#x2F;disk1&#x2F;ambari-agent &#x2F;var&#x2F;lib&#x2F;ambari-agent</p>
+<p>mv &#x2F;usr&#x2F;hdp &#x2F;data&#x2F;disk1&#x2F; ln -s &#x2F;data&#x2F;disk1&#x2F;hdp&#x2F; &#x2F;usr&#x2F;hdp</p>
+<p>ambari-agent start</p>
+<p>2、ambari与presto整合 参考 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/0b5f52a959d5">https://www.jianshu.com/p/0b5f52a959d5</a> <a target="_blank" rel="noopener" href="https://github.com/prestodb/ambari-presto-service/releases">https://github.com/prestodb/ambari-presto-service/releases</a> <a target="_blank" rel="noopener" href="https://github.com/prestodb/ambari-presto-service/releases/download/v1.2/ambari-presto-1.2.tar.gz">https://github.com/prestodb/ambari-presto-service/releases/download/v1.2/ambari-presto-1.2.tar.gz</a></p>
+<p>[root@prod-hadoop-master-01 ~]# tar zxvf ambari-presto-1.2.tar.gz -C &#x2F;var&#x2F;lib&#x2F;ambari-server&#x2F;resources&#x2F;stacks&#x2F;HDP&#x2F;2.6&#x2F;services&#x2F; ambari-presto-1.2&#x2F; ambari-presto-1.2&#x2F;configuration&#x2F; ambari-presto-1.2&#x2F;configuration&#x2F;connectors.properties.xml ambari-presto-1.2&#x2F;configuration&#x2F;jvm.config.xml ambari-presto-1.2&#x2F;configuration&#x2F;config.properties.xml ambari-presto-1.2&#x2F;configuration&#x2F;node.properties.xml ambari-presto-1.2&#x2F;HISTORY.rst ambari-presto-1.2&#x2F;themes&#x2F; ambari-presto-1.2&#x2F;themes&#x2F;theme.json ambari-presto-1.2&#x2F;Makefile ambari-presto-1.2&#x2F;setup.py ambari-presto-1.2&#x2F;MANIFEST.in ambari-presto-1.2&#x2F;PKG-INFO ambari-presto-1.2&#x2F;package&#x2F; ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F; ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;presto_cli.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;presto_worker.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;presto_coordinator.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;<strong>init</strong>.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;params.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;download.ini ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;common.py ambari-presto-1.2&#x2F;package&#x2F;scripts&#x2F;presto_client.py ambari-presto-1.2&#x2F;setup.cfg ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F; ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F;dependency_links.txt ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F;not-zip-safe ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F;PKG-INFO ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F;top_level.txt ambari-presto-1.2&#x2F;ambari_presto.egg-info&#x2F;SOURCES.txt ambari-presto-1.2&#x2F;LICENSE ambari-presto-1.2&#x2F;README.md ambari-presto-1.2&#x2F;metainfo.xml ambari-presto-1.2&#x2F;requirements.txt [root@prod-hadoop-master-01 ~]# cd &#x2F;var&#x2F;lib&#x2F;ambari-server&#x2F;resources&#x2F;stacks&#x2F;HDP&#x2F;2.6&#x2F;services&#x2F; [root@prod-hadoop-master-01 services]# ls ACCUMULO ATLAS FALCON HBASE HIVE KERBEROS MAHOUT PIG RANGER_KMS SPARK SQOOP stack_advisor.pyc STORM TEZ ZEPPELIN ambari-presto-1.2 DRUID FLUME HDFS KAFKA KNOX OOZIE RANGER SLIDER SPARK2 stack_advisor.py stack_advisor.pyo SUPERSET YARN ZOOKEEPER [root@prod-hadoop-master-01 services]# mv ambari-presto-1.2&#x2F; PRESTO [root@prod-hadoop-master-01 services]# chmod -R +x PRESTO&#x2F;* [root@prod-hadoop-master-01 services]# ambari-server restart 平台上添加presto服务器，一个控制节点，两个worker节点</p>
+<p>3、安装kylin组件 <a target="_blank" rel="noopener" href="https://blog.csdn.net/vivismilecs/article/details/72763665">https://blog.csdn.net/vivismilecs/article/details/72763665</a> 下载安装 tar -zxvf apache-kylin-2.3.1-hbase1x-bin.tar.gz -C &#x2F;hadoop&#x2F; cd &#x2F;hadoop&#x2F; chown -R <a target="_blank" rel="noopener" href="http://hdfshadoop/">hdfs:hadoop</a> kylin&#x2F; vim &#x2F;etc&#x2F;profile source &#x2F;etc&#x2F;profile echo $KYLIN_HOME &#x2F;hadoop&#x2F;kylin 切换用户检查环境是否正确安装 su hdfs hive（进入hive，quit;退出） hbase shell（进入hbase shell，ctrl+c结束）</p>
+<p>[hdfs@prod-hadoop-data-01 kylin]$ bin&#x2F;check-env.sh  Retrieving hadoop conf dir… KYLIN_HOME is set to &#x2F;hadoop&#x2F;kylin hdfs is not in the sudoers file. This incident will be reported. Failed to create <a href="hdfs://wiki.365jiating.com/kylin/spark-history">hdfs:&#x2F;&#x2F;&#x2F;kylin&#x2F;spark-history</a>. Please make sure the user has right to access <a href="hdfs://wiki.365jiating.com/kylin/spark-history">hdfs:&#x2F;&#x2F;&#x2F;kylin&#x2F;spark-history</a></p>
+<p>排错 [hdfs@prod-hadoop-data-01 kylin]$ exit [root@prod-hadoop-data-01 hadoop]# vim &#x2F;etc&#x2F;sudoers.d&#x2F;waagent</p>
+<p>检测 [hdfs@prod-hadoop-data-01 kylin]$ bin&#x2F;check-env.sh  Retrieving hadoop conf dir… KYLIN_HOME is set to &#x2F;hadoop&#x2F;kylin</p>
+<p>启动 [hdfs@prod-hadoop-data-01 kylin]$ bin&#x2F;kylin.sh start Retrieving hadoop conf dir… KYLIN_HOME is set to &#x2F;hadoop&#x2F;kylin Retrieving hive dependency… Retrieving hbase dependency… Retrieving hadoop conf dir… Retrieving kafka dependency… Retrieving Spark dependency… Start to check whether we need to migrate acl tables Retrieving hadoop conf dir… KYLIN_HOME is set to &#x2F;hadoop&#x2F;kylin Retrieving hive dependency… Retrieving hbase dependency… Retrieving hadoop conf dir… Retrieving kafka dependency… Retrieving Spark dependency… SLF4J: Class path contains multiple SLF4J bindings. SLF4J: Found binding in [<a target="_blank" rel="noopener" href="http://jarfile/">jar:file:&#x2F;hadoop&#x2F;apache-kylin-2.3.1-bin&#x2F;tool&#x2F;kylin-tool-2.3.1.jar!&#x2F;org&#x2F;slf4j&#x2F;impl&#x2F;StaticLoggerBinder.class</a>] SLF4J: Found binding in [<a target="_blank" rel="noopener" href="http://jarfile/">jar:file:&#x2F;data&#x2F;disk1&#x2F;hdp&#x2F;2.6.5.0-292&#x2F;hadoop&#x2F;lib&#x2F;slf4j-log4j12-1.7.10.jar!&#x2F;org&#x2F;slf4j&#x2F;impl&#x2F;StaticLoggerBinder.class</a>] SLF4J: Found binding in [<a target="_blank" rel="noopener" href="http://jarfile/">jar:file:&#x2F;hadoop&#x2F;apache-kylin-2.3.1-bin&#x2F;spark&#x2F;jars&#x2F;slf4j-log4j12-1.7.16.jar!&#x2F;org&#x2F;slf4j&#x2F;impl&#x2F;StaticLoggerBinder.class</a>] SLF4J: See <a target="_blank" rel="noopener" href="http://www.slf4j.org/codes.html#multiple_bindings">http://www.slf4j.org/codes.html#multiple_bindings</a> for an explanation. SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory] 2018-05-24 14:23:21,974 INFO [main] common.KylinConfig:319 : Loading kylin-defaults.properties from <a target="_blank" rel="noopener" href="http://file/hadoop/apache-kylin-2.3.1-bin/tool/kylin-tool-2.3.1.jar!/kylin-defaults.properties">file:&#x2F;hadoop&#x2F;apache-kylin-2.3.1-bin&#x2F;tool&#x2F;kylin-tool-2.3.1.jar!&#x2F;kylin-defaults.properties</a> 2018-05-24 14:23:22,016 DEBUG [main] common.KylinConfig:278 : KYLIN_CONF property was not set, will seek KYLIN_HOME env variable 2018-05-24 14:23:22,019 INFO [main] common.KylinConfig:99 : Initialized a new KylinConfig from getInstanceFromEnv : 494317290 2018-05-24 14:23:22,120 INFO [main] persistence.ResourceStore:86 : Using metadata url kylin_metadata@hbase for resource store 2018-05-24 14:23:24,034 DEBUG [main] hbase.HBaseConnection:181 : Using the working dir FS for HBase: <a href="hdfs://prod-hadoop-master-01.hadoop:8020">hdfs:&#x2F;&#x2F;prod-hadoop-master-01.hadoop:8020</a> 2018-05-24 14:23:24,034 INFO [main] hbase.HBaseConnection:258 : connection is null or closed, creating a new one 2018-05-24 14:23:24,168 INFO [main] zookeeper.RecoverableZooKeeper:120 : Process identifier&#x3D;hconnection-0x7561db12 connecting to ZooKeeper ensemble&#x3D;prod-hadoop-master-01.<a href="http://hadoop:2181%2Cprod-hadoop-master-02.hadoop:2181%2Cprod-hadoop-data-01.hadoop:2181/">hadoop:2181,prod-hadoop-master-02.hadoop:2181,prod-hadoop-data-01.hadoop:2181</a> 2018-05-24 14:23:24,176 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentzookeeper.version=3.4.6-292--1/">environment:zookeeper.version&#x3D;3.4.6-292–1</a>, built on 05&#x2F;11&#x2F;2018 07:09 GMT 2018-05-24 14:23:24,176 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmenthost.name=prod-hadoop-data-01.hadoop/">environment:host.name&#x3D;prod-hadoop-data-01.hadoop</a> 2018-05-24 14:23:24,176 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.version=1.8.0_91/">environment:java.version&#x3D;1.8.0_91</a> 2018-05-24 14:23:24,177 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.vendor=oracle/">environment:java.vendor&#x3D;Oracle</a> Corporation 2018-05-24 14:23:24,177 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.home=/">environment:java.home&#x3D;&#x2F;usr&#x2F;local&#x2F;java</a> 2018-05-24 14:23:24,182 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.class.path=/">environment:java.class.path&#x3D;&#x2F;hadoop&#x2F;kylin&#x2F;tool&#x2F;kylin-tool-2.3.1.jar:1.8.1.jar:&#x2F;hadoop&#x2F;kylin&#x2F;spark&#x2F;jars&#x2F;hadoop-mapreduce-client-jobclient-2.7.3.jar:&#x2F;hadoop&#x2F;kylin&#x2F;spark&#x2F;jars&#x2F;chill-java-0.8.0.jar:jar:&#x2F;hadoop&#x2F;kylin&#x2F;spark&#x2F;jars&#x2F;xercesImpl-2.9.1.jar:&#x2F;hadoop&#x2F;kylin&#x2F;spark&#x2F;jars&#x2F;netty-3.8.0.Final.jar:&#x2F;usr&#x2F;hdp&#x2F;current&#x2F;ext&#x2F;hbase&#x2F;*</a> 2018-05-24 14:23:24,191 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.library.path=/">environment:java.library.path&#x3D;:&#x2F;usr&#x2F;hdp&#x2F;2.6.5.0-292&#x2F;hadoop&#x2F;lib&#x2F;native&#x2F;Linux-amd64-64:&#x2F;usr&#x2F;hdp&#x2F;2.6.5.0-292&#x2F;hadoop&#x2F;lib&#x2F;native&#x2F;Linux-amd64-64:&#x2F;data&#x2F;disk1&#x2F;hdp&#x2F;2.6.5.0-292&#x2F;hadoop&#x2F;lib&#x2F;native</a> 2018-05-24 14:23:24,191 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.io.tmpdir=/">environment:java.io.tmpdir&#x3D;&#x2F;tmp</a> 2018-05-24 14:23:24,191 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentjava.compiler=/">environment:java.compiler&#x3D;</a> 2018-05-24 14:23:24,193 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentos.name=linux/">environment:os.name&#x3D;Linux</a> 2018-05-24 14:23:24,193 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentos.arch=amd64/">environment:os.arch&#x3D;amd64</a> 2018-05-24 14:23:24,193 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentos.version=2.6.32-696.18.7.el6.x86_64/">environment:os.version&#x3D;2.6.32-696.18.7.el6.x86_64</a> 2018-05-24 14:23:24,193 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentuser.name=hdfs/">environment:user.name&#x3D;hdfs</a> 2018-05-24 14:23:24,194 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentuser.home=/">environment:user.home&#x3D;&#x2F;home&#x2F;hdfs</a> 2018-05-24 14:23:24,194 INFO [main] zookeeper.ZooKeeper:100 : Client <a target="_blank" rel="noopener" href="http://environmentuser.dir=/">environment:user.dir&#x3D;&#x2F;hadoop&#x2F;apache-kylin-2.3.1-bin</a> 2018-05-24 14:23:24,195 INFO [main] zookeeper.ZooKeeper:438 : Initiating client connection, connectString&#x3D;prod-hadoop-master-01.<a href="http://hadoop:2181%2Cprod-hadoop-master-02.hadoop:2181%2Cprod-hadoop-data-01.hadoop:2181/">hadoop:2181,prod-hadoop-master-02.hadoop:2181,prod-hadoop-data-01.hadoop:2181</a> sessionTimeout&#x3D;90000 watcher&#x3D;org.apache.hadoop.hbase.zookeeper.PendingWatcher@66b72664 2018-05-24 14:23:24,237 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1019 : Opening socket connection to server prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181. Will not attempt to authenticate using SASL (unknown error) 2018-05-24 14:23:24,246 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:864 : Socket connection established, initiating session, client: &#x2F;172.20.3.6:50746, server: prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181 2018-05-24 14:23:24,256 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1279 : Session establishment complete on server prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181, sessionid &#x3D; 0x163882326e1003b, negotiated timeout &#x3D; 60000 2018-05-24 14:23:24,892 DEBUG [main] hbase.HBaseConnection:181 : Using the working dir FS for HBase: <a href="hdfs://prod-hadoop-master-01.hadoop:8020">hdfs:&#x2F;&#x2F;prod-hadoop-master-01.hadoop:8020</a> 2018-05-24 14:23:24,944 INFO [main] imps.CuratorFrameworkImpl:224 : Starting 2018-05-24 14:23:24,947 INFO [main] zookeeper.ZooKeeper:438 : Initiating client connection, connectString&#x3D;prod-hadoop-master-01.<a href="http://hadoop:2181%2Cprod-hadoop-master-02.hadoop:2181%2Cprod-hadoop-data-01.hadoop:2181/">hadoop:2181,prod-hadoop-master-02.hadoop:2181,prod-hadoop-data-01.hadoop:2181</a> sessionTimeout&#x3D;120000 watcher&#x3D;org.apache.curator.ConnectionState@67207d8a 2018-05-24 14:23:24,950 INFO [main-SendThread(prod-hadoop-master-02.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1019 : Opening socket connection to server prod-hadoop-master-02.hadoop&#x2F;172.20.3.5:2181. Will not attempt to authenticate using SASL (unknown error) 2018-05-24 14:23:24,951 INFO [main-SendThread(prod-hadoop-master-02.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:864 : Socket connection established, initiating session, client: &#x2F;172.20.3.6:60080, server: prod-hadoop-master-02.hadoop&#x2F;172.20.3.5:2181 2018-05-24 14:23:24,952 DEBUG [main] util.ZookeeperDistributedLock:143 : 6616@prod-hadoop-data-01 trying to lock &#x2F;kylin&#x2F;kylin_metadata&#x2F;create_htable&#x2F;kylin_metadata&#x2F;lock 2018-05-24 14:23:24,957 INFO [main-SendThread(prod-hadoop-master-02.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1279 : Session establishment complete on server prod-hadoop-master-02.hadoop&#x2F;172.20.3.5:2181, sessionid &#x3D; 0x3638801b4480045, negotiated timeout &#x3D; 60000 2018-05-24 14:23:24,962 INFO [main-EventThread] state.ConnectionStateManager:228 : State change: CONNECTED 2018-05-24 14:23:25,031 INFO [main] util.ZookeeperDistributedLock:155 : 6616@prod-hadoop-data-01 acquired lock at &#x2F;kylin&#x2F;kylin_metadata&#x2F;create_htable&#x2F;kylin_metadata&#x2F;lock 2018-05-24 14:23:25,036 DEBUG [main] hbase.HBaseConnection:337 : Creating HTable ‘kylin_metadata’ 2018-05-24 14:23:27,822 INFO [main] client.HBaseAdmin:789 : Created kylin_metadata 2018-05-24 14:23:27,823 DEBUG [main] hbase.HBaseConnection:350 : HTable ‘kylin_metadata’ created 2018-05-24 14:23:27,824 DEBUG [main] util.ZookeeperDistributedLock:223 : 6616@prod-hadoop-data-01 trying to unlock &#x2F;kylin&#x2F;kylin_metadata&#x2F;create_htable&#x2F;kylin_metadata&#x2F;lock 2018-05-24 14:23:27,833 INFO [main] util.ZookeeperDistributedLock:234 : 6616@prod-hadoop-data-01 released lock at &#x2F;kylin&#x2F;kylin_metadata&#x2F;create_htable&#x2F;kylin_metadata&#x2F;lock 2018-05-24 14:23:28,105 DEBUG [main] hbase.HBaseConnection:181 : Using the working dir FS for HBase: <a href="hdfs://prod-hadoop-master-01.hadoop:8020">hdfs:&#x2F;&#x2F;prod-hadoop-master-01.hadoop:8020</a> 2018-05-24 14:23:28,105 INFO [main] hbase.HBaseConnection:258 : connection is null or closed, creating a new one 2018-05-24 14:23:28,106 INFO [main] zookeeper.RecoverableZooKeeper:120 : Process identifier&#x3D;hconnection-0xf339eae connecting to ZooKeeper ensemble&#x3D;prod-hadoop-master-01.<a href="http://hadoop:2181%2Cprod-hadoop-master-02.hadoop:2181%2Cprod-hadoop-data-01.hadoop:2181/">hadoop:2181,prod-hadoop-master-02.hadoop:2181,prod-hadoop-data-01.hadoop:2181</a> 2018-05-24 14:23:28,106 INFO [main] zookeeper.ZooKeeper:438 : Initiating client connection, connectString&#x3D;prod-hadoop-master-01.<a href="http://hadoop:2181%2Cprod-hadoop-master-02.hadoop:2181%2Cprod-hadoop-data-01.hadoop:2181/">hadoop:2181,prod-hadoop-master-02.hadoop:2181,prod-hadoop-data-01.hadoop:2181</a> sessionTimeout&#x3D;90000 watcher&#x3D;org.apache.hadoop.hbase.zookeeper.PendingWatcher@2822c6ff 2018-05-24 14:23:28,109 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1019 : Opening socket connection to server prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181. Will not attempt to authenticate using SASL (unknown error) 2018-05-24 14:23:28,109 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:864 : Socket connection established, initiating session, client: &#x2F;172.20.3.6:50760, server: prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181 2018-05-24 14:23:28,115 INFO [main-SendThread(prod-hadoop-data-01.<a target="_blank" rel="noopener" href="http://hadoop:2181/">hadoop:2181</a>)] zookeeper.ClientCnxn:1279 : Session establishment complete on server prod-hadoop-data-01.hadoop&#x2F;172.20.3.6:2181, sessionid &#x3D; 0x163882326e1003c, negotiated timeout &#x3D; 60000 2018-05-24 14:23:28,138 INFO [close-hbase-conn] hbase.HBaseConnection:137 : Closing HBase connections… 2018-05-24 14:23:28,144 INFO [close-hbase-conn] client.ConnectionManager$HConnectionImplementation:1703 : Closing zookeeper sessionid&#x3D;0x163882326e1003c 2018-05-24 14:23:28,152 INFO [close-hbase-conn] zookeeper.ZooKeeper:684 : Session: 0x163882326e1003c closed 2018-05-24 14:23:28,152 INFO [main-EventThread] zookeeper.ClientCnxn:524 : EventThread shut down 2018-05-24 14:23:28,154 INFO [Thread-8] zookeeper.ZooKeeper:684 : Session: 0x3638801b4480045 closed 2018-05-24 14:23:28,154 INFO [main-EventThread] zookeeper.ClientCnxn:524 : EventThread shut down 2018-05-24 14:23:28,162 INFO [close-hbase-conn] client.ConnectionManager$HConnectionImplementation:2167 : Closing master protocol: MasterService 2018-05-24 14:23:28,163 INFO [close-hbase-conn] client.ConnectionManager$HConnectionImplementation:1703 : Closing zookeeper sessionid&#x3D;0x163882326e1003b 2018-05-24 14:23:28,168 INFO [main-EventThread] zookeeper.ClientCnxn:524 : EventThread shut down 2018-05-24 14:23:28,169 INFO [close-hbase-conn] zookeeper.ZooKeeper:684 : Session: 0x163882326e1003b closed</p>
+<p>A new Kylin instance is started by hdfs. To stop it, run ‘kylin.sh stop’ Check the log at &#x2F;hadoop&#x2F;kylin&#x2F;logs&#x2F;kylin.log Web UI is at http:&#x2F;&#x2F;:7070&#x2F;kylin</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ambari/" rel="tag"># ambari</a>
+              <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/09/2018/12/2018-12-09-dns%E4%B8%BB%E4%BB%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/index/" rel="prev" title="DNS主从服务器搭建">
+      <i class="fa fa-chevron-left"></i> DNS主从服务器搭建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/12/2018/12/2018-12-12-centos7-4%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AEelasticsearch6-3-2%E9%9B%86%E7%BE%A4/index/" rel="next" title="Centos7.4部署配置Elasticsearch6.3.2集群">
+      Centos7.4部署配置Elasticsearch6.3.2集群 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%8B%E6%89%80%E4%BB%A5%E9%80%89%E6%8B%A9Ambari%E9%83%A8%E7%BD%B2hadoop%E8%80%8C%E4%B8%8D%E6%98%AFCDH%EF%BC%8C%E6%98%AF%E5%9B%A0%E4%B8%BACDH%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E5%8F%AA%E6%94%AF%E6%8C%81Hadoop2-6-X%EF%BC%8CAmbari%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%94%AF%E6%8C%81Hadoop2-7-3%E3%80%82"><span class="nav-number">1.</span> <span class="nav-text">之所以选择Ambari部署hadoop而不是CDH，是因为CDH最新版本只支持Hadoop2.6.X，Ambari最新版本支持Hadoop2.7.3。</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

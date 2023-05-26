@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档 12345https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;4143b5cef39fhttps:&#x2F;&#x2F;www.cnblogs.com&#x2F;niloay&#x2F;p&#x2F;6261784.htmlhttps:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_35981283&#x2F;article&#x2F;details&#x2F;80738451https:&#x2F;&#x2F;cloud.tencent.com&#x2F;developer&#x2F;article&#x2F;11884">
+<meta property="og:type" content="article">
+<meta property="og:title" content="制作java基础docker镜像">
+<meta property="og:url" content="https://minminmsn.github.io/2019/05/23/2019/05/2019-05-23-%E5%88%B6%E4%BD%9Cjava%E5%9F%BA%E7%A1%80docker%E9%95%9C%E5%83%8F/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档 12345https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;4143b5cef39fhttps:&#x2F;&#x2F;www.cnblogs.com&#x2F;niloay&#x2F;p&#x2F;6261784.htmlhttps:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_35981283&#x2F;article&#x2F;details&#x2F;80738451https:&#x2F;&#x2F;cloud.tencent.com&#x2F;developer&#x2F;article&#x2F;11884">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-05-23T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:32.028Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/05/23/2019/05/2019-05-23-%E5%88%B6%E4%BD%9Cjava%E5%9F%BA%E7%A1%80docker%E9%95%9C%E5%83%8F/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>制作java基础docker镜像 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/05/23/2019/05/2019-05-23-%E5%88%B6%E4%BD%9Cjava%E5%9F%BA%E7%A1%80docker%E9%95%9C%E5%83%8F/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          制作java基础docker镜像
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-23 08:00:00" itemprop="dateCreated datePublished" datetime="2019-05-23T08:00:00+08:00">2019-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:32" itemprop="dateModified" datetime="2023-05-26T15:06:32+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cloud/" itemprop="url" rel="index"><span itemprop="name">cloud</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>参考文档</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://www.jianshu.com/p/4143b5cef39f</span><br><span class="line">https://www.cnblogs.com/niloay/p/6261784.html</span><br><span class="line">https://blog.csdn.net/qq_35981283/article/details/80738451</span><br><span class="line">https://cloud.tencent.com/developer/article/1188404</span><br><span class="line">http://www.cnblogs.com/zhujingzhi/p/9746760.html#_label0</span><br></pre></td></tr></table></figure>
+
+<p><strong>选择底层操作系统</strong> 通常是从一个底层的操作系统来开始构建一个Docker镜像的，也就是Dockerfile的FROM指令提及的。在某些情况下，你也许会从一个已有的基础镜像开始，这时你已经选择了底层操作系统镜像。但是如果你需要选择一个底层操作系统镜像，那么常用的镜像和对应的大小如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">ubuntu                                     19.04               9b17fc7d6848        5 days ago          75.4MB</span><br><span class="line">alpine                                     3.9                 055936d39205        10 days ago         5.53MB</span><br><span class="line">busybox                                    latest              64f5d945efcc        11 days ago         1.2MB</span><br><span class="line">centos                                     7.6.1810            f1cb7c7d58b7        2 months ago        202MB</span><br></pre></td></tr></table></figure>
+
+<p><strong>制作基础系统镜像alpine、centos、ubuntu</strong> 注意： 所有基础镜像及部署软件都要指定好具体版本，禁用last tag</p>
+<ul>
+<li>下载alpine基础镜像</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# docker pull alpine:v3.9</span><br><span class="line">Error response from daemon: manifest for alpine:v3.9 not found</span><br><span class="line">[root@VM_8_24_centos ~]# docker pull alpine:3.9</span><br><span class="line">3.9: Pulling from library/alpine</span><br><span class="line">Digest: sha256:769fddc7cc2f0a1c35abb2f91432e8beecf83916c421420e6a6da9f8975464b6</span><br><span class="line">Status: Downloaded newer image for alpine:3.9</span><br><span class="line">[root@VM_8_24_centos ~]# docker images</span><br><span class="line">REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">alpine                        3.9                 055936d39205        10 days ago         5.53MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>登陆私有镜像库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# docker login core-harbor.minminmsn.com</span><br><span class="line">Username: admin</span><br><span class="line">Password: </span><br><span class="line">WARNING! Your password will be stored unencrypted in /root/.docker/config.json.</span><br><span class="line">Configure a credential helper to remove this warning. See</span><br><span class="line">https://docs.docker.com/engine/reference/commandline/login/#credentials-store</span><br><span class="line"></span><br><span class="line">Login Succeeded</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>打标签上传到私有镜像库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# docker tag library/alpine:3.9  core-harbor.minminmsn.com/public/alpine:3.9</span><br><span class="line">[root@VM_8_24_centos ~]# docker push core-harbor.minminmsn.com/public/alpine:3.9</span><br><span class="line">The push refers to repository [core-harbor.minminmsn.com/public/alpine]</span><br><span class="line">f1b5933fe4b5: Pushed </span><br><span class="line">3.9: digest: sha256:bf1684a6e3676389ec861c602e97f27b03f14178e5bc3f70dce198f9f160cce9 size: 528</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同样方法制作centos、ubuntu系统基础镜像</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# docker images</span><br><span class="line">REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">core-harbor.minminmsn.com/public/ubuntu   19.04               9b17fc7d6848        5 days ago          75.4MB</span><br><span class="line">ubuntu                                     19.04               9b17fc7d6848        5 days ago          75.4MB</span><br><span class="line">core-harbor.minminmsn.com/public/alpine   3.9                 055936d39205        10 days ago         5.53MB</span><br><span class="line">alpine                                     3.9                 055936d39205        10 days ago         5.53MB</span><br><span class="line">core-harbor.minminmsn.com/public/centos   7.6.1810            f1cb7c7d58b7        2 months ago        202MB</span><br><span class="line">centos                                     7.6.1810            f1cb7c7d58b7        2 months ago        202MB</span><br></pre></td></tr></table></figure>
+
+<p><strong>在centos基础镜像上制作jre镜像</strong></p>
+<ul>
+<li>下载jre包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[work@VM_8_24_centos jre-centos]# wget https://github.com/frekele/oracle-java/releases/download/8u212-b10/jre-8u212-linux-x64.tar.gz</span><br><span class="line">[work@VM_8_24_centos jre-centos]# ls</span><br><span class="line">jre-8u212-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编辑Dockerfile</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[work@VM_8_24_centos jre-centos]# cat Dockerfile </span><br><span class="line"># 基础镜像</span><br><span class="line">FROM core-harbor.minminmsn.com/public/centos:7.6.1810</span><br><span class="line"></span><br><span class="line"># 维护信息</span><br><span class="line">MAINTAINER minyt &lt;minyongtao@minminmsn.com&gt;</span><br><span class="line"></span><br><span class="line"># 文件复制到镜像</span><br><span class="line">ADD jre-8u212-linux-x64.tar.gz /usr/local/</span><br><span class="line"></span><br><span class="line"># 设置环境变量</span><br><span class="line">ENV JAVA_HOME /usr/local/jre1.8.0_212</span><br><span class="line">ENV PATH $&#123;PATH&#125;:$&#123;JAVA_HOME&#125;/bin</span><br><span class="line"></span><br><span class="line"># 容器启动时运行的命令</span><br><span class="line">CMD [&quot;java&quot;, &quot;-version&quot;]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>制作镜像</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos data]# cd jre-centos/</span><br><span class="line">[root@VM_8_24_centos jre-centos]# ls</span><br><span class="line">Dockerfile  jre-8u212-linux-x64.tar.gz</span><br><span class="line">[root@VM_8_24_centos jre-centos]# docker build -t core-harbor.minminmsn.com/public/jre-centos:1.8.0_212 .</span><br><span class="line">Sending build context to Docker daemon  87.89MB</span><br><span class="line">Step 1/6 : FROM core-harbor.minminmsn.com/public/centos:7.6.1810</span><br><span class="line"> ---&gt; f1cb7c7d58b7</span><br><span class="line">Step 2/6 : MAINTAINER minyt &lt;minyongtao@minminmsn.com&gt;</span><br><span class="line"> ---&gt; Using cache</span><br><span class="line"> ---&gt; d0fb7c193008</span><br><span class="line">Step 3/6 : ADD jre-8u212-linux-x64.tar.gz /usr/local/</span><br><span class="line"> ---&gt; 674cf9135825</span><br><span class="line">Step 4/6 : ENV JAVA_HOME /usr/local/jre1.8.0_212</span><br><span class="line"> ---&gt; Running in 1c4a7c7a19ad</span><br><span class="line">Removing intermediate container 1c4a7c7a19ad</span><br><span class="line"> ---&gt; ab2fc886e944</span><br><span class="line">Step 5/6 : ENV PATH $&#123;PATH&#125;:$&#123;JAVA_HOME&#125;/bin</span><br><span class="line"> ---&gt; Running in 3107ba5ae7b9</span><br><span class="line">Removing intermediate container 3107ba5ae7b9</span><br><span class="line"> ---&gt; f14d2948c92d</span><br><span class="line">Step 6/6 : CMD [&quot;java&quot;, &quot;-version&quot;]</span><br><span class="line"> ---&gt; Running in 99374bccaa27</span><br><span class="line">Removing intermediate container 99374bccaa27</span><br><span class="line"> ---&gt; f27d47159f1e</span><br><span class="line">Successfully built f27d47159f1e</span><br><span class="line">Successfully tagged core-harbor.minminmsn.com/public/jre-centos:1.8.0_212</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看镜像</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos jre-centos]# docker images </span><br><span class="line">REPOSITORY                                     TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">core-harbor.minminmsn.com/public/jre-centos   1.8.0_212           f27d47159f1e        17 seconds ago      441MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上传镜像到私有镜像库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos jre-centos]# docker push core-harbor.minminmsn.com/public/jre-centos:1.8.0_212</span><br><span class="line">The push refers to repository [core-harbor.minminmsn.com/public/jre-centos]</span><br><span class="line">b9049811dc7d: Pushed </span><br><span class="line">89169d87dbe2: Mounted from public/jdk-centos </span><br><span class="line">1.8.0_212: digest: sha256:5c909a0c33aaa13b3a3ce48fd0f60356a32c5a697d99f39f08e92f1c6ba7bd57 size: 741</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运行验证jre镜像</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos jre-centos]# docker run core-harbor.minminmsn.com/public/jre-centos:1.8.0_212</span><br><span class="line">java version &quot;1.8.0_212&quot;</span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_212-b10)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.212-b10, mixed mode)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/22/2019/05/2019-05-22-%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE%EF%BC%9A%E5%88%9B%E6%84%8F%E9%AB%98%E6%89%8B%E7%9A%84%E8%B6%85%E5%BC%BA%E6%80%9D%E8%80%83%E5%B7%A5%E5%85%B7/index/" rel="prev" title="思维导图：创意高手的超强思考工具">
+      <i class="fa fa-chevron-left"></i> 思维导图：创意高手的超强思考工具
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/05/26/2019/05/2019-05-26-java%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%95%9C%E5%83%8F%E5%88%B6%E4%BD%9C%E5%8F%8A%E5%9C%A8kubernetes%E4%B8%8A%E5%8F%91%E5%B8%83/index/" rel="next" title="Java应用程序镜像制作及在kubernetes上发布">
+      Java应用程序镜像制作及在kubernetes上发布 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

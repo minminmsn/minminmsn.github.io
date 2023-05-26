@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考及依赖 1234567https:&#x2F;&#x2F;github.com&#x2F;nginxinc&#x2F;nginx-ldap-authhttp:&#x2F;&#x2F;nginx.org&#x2F;nginx-1.14.2http_auth_request_modulenginx-ldap-authpython2.7python-ldap   Nginx支持ldap  部署nginx，注意需要http_auth_request_module支持">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 结合Python Ldap认证用于Kibana权限登陆">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/24/2018/12/2018-12-24-nginx-%E7%BB%93%E5%90%88python-ldap%E8%AE%A4%E8%AF%81%E7%94%A8%E4%BA%8Ekibana%E6%9D%83%E9%99%90%E7%99%BB%E9%99%86/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考及依赖 1234567https:&#x2F;&#x2F;github.com&#x2F;nginxinc&#x2F;nginx-ldap-authhttp:&#x2F;&#x2F;nginx.org&#x2F;nginx-1.14.2http_auth_request_modulenginx-ldap-authpython2.7python-ldap   Nginx支持ldap  部署nginx，注意需要http_auth_request_module支持">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c20c64965803.png">
+<meta property="article:published_time" content="2018-12-24T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.803Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="kibana">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/5c20c64965803.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/24/2018/12/2018-12-24-nginx-%E7%BB%93%E5%90%88python-ldap%E8%AE%A4%E8%AF%81%E7%94%A8%E4%BA%8Ekibana%E6%9D%83%E9%99%90%E7%99%BB%E9%99%86/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Nginx 结合Python Ldap认证用于Kibana权限登陆 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/24/2018/12/2018-12-24-nginx-%E7%BB%93%E5%90%88python-ldap%E8%AE%A4%E8%AF%81%E7%94%A8%E4%BA%8Ekibana%E6%9D%83%E9%99%90%E7%99%BB%E9%99%86/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx 结合Python Ldap认证用于Kibana权限登陆
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-24 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-24T08:00:00+08:00">2018-12-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/dev/" itemprop="url" rel="index"><span itemprop="name">dev</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h3 id="参考及依赖"><a href="#参考及依赖" class="headerlink" title="参考及依赖"></a><strong>参考及依赖</strong></h3></blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/nginxinc/nginx-ldap-auth</span><br><span class="line">http://nginx.org/</span><br><span class="line">nginx-1.14.2</span><br><span class="line">http_auth_request_module</span><br><span class="line">nginx-ldap-auth</span><br><span class="line">python2.7</span><br><span class="line">python-ldap</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h3 id="Nginx支持ldap"><a href="#Nginx支持ldap" class="headerlink" title="Nginx支持ldap"></a><strong>Nginx支持ldap</strong></h3></blockquote>
+<ol>
+<li>部署nginx，注意需要http_auth_request_module支持</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.14.2.tar.gz</span><br><span class="line">tar zxvf nginx-1.14.2.tar.gz</span><br><span class="line">cd nginx-1.14.2</span><br><span class="line">./configure --with-http_auth_request_module</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">/usr/local/nginx/sbin/nginx</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>配置nginx,注意ldap配置 cat &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;nginx.conf</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">user                  nobody nobody;</span><br><span class="line">worker_processes auto;</span><br><span class="line">#worker_cpu_affinity auto;</span><br><span class="line">worker_rlimit_nofile 65535;</span><br><span class="line"></span><br><span class="line">error_log             logs/error.log;</span><br><span class="line">pid                   logs/nginx.pid;</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    use epoll;</span><br><span class="line">    #reuse_port on;   #used in tengine and linux kernel &gt;= 3.9</span><br><span class="line">    accept_mutex off;  #used in nginx</span><br><span class="line">    worker_connections  65535;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include                     mime.types;</span><br><span class="line">    default_type                application/octet-stream;</span><br><span class="line">    server_tokens               off;</span><br><span class="line"></span><br><span class="line">    log_format      main        &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                                &#x27;$status $request_time $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                                &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;|body: $request_body&#x27;;</span><br><span class="line"></span><br><span class="line">    sendfile                    on;</span><br><span class="line">    tcp_nopush                  on;</span><br><span class="line">    tcp_nodelay                 on;</span><br><span class="line">    keepalive_timeout           60;</span><br><span class="line"></span><br><span class="line">    gzip                        on;</span><br><span class="line">    gzip_vary                   on;</span><br><span class="line">    gzip_comp_level             5;</span><br><span class="line">    gzip_buffers                16 4k;</span><br><span class="line">    gzip_min_length             1000;</span><br><span class="line">    gzip_proxied                any;</span><br><span class="line">    gzip_disable                &quot;msie6&quot;;</span><br><span class="line">    gzip_types                  text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/json;</span><br><span class="line"></span><br><span class="line">    open_file_cache max=1000    inactive=20s;</span><br><span class="line">    open_file_cache_valid       30s;</span><br><span class="line">    open_file_cache_min_uses    2;</span><br><span class="line">    open_file_cache_errors      on;</span><br><span class="line"></span><br><span class="line">    client_max_body_size        50m;</span><br><span class="line"></span><br><span class="line">    #缓存可以减少ldap验证频率，不然每个页面都需要ldap验证一次</span><br><span class="line">    #你不在乎的话，不要缓存也是没有任何问题的 </span><br><span class="line">    proxy_cache_path cache/ keys_zone=auth_cache:10m;</span><br><span class="line"></span><br><span class="line">#kibanan</span><br><span class="line">upstream kibana_server &#123;</span><br><span class="line">    server 10.2.8.44:5601;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 5601;</span><br><span class="line">    server_name localhost;</span><br><span class="line">    access_log logs/kibanan_access.log main;</span><br><span class="line">    error_log logs/kibanan_error.log debug;</span><br><span class="line"></span><br><span class="line">    #后端程序，也就是kubernetes-dashboard</span><br><span class="line">    location / &#123;</span><br><span class="line">        auth_request /auth-proxy;</span><br><span class="line"></span><br><span class="line">        #nginx接收到nginx-ldap-auth-daemon.py返回的401和403都会重新跳转到登录页面</span><br><span class="line">        error_page 401 403 =200 /login;</span><br><span class="line"></span><br><span class="line">        proxy_pass http://kibana_server;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    #登录页面，由backend-sample-app.py提供，跑在同一台机器的8082端口(默认不是8082端口)</span><br><span class="line">    location /login &#123;</span><br><span class="line">        proxy_pass http://127.0.0.1:9000/login;</span><br><span class="line">        proxy_set_header X-Target $request_uri;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location = /auth-proxy &#123;</span><br><span class="line">        internal;</span><br><span class="line">        proxy_pass http://127.0.0.1:8888;     #nginx-ldap-auth-daemon.py运行端口</span><br><span class="line">        #缓存设置</span><br><span class="line">        proxy_cache auth_cache;</span><br><span class="line">        proxy_cache_key &quot;$http_authorization$cookie_nginxauth&quot;;</span><br><span class="line">        proxy_cache_valid 200 403 10m;</span><br><span class="line"></span><br><span class="line">        proxy_pass_request_body off;</span><br><span class="line">        proxy_set_header Content-Length &quot;&quot;;</span><br><span class="line"></span><br><span class="line">        #最最重要的ldap配置，请务必按照贵公司的ldap配置如下四项，我在这一步卡了好久，就是ldap配置不对</span><br><span class="line">        #这些配置都会通过http头部传递给nginx-ldap-auth-daemon.py脚本</span><br><span class="line">        proxy_set_header X-Ldap-URL      &quot;ldap://192.168.88.88:389&quot;;</span><br><span class="line">        proxy_set_header X-Ldap-BaseDN   &quot;ou=People,dc=che,dc=org&quot;;</span><br><span class="line">        proxy_set_header X-Ldap-BindDN   &quot;cn=OPITUser,ou=OuterUser,dc=che,dc=org&quot;;</span><br><span class="line">        proxy_set_header X-Ldap-BindPass &quot;opit@minminmsn&quot;;</span><br><span class="line">        proxy_set_header X-Ldap-Template &quot;(uid=%(username)s)&quot;;</span><br><span class="line"></span><br><span class="line">        proxy_set_header X-CookieName &quot;nginxauth&quot;;</span><br><span class="line">        proxy_set_header Cookie nginxauth=$cookie_nginxauth;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h3 id="Python-Ldap认证"><a href="#Python-Ldap认证" class="headerlink" title="Python Ldap认证"></a><strong>Python Ldap认证</strong></h3></blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/nginxinc/nginx-ldap-auth/archive/0.0.4.tar.gz</span><br><span class="line">tar zxvf 0.0.4.tar.gz</span><br><span class="line">python nginx-ldap-auth-daemon.py &amp;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h3 id="后端登陆跳转页面"><a href="#后端登陆跳转页面" class="headerlink" title="后端登陆跳转页面"></a><strong>后端登陆跳转页面</strong></h3></blockquote>
+<p>默认页面只能测试，这里需要大概改下才能使用 vim backend-sample-app.py python backend-sample-app.py &amp; backend-sample-app.py其中html&#x3D;``````修改后如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf8&quot;/&gt;</span><br><span class="line">&lt;title&gt;login&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">*&#123;margin:0;padding:0;&#125;</span><br><span class="line">.login&#123;</span><br><span class="line">width:400px;</span><br><span class="line">height:220px;</span><br><span class="line">margin:0 auto;</span><br><span class="line">position:absolute;</span><br><span class="line">left:35%;</span><br><span class="line">top:25%;</span><br><span class="line">&#125;</span><br><span class="line">.login_title&#123;</span><br><span class="line">color: #000000;</span><br><span class="line">font: bold 14px/37px Arial,Helvetica,sans-serif;</span><br><span class="line">height: 37px;</span><br><span class="line">padding-left: 35px;</span><br><span class="line">text-align: left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.login_cont &#123;</span><br><span class="line">    background: none repeat scroll 0 0 #FFFFFF;</span><br><span class="line">    border: 1px solid #B8B7B7;</span><br><span class="line">    height: 152px;</span><br><span class="line">    padding-top: 30px;</span><br><span class="line">&#125;</span><br><span class="line">.form_table &#123;</span><br><span class="line">    float: left;</span><br><span class="line">    margin-top: 10px;</span><br><span class="line">    table-layout: fixed;</span><br><span class="line">    width: 100%;</span><br><span class="line">&#125;</span><br><span class="line">.form_table th &#123;</span><br><span class="line">    color: #333333;</span><br><span class="line">    font-weight: bold;</span><br><span class="line">    padding: 5px 8px 5px 0;</span><br><span class="line">    text-align: right;</span><br><span class="line">    white-space: nowrap;</span><br><span class="line">&#125;</span><br><span class="line">.form_table td &#123;</span><br><span class="line">    color: #717171;</span><br><span class="line">    line-height: 200%;</span><br><span class="line">    padding: 6px 0 5px 10px;</span><br><span class="line">    text-align: left;</span><br><span class="line">&#125;</span><br><span class="line">.login_cont input.submit &#123;</span><br><span class="line">    background-position: 0 -37px;</span><br><span class="line">    height: 29px;</span><br><span class="line">    margin: 10px 14px 0 0;</span><br><span class="line">    width: 38px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;div class=&quot;login&quot;&gt;</span><br><span class="line">        &lt;div class=&quot;login_cont&quot;&gt;</span><br><span class="line">            &lt;form action=&#x27;/login&#x27; method=&#x27;post&#x27;&gt;</span><br><span class="line">                &lt;table class=&quot;form_table&quot;&gt;</span><br><span class="line">                    &lt;col width=&quot;60px&quot; /&gt;</span><br><span class="line">                    &lt;col /&gt;</span><br><span class="line">                        &lt;p align=&quot;center&quot;&gt;  欢迎登陆kibana管理平台&lt;/p&gt;</span><br><span class="line">                        &lt;p align=&quot;center&quot;&gt;  请使用邮箱账户密码登陆&lt;/p&gt;</span><br><span class="line">                    &lt;tr&gt;</span><br><span class="line">                        &lt;th&gt;用户名:&lt;/th&gt;&lt;td&gt;&lt;input class=&quot;normal&quot; type=&quot;text&quot; name=&quot;username&quot; alt=&quot;请填写用户名&quot; /&gt;&lt;th&gt;@minminmsn.com&lt;/th&gt;&lt;/td&gt;</span><br><span class="line">                    &lt;/tr&gt;</span><br><span class="line">                    &lt;tr&gt;</span><br><span class="line">                        &lt;th&gt;密   码:&lt;/th&gt;&lt;td&gt;&lt;input class=&quot;normal&quot; type=&quot;password&quot; name=&quot;password&quot; alt=&quot;请填写密码&quot; /&gt;&lt;/td&gt;</span><br><span class="line">                    &lt;/tr&gt;</span><br><span class="line">                    &lt;tr&gt;</span><br><span class="line">                        &lt;th&gt;&lt;/th&gt;&lt;td&gt;&lt;input class=&quot;submit&quot; type=&quot;submit&quot; value=&quot;登录&quot; /&gt;&lt;input class=&quot;submit&quot; type=&quot;reset&quot; value=&quot;取消&quot; /&gt;&lt;/td&gt;</span><br><span class="line">                    &lt;/tr&gt;</span><br><span class="line">                &lt;/table&gt;</span><br><span class="line">                    &lt;input type=&quot;hidden&quot; name=&quot;target&quot; value=&quot;TARGET&quot;&gt;</span><br><span class="line">            &lt;/form&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h3 id="登陆测试"><a href="#登陆测试" class="headerlink" title="登陆测试"></a><strong>登陆测试</strong></h3><p><a target="_blank" rel="noopener" href="http://192.168.88.188:5601/">http://192.168.88.188:5601/</a> <a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/24/5c20c64965803.png"><img src="/images/5c20c64965803.png"></a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/kibana/" rel="tag"># kibana</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/21/2018/12/2018-12-21-promethous%E9%85%8D%E5%90%88alertmanager%E6%8A%A5%E8%AD%A6%E7%B3%BB%E7%BB%9F/index/" rel="prev" title="Promethous配合Alertmanager报警系统">
+      <i class="fa fa-chevron-left"></i> Promethous配合Alertmanager报警系统
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/27/2018/12/2018-12-27-kubernetes13-1etcd3-3-10flannel0-10%E9%83%A8%E7%BD%B2/index/" rel="next" title="kubernetes13.1+etcd3.3.10+flanneld0.10部署">
+      kubernetes13.1+etcd3.3.10+flanneld0.10部署 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E5%8F%8A%E4%BE%9D%E8%B5%96"><span class="nav-number">1.</span> <span class="nav-text">参考及依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx%E6%94%AF%E6%8C%81ldap"><span class="nav-number">2.</span> <span class="nav-text">Nginx支持ldap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python-Ldap%E8%AE%A4%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text">Python Ldap认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF%E7%99%BB%E9%99%86%E8%B7%B3%E8%BD%AC%E9%A1%B5%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">后端登陆跳转页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BB%E9%99%86%E6%B5%8B%E8%AF%95"><span class="nav-number">5.</span> <span class="nav-text">登陆测试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

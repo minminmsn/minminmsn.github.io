@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考Redis开发与运维 https:&#x2F;&#x2F;redis.io&#x2F; http:&#x2F;&#x2F;www.redis.cn&#x2F; https:&#x2F;&#x2F;github.com&#x2F;antirez&#x2F;redis https:&#x2F;&#x2F;github.com&#x2F;sohutv&#x2F;cachecloud  源起优化之路永无止境，在此之前一做过一些架构优化汇总如下： 1，Redis集群3.0.7升级到3.2.9解决读从节点KEY过期不删除问题，集群有几千万K">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis集群性能问题深度分析">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis%E9%9B%86%E7%BE%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考Redis开发与运维 https:&#x2F;&#x2F;redis.io&#x2F; http:&#x2F;&#x2F;www.redis.cn&#x2F; https:&#x2F;&#x2F;github.com&#x2F;antirez&#x2F;redis https:&#x2F;&#x2F;github.com&#x2F;sohutv&#x2F;cachecloud  源起优化之路永无止境，在此之前一做过一些架构优化汇总如下： 1，Redis集群3.0.7升级到3.2.9解决读从节点KEY过期不删除问题，集群有几千万K">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-11-21T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.203Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis%E9%9B%86%E7%BE%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Redis集群性能问题深度分析 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/21/2018/11/2018-11-21-redis%E9%9B%86%E7%BE%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%B7%B1%E5%BA%A6%E5%88%86%E6%9E%90/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis集群性能问题深度分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-21 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-21T08:00:00+08:00">2018-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>Redis开发与运维 <a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io/</a> <a target="_blank" rel="noopener" href="http://www.redis.cn/">http://www.redis.cn/</a> <a target="_blank" rel="noopener" href="https://github.com/antirez/redis">https://github.com/antirez/redis</a> <a target="_blank" rel="noopener" href="https://github.com/sohutv/cachecloud">https://github.com/sohutv/cachecloud</a></p>
+</blockquote>
+<h3 id="源起"><a href="#源起" class="headerlink" title="源起"></a>源起</h3><h4 id="优化之路永无止境，在此之前一做过一些架构优化汇总如下："><a href="#优化之路永无止境，在此之前一做过一些架构优化汇总如下：" class="headerlink" title="优化之路永无止境，在此之前一做过一些架构优化汇总如下："></a>优化之路永无止境，在此之前一做过一些架构优化汇总如下：</h4><ul>
+<li>1，Redis集群3.0.7升级到3.2.9解决读从节点KEY过期不删除问题，集群有几千万KEY原来经核查3.0.7版本只有主上保存过期时间，所以需要主触发才能删除过期的KEY，默认有主动删除与惰性删除同时工作，但是KEY比较多，写的比删除的KEY，另外读从的话不能触发主动删KEY所以会有KEY没更新问题，升级3.2.X之后解决。</li>
+<li>2，发现持久化操作时容易导致超时，后来从节点的持久化关闭，效果良好；后续计划持久化非持久化业务分开，过期时间短的与过期时间长的分开。</li>
+<li>2，集群扩容，升级到3.2.9版本后为了均摊QPS扩容了几个节点，后续发现有2个节点内核版本比其他的高但是性能反而表现比其他差，后替换了同版本的内核。</li>
+<li>3，Bigkeys扫描发现有几个hashkey元素过大超过几千万，单个KEY占用内存几个G后联系开发解决。</li>
+<li>4，建立了CacheCloud监控系统，便于分析观察问题，另外Zabbix也使用Redis模版出现大故障时会报错。</li>
+<li>5，后续优化方向转为客户端使用规划的问题，主要是解决各个量大的命令平均用时超过10微秒的问题。</li>
+<li>6，每个Redis集群版本升级在功能与性能上都有比较大的提升，需要持久化功能的集群后续可以使用4.0.2版本，另外如果使用虚拟化不建议使用XEN、Hyper-V等，最好使用vSphere压力测试vSphere在各方面表现良好。</li>
+</ul>
+<h3 id="一，发现问题"><a href="#一，发现问题" class="headerlink" title="一，发现问题"></a>一，发现问题</h3><h4 id="1，慢查询"><a href="#1，慢查询" class="headerlink" title="1，慢查询"></a>1，慢查询</h4><p>slowlog get n 默认保留128个日志执行超过10毫秒的记录，可以根据实际情况修改</p>
+<h4 id="2，应用报错"><a href="#2，应用报错" class="headerlink" title="2，应用报错"></a>2，应用报错</h4><p>主要是应用邮件报超时</p>
+<h3 id="二，分析问题"><a href="#二，分析问题" class="headerlink" title="二，分析问题"></a>二，分析问题</h3><h4 id="1，内在原因"><a href="#1，内在原因" class="headerlink" title="1，内在原因"></a>1，内在原因</h4><p>1）API或数据结构使用不合理 2）CPU饱和的问题 3）持久化相关的阻塞</p>
+<h4 id="2，外在原因"><a href="#2，外在原因" class="headerlink" title="2，外在原因"></a>2，外在原因</h4><p>1）CPU竞争 2）内存交换 3）网络问题</p>
+<h3 id="三，解决问题之内在原因"><a href="#三，解决问题之内在原因" class="headerlink" title="三，解决问题之内在原因"></a>三，解决问题之内在原因</h3><h4 id="1，API或数据结构使用不合理"><a href="#1，API或数据结构使用不合理" class="headerlink" title="1，API或数据结构使用不合理"></a>1，API或数据结构使用不合理</h4><p>1）发现慢查询 slowlog get n 慢查询日志有两个参数： slowlog-log-slower-than: 单位微妙，指定redis执行命令的最大时间，超过将记录到慢查询日志中, 不接受负值，如果设置为0每条命令都要记录到慢查询日志中,默认10微妙。 slowlog-max-len: 设置慢查询日志长度，如果慢查询日志已经到最大值，如果有新命令需要记录，就将最老那条记录删除，默认保存128，可以在线修改，CONFIG REWRITE保存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redis-cli </span><br><span class="line">127.0.0.1:6379&gt; config get slowlog-max-len</span><br><span class="line">1) &quot;slowlog-max-len&quot;</span><br><span class="line">2) &quot;128&quot;</span><br><span class="line">127.0.0.1:6379&gt; config set slowlog-max-len 1000</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; config rewrite</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<p>2）发现大key redis-cli –bigkeys</p>
+<h4 id="2，CPU饱和"><a href="#2，CPU饱和" class="headerlink" title="2，CPU饱和"></a>2，CPU饱和</h4><p>1）统计Redis状态 500QPS左右，单个命令使用时间越少支持的QPS并发越大，比如平均1毫妙的支持1000QPS，平均100微妙的支持10000QPS。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --stat</span><br><span class="line">------- data ------ --------------------- load -------------------- - child -</span><br><span class="line">keys       mem      clients blocked requests            connections          </span><br><span class="line">5088981    6.51G    514     0       578132987 (+0)      384742      </span><br><span class="line">5088997    6.51G    514     0       578133573 (+586)    384742      </span><br><span class="line">5089018    6.51G    514     0       578134096 (+523)    384742      </span><br><span class="line">5089005    6.51G    515     0       578134720 (+624)    384743      </span><br><span class="line">5089048    6.51G    515     0       578135195 (+475)    384743      </span><br><span class="line">5089093    6.51G    513     0       578135829 (+634)    384743      </span><br><span class="line">5089117    6.51G    513     0       578136455 (+626)    384743      </span><br><span class="line">5089081    6.51G    512     0       578136850 (+395)    384743      </span><br><span class="line">5089121    6.51G    512     0       578137226 (+376)    384743</span><br></pre></td></tr></table></figure>
+
+<p>2）命令统计 时间单位为微秒 单个命令10微妙以内，尽量避免高算法复杂的命令 setex平均26 del 平均43 hmset平均229 hmget平均12 以上特别是hmset要优化，另外hgetall命令不建议使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">redis-cli  info commandstats</span><br><span class="line"># Commandstats</span><br><span class="line">cmdstat_get:calls=2814596805,usec=12130889716,usec_per_call=4.31</span><br><span class="line">cmdstat_set:calls=25674338,usec=234328226,usec_per_call=9.13</span><br><span class="line">cmdstat_setex:calls=910333006,usec=20767349072,usec_per_call=22.81</span><br><span class="line">cmdstat_del:calls=780287520,usec=33983500560,usec_per_call=43.55</span><br><span class="line">cmdstat_lpush:calls=1,usec=34,usec_per_call=34.00</span><br><span class="line">cmdstat_hset:calls=145663119,usec=499130659,usec_per_call=3.43</span><br><span class="line">cmdstat_hget:calls=2841141555,usec=13763160250,usec_per_call=4.84</span><br><span class="line">cmdstat_hmset:calls=1452658,usec=333516295,usec_per_call=229.59</span><br><span class="line">cmdstat_hmget:calls=970024532,usec=11909915205,usec_per_call=12.28</span><br><span class="line">cmdstat_hdel:calls=581004,usec=3925702,usec_per_call=6.76</span><br><span class="line">cmdstat_hgetall:calls=28985688,usec=555451600,usec_per_call=19.16</span><br><span class="line">cmdstat_hexists:calls=262547,usec=2867627,usec_per_call=10.92</span><br><span class="line">cmdstat_select:calls=1,usec=1,usec_per_call=1.00</span><br><span class="line">cmdstat_expire:calls=72409493,usec=101731304,usec_per_call=1.40</span><br><span class="line">cmdstat_auth:calls=1544789,usec=2890530,usec_per_call=1.87</span><br><span class="line">cmdstat_ping:calls=4977672,usec=2672430,usec_per_call=0.54</span><br><span class="line">cmdstat_echo:calls=697770,usec=380462,usec_per_call=0.55</span><br><span class="line">cmdstat_info:calls=32700948,usec=7243085428,usec_per_call=221.49</span><br><span class="line">cmdstat_config:calls=2176619,usec=31168795,usec_per_call=14.32</span><br><span class="line">cmdstat_subscribe:calls=1717,usec=7283,usec_per_call=4.24</span><br><span class="line">cmdstat_unsubscribe:calls=5506966,usec=21985846,usec_per_call=3.99</span><br><span class="line">cmdstat_cluster:calls=696482,usec=210160284,usec_per_call=301.75</span><br><span class="line">cmdstat_readonly:calls=696449,usec=437883,usec_per_call=0.63</span><br><span class="line">cmdstat_client:calls=697770,usec=1869891,usec_per_call=2.68</span><br><span class="line">cmdstat_slowlog:calls=2,usec=214,usec_per_call=107.00</span><br><span class="line">cmdstat_command:calls=2,usec=11824,usec_per_call=5912.00</span><br></pre></td></tr></table></figure>
+
+<p>3）持久化阻塞 由于从已经关闭持久化，主要分析主的，主上只开启了RDB且10分钟一次，没有开启AOF刷盘阻塞（故不用考虑） fork阻塞：latest_fork_usec该指标不能超过1秒，这里是275毫秒</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">redis-cli  info stats</span><br><span class="line"># Stats</span><br><span class="line">total_connections_received:384861</span><br><span class="line">total_commands_processed:578276973</span><br><span class="line">instantaneous_ops_per_sec:509</span><br><span class="line">total_net_input_bytes:530863235402</span><br><span class="line">total_net_output_bytes:1584445816901</span><br><span class="line">instantaneous_input_kbps:668.38</span><br><span class="line">instantaneous_output_kbps:838.84</span><br><span class="line">rejected_connections:0</span><br><span class="line">sync_full:1</span><br><span class="line">sync_partial_ok:0</span><br><span class="line">sync_partial_err:0</span><br><span class="line">expired_keys:164683638</span><br><span class="line">evicted_keys:0</span><br><span class="line">keyspace_hits:193101765</span><br><span class="line">keyspace_misses:12414607</span><br><span class="line">pubsub_channels:0</span><br><span class="line">pubsub_patterns:0</span><br><span class="line">latest_fork_usec:275078   275毫秒</span><br><span class="line">migrate_cached_sockets:0</span><br></pre></td></tr></table></figure>
+
+<p>另外HugePage写操作阻塞，这个内核已经关闭HugePages，方法如下 echo never &gt; &#x2F;sys&#x2F;kernel&#x2F;mm&#x2F;transparent_hugepage&#x2F;enabled</p>
+<h3 id="四，解决问题之外在原因"><a href="#四，解决问题之外在原因" class="headerlink" title="四，解决问题之外在原因"></a>四，解决问题之外在原因</h3><h4 id="1，CPU竞争"><a href="#1，CPU竞争" class="headerlink" title="1，CPU竞争"></a>1，CPU竞争</h4><p>Redis是典型的CPU密集型应用，同一台服务器不建议部署其他服务，如果需要不是多个Redis实例也建议绑定CPU。</p>
+<h4 id="2，内存交换"><a href="#2，内存交换" class="headerlink" title="2，内存交换"></a>2，内存交换</h4><p>1）根据进程号cat &#x2F;proc&#x2F;5413&#x2F;smaps |grep Swap可以查看内存交换，为了避免内存交换，首先服务器最好富余1&#x2F;3-1&#x2F;2内存，fork时会生成一个进程占用当前实例大小的内存，等于说内存加倍。</p>
+<p>2）设置最大可用内存及触发内存启动lru算法（Redis版本越高该算法效率越高，因为Redis一直在进化）以防万一，方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; CONFIG GET maxmemory</span><br><span class="line">1) &quot;maxmemory&quot;</span><br><span class="line">2) &quot;21474836480&quot;</span><br><span class="line">127.0.0.1:6379&gt; CONFIG GET maxmemory-policy</span><br><span class="line">1) &quot;maxmemory-policy&quot;</span><br><span class="line">2) &quot;allkeys-lru&quot;</span><br></pre></td></tr></table></figure>
+
+<p>3)可以降低系统使用swap的优先级，由于前面对内存做了优化这里没有对swap调优，毕竟这些都是不得已手段，需要从架构与使用上修改效果才好。</p>
+<h4 id="3，网络问题"><a href="#3，网络问题" class="headerlink" title="3，网络问题"></a>3，网络问题</h4><p>1）连接拒绝 主要是网络闪断接Redis连接数超过默认的10000，可以通过监控与修改默认值规避。目前连接不多，如果连接过多服务端的timeout可以修改一个具体的值，默认是0代表永远不主动断开连接。 另外连接溢出，这个服务端与客户端都需要排查，主要是看进程限制与backlog队列是否溢出。 2）网络延迟 3）网卡软中断</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/21/2018/11/2018-11-21-yum%E5%AE%89%E8%A3%85rabbitmq3-6-11%E4%B8%8Eerlange20%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96/index/" rel="prev" title="Yum安装RabbitMQ3.6.11与Erlange20配置及优化">
+      <i class="fa fa-chevron-left"></i> Yum安装RabbitMQ3.6.11与Erlange20配置及优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/21/2018/11/2018-11-21-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/index/" rel="next" title="从零开始创建自己的博客">
+      从零开始创建自己的博客 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E8%B5%B7"><span class="nav-number">2.</span> <span class="nav-text">源起</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E4%B9%8B%E8%B7%AF%E6%B0%B8%E6%97%A0%E6%AD%A2%E5%A2%83%EF%BC%8C%E5%9C%A8%E6%AD%A4%E4%B9%8B%E5%89%8D%E4%B8%80%E5%81%9A%E8%BF%87%E4%B8%80%E4%BA%9B%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">优化之路永无止境，在此之前一做过一些架构优化汇总如下：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%EF%BC%8C%E5%8F%91%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">一，发现问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%8C%E6%85%A2%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.1.</span> <span class="nav-text">1，慢查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%8C%E5%BA%94%E7%94%A8%E6%8A%A5%E9%94%99"><span class="nav-number">3.2.</span> <span class="nav-text">2，应用报错</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%EF%BC%8C%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">二，分析问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%8C%E5%86%85%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-number">4.1.</span> <span class="nav-text">1，内在原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%8C%E5%A4%96%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-number">4.2.</span> <span class="nav-text">2，外在原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%EF%BC%8C%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%E4%B9%8B%E5%86%85%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-number">5.</span> <span class="nav-text">三，解决问题之内在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%8CAPI%E6%88%96%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%88%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">1，API或数据结构使用不合理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%8CCPU%E9%A5%B1%E5%92%8C"><span class="nav-number">5.2.</span> <span class="nav-text">2，CPU饱和</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%EF%BC%8C%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%E4%B9%8B%E5%A4%96%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-number">6.</span> <span class="nav-text">四，解决问题之外在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%8CCPU%E7%AB%9E%E4%BA%89"><span class="nav-number">6.1.</span> <span class="nav-text">1，CPU竞争</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%8C%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-number">6.2.</span> <span class="nav-text">2，内存交换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%EF%BC%8C%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-number">6.3.</span> <span class="nav-text">3，网络问题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

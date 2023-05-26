@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="结合自己所知及个人喜好，总结汇总了下面这个列表。当然同等功能的开源产品可能有好几个，本着惟精惟一的标准，这里只选择一个加以说明，如果是自己的项目可以不拘泥于这个列表，选择自己熟悉的即可!   1、操作系统名称：CentOS 官网：https:&#x2F;&#x2F;www.centos.org&#x2F; 简介：CentOS（Community Enterprise Operating System，中文意思是：社区企业操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="纯开源产品打造初创公司运维体系">
+<meta property="og:url" content="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E7%BA%AF%E5%BC%80%E6%BA%90%E4%BA%A7%E5%93%81%E6%89%93%E9%80%A0%E5%88%9D%E5%88%9B%E5%85%AC%E5%8F%B8%E8%BF%90%E7%BB%B4%E4%BD%93%E7%B3%BB/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="结合自己所知及个人喜好，总结汇总了下面这个列表。当然同等功能的开源产品可能有好几个，本着惟精惟一的标准，这里只选择一个加以说明，如果是自己的项目可以不拘泥于这个列表，选择自己熟悉的即可!   1、操作系统名称：CentOS 官网：https:&#x2F;&#x2F;www.centos.org&#x2F; 简介：CentOS（Community Enterprise Operating System，中文意思是：社区企业操作">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-a0405fdff82d2cde.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2018-11-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:29.603Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="op">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/7535971-a0405fdff82d2cde.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E7%BA%AF%E5%BC%80%E6%BA%90%E4%BA%A7%E5%93%81%E6%89%93%E9%80%A0%E5%88%9D%E5%88%9B%E5%85%AC%E5%8F%B8%E8%BF%90%E7%BB%B4%E4%BD%93%E7%B3%BB/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>纯开源产品打造初创公司运维体系 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/11/09/2018/11/2018-11-09-%E7%BA%AF%E5%BC%80%E6%BA%90%E4%BA%A7%E5%93%81%E6%89%93%E9%80%A0%E5%88%9D%E5%88%9B%E5%85%AC%E5%8F%B8%E8%BF%90%E7%BB%B4%E4%BD%93%E7%B3%BB/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          纯开源产品打造初创公司运维体系
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-09 08:00:00" itemprop="dateCreated datePublished" datetime="2018-11-09T08:00:00+08:00">2018-11-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:29" itemprop="dateModified" datetime="2023-05-26T15:06:29+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>结合自己所知及个人喜好，总结汇总了下面这个列表。当然同等功能的开源产品可能有好几个，本着惟精惟一的标准，这里只选择一个加以说明，如果是自己的项目可以不拘泥于这个列表，选择自己熟悉的即可! <img src="https://upload-images.jianshu.io/upload_images/7535971-a0405fdff82d2cde.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<h3 id="1、操作系统"><a href="#1、操作系统" class="headerlink" title="1、操作系统"></a><strong>1、操作系统</strong></h3><p>名称：CentOS 官网：<a target="_blank" rel="noopener" href="https://www.centos.org/">https://www.centos.org/</a> 简介：CentOS（Community Enterprise Operating System，中文意思是：社区企业操作系统）是Linux发行版之一，它是来自于Red Hat Enterprise Linux依照开放源代码规定释出的源代码所编译而成。由于出自同样的源代码，因此有些要求高度稳定性的服务器以CentOS替代商业版的Red Hat Enterprise Linux使用。两者的不同，在于CentOS并不包含封闭源代码软件。</p>
+<h3 id="2、代理站点"><a href="#2、代理站点" class="headerlink" title="2、代理站点"></a><strong>2、代理站点</strong></h3><p>名称：Nginx 官网：<a target="_blank" rel="noopener" href="http://nginx.org/">http://nginx.org/</a> 简介：Nginx是一款轻量级的Web 服务器&#x2F;反向代理服务器及电子邮件（IMAP&#x2F;POP3）代理服务器，并在一个BSD-like 协议下发行。其特点是占有内存少，并发能力强，事实上nginx的并发能力确实在同类型的网页服务器中表现较好，中国大陆使用nginx网站用户有：百度、京东、新浪、网易、腾讯、淘宝等。</p>
+<h3 id="3、缓存"><a href="#3、缓存" class="headerlink" title="3、缓存"></a><strong>3、缓存</strong></h3><p>名称：Redis 官网：<a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io/</a> 简介：Redis 是一个高性能的key-value数据库。Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了 复制（replication），LUA脚本（Lua scripting）， LRU驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis哨兵（Sentinel）和自动 分区（Cluster）提供高可用性（high availability）。</p>
+<h3 id="4、数据库"><a href="#4、数据库" class="headerlink" title="4、数据库"></a><strong>4、数据库</strong></h3><p>名称：Mysql 官网：<a target="_blank" rel="noopener" href="https://www.mysql.com/">https://www.mysql.com/</a> 简介：MySQL是一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，目前属于 Oracle 旗下产品。MySQL 是最流行的关系型数据库管理系统之一，在 WEB 应用方面，MySQL是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件。MySQL是一种关系数据库管理系统，关系数据库将数据保存在不同的表中，而不是将所有数据放在一个大仓库内，这样就增加了速度并提高了灵活性。</p>
+<h3 id="5、消息队列"><a href="#5、消息队列" class="headerlink" title="5、消息队列"></a><strong>5、消息队列</strong></h3><p>名称：RabbitMQ 官网：<a target="_blank" rel="noopener" href="http://www.rabbitmq.com/">http://www.rabbitmq.com/</a> 简介：MQ全称为Message Queue, 消息队列（MQ）是一种应用程序对应用程序的通信方法。应用程序通过读写出入队列的消息（针对应用程序的数据）来通信，而无需专用连接来链接它们。消息传递指的是程序之间通过在消息中发送数据进行通信，而不是通过直接调用彼此来通信，直接调用通常是用于诸如远程过程调用的技术。排队指的是应用程序通过 队列来通信。队列的使用除去了接收和发送应用程序同时执行的要求。</p>
+<h3 id="6、配置维护"><a href="#6、配置维护" class="headerlink" title="6、配置维护"></a><strong>6、配置维护</strong></h3><p>名称：ZooKeeper 官网：<a target="_blank" rel="noopener" href="http://zookeeper.apache.org/">http://zookeeper.apache.org/</a> 简介：ZooKeeper是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<h3 id="7、发布订阅系统"><a href="#7、发布订阅系统" class="headerlink" title="7、发布订阅系统"></a><strong>7、发布订阅系统</strong></h3><p>名称：Kafka 官网：<a target="_blank" rel="noopener" href="http://kafka.apache.org/">http://kafka.apache.org/</a> 简介：Kafka是由Apache软件基金会开发的一个开源流处理平台，由Scala和Java编写。Kafka是一种高吞吐量的分布式发布订阅消息系统，它可以处理消费者规模的网站中的所有动作流数据。 这种动作（网页浏览，搜索和其他用户的行动）是在现代网络上的许多社会功能的一个关键因素。 这些数据通常是由于吞吐量的要求而通过处理日志和日志聚合来解决。 对于像Hadoop的一样的日志数据和离线分析系统，但又要求实时处理的限制，这是一个可行的解决方案。Kafka的目的是通过Hadoop的并行加载机制来统一线上和离线的消息处理，也是为了通过集群来提供实时的消息。</p>
+<h3 id="8、监控"><a href="#8、监控" class="headerlink" title="8、监控"></a><strong>8、监控</strong></h3><p>名称：Zabbix 官网：<a target="_blank" rel="noopener" href="https://www.zabbix.com/">https://www.zabbix.com/</a> 简介：Zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。Zabbix能监视各种网络参数，保证服务器系统的安全运营；并提供灵活的通知机制以让系统管理员快速定位&#x2F;解决存在的各种问题。</p>
+<h3 id="9、日志分析"><a href="#9、日志分析" class="headerlink" title="9、日志分析"></a><strong>9、日志分析</strong></h3><p>名称：Elastic Stack 官网：<a target="_blank" rel="noopener" href="https://www.elastic.co/">https://www.elastic.co/</a> 简介：ELKB（Elasticsearch + Logstash + Kibana + Filebeat）用于日志集中分析系统，Elasticsearch 用于存储、搜索、分析数据，Logstash 用于接收并处理数据，Kibana 提供 Web UI 管理数据，客户端通过 Logstash-Forwarder 将指定的日志数据传递数据给 ELKB 系统。</p>
+<h3 id="10、图形展示"><a href="#10、图形展示" class="headerlink" title="10、图形展示"></a><strong>10、图形展示</strong></h3><p>名称：Grafana 官网：<a target="_blank" rel="noopener" href="https://grafana.com/">https://grafana.com/</a> 简介：Grafana是一个可视化面板（Dashboard），有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持Graphite、zabbix、InfluxDB、Prometheus和OpenTSDB作为数据源。Grafana主要特性：灵活丰富的图形化选项；可以混合多种风格；支持白天和夜间模式；多个数据源。</p>
+<h3 id="11、大数据处理"><a href="#11、大数据处理" class="headerlink" title="11、大数据处理"></a><strong>11、大数据处理</strong></h3><p>名称：Hadoop 官网：<a target="_blank" rel="noopener" href="http://hadoop.apache.org/">http://hadoop.apache.org/</a> 简介：Hadoop是一个由Apache基金会所开发的分布式系统基础架构。用户可以在不了解分布式底层细节的情况下，开发分布式程序。充分利用集群的威力进行高速运算和存储。 Hadoop实现了一个分布式文件系统（Hadoop Distributed File System），简称HDFS。HDFS有高容错性的特点，并且设计用来部署在低廉的（low-cost）硬件上；而且它提供高吞吐量（high throughput）来访问应用程序的数据，适合那些有着超大数据集（large data set）的应用程序。HDFS放宽了（relax）POSIX的要求，可以以流的形式访问（streaming access）文件系统中的数据。Hadoop的框架最核心的设计就是：HDFS和MapReduce。HDFS为海量的数据提供了存储，则MapReduce为海量的数据提供了计算。</p>
+<h3 id="12、运维语言"><a href="#12、运维语言" class="headerlink" title="12、运维语言"></a><strong>12、运维语言</strong></h3><p>名称：Python 官网：<a target="_blank" rel="noopener" href="https://www.python.org/">https://www.python.org/</a> 简介：Python 是一种面向对象的解释型计算机程序设计语言,是纯粹的自由软件， 源代码和解释器CPython遵循 GPL(GNU General Public License)协议。Python语法简洁清晰，特色之一是强制用空白符(white space)作为语句缩进。Python具有丰富和强大的库。它常被昵称为胶水语言，能够把用其他语言制作的各种模块（尤其是C&#x2F;C++）很轻松地联结在一起。常见的一种应用情形是，使用Python快速生成程序的原型（有时甚至是程序的最终界面），然后对其中有特别要求的部分，用更合适的语言改写，比如3D游戏中的图形渲染模块，性能要求特别高，就可以用C&#x2F;C++重写，而后封装为Python可以调用的扩展类库。需要注意的是在您使用扩展类库时可能需要考虑平台问题，某些可能不提供跨平台的实现。</p>
+<h3 id="13、自动化运维"><a href="#13、自动化运维" class="headerlink" title="13、自动化运维"></a><strong>13、自动化运维</strong></h3><p>名称：Ansible 官网：<a target="_blank" rel="noopener" href="https://www.ansible.com/">https://www.ansible.com/</a> 简介：Ansible是新出现的自动化运维工具，基于Python开发，集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点，实现了批量系统配置、批量程序部署、批量运行命令等功能。</p>
+<h3 id="14、虚拟化"><a href="#14、虚拟化" class="headerlink" title="14、虚拟化"></a><strong>14、虚拟化</strong></h3><p>名称：Openstack 官网：<a target="_blank" rel="noopener" href="https://www.openstack.org/">https://www.openstack.org/</a> 简介：OpenStack是一个开源的云计算管理平台项目，由几个主要的组件组合起来完成具体工作。OpenStack支持几乎所有类型的云环境，项目目标是提供实施简单、可大规模扩展、丰富、标准统一的云计算管理平台。OpenStack通过各种互补的服务提供了基础设施即服务（IaaS）的解决方案，每个服务提供API以进行集成。</p>
+<h3 id="15、代码管理"><a href="#15、代码管理" class="headerlink" title="15、代码管理"></a><strong>15、代码管理</strong></h3><p>名称：Gitlab 官网：<a target="_blank" rel="noopener" href="https://about.gitlab.com/">https://about.gitlab.com/</a> 简介：GitLab 是一个用于仓库管理系统的开源项目，使用Git作为代码管理工具，并在此基础上搭建起来的web服务。</p>
+<h3 id="16、持续集成"><a href="#16、持续集成" class="headerlink" title="16、持续集成"></a><strong>16、持续集成</strong></h3><p>名称：Jenkins 官网：<a target="_blank" rel="noopener" href="https://jenkins.io/">https://jenkins.io/</a> 简介：Jenkins是一个开源软件项目，是基于Java开发的一种持续集成工具，用于监控持续重复的工作，旨在提供一个开放易用的软件平台，使软件的持续集成变成可能。</p>
+<h3 id="17、容器"><a href="#17、容器" class="headerlink" title="17、容器"></a><strong>17、容器</strong></h3><p>名称：Docker 官网：<a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com/</a> 简介：Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。</p>
+<h3 id="18、容器管理"><a href="#18、容器管理" class="headerlink" title="18、容器管理"></a><strong>18、容器管理</strong></h3><p>名称：Kubernetes 官网：<a target="_blank" rel="noopener" href="https://kubernetes.io/">https://kubernetes.io/</a> 简介：Kubernetes（通常写成“k8s”）是最开始由google设计开发最后贡献给Cloud Native Computing Foundation的开源容器集群管理项目。它的设计目标是在主机集群之间提供一个能够自动化部署、可拓展、应用容器可运营的平台。Kubernetes通常结合docker容器工具工作，并且整合多个运行着docker容器的主机集群。</p>
+<h3 id="19、私有镜像库"><a href="#19、私有镜像库" class="headerlink" title="19、私有镜像库"></a><strong>19、私有镜像库</strong></h3><p>名称：Harbor 官网：<a target="_blank" rel="noopener" href="https://github.com/vmware/harbor">https://github.com/vmware/harbor</a> 简介：Harbor是一个用于存储和分发Docker镜像的企业级Registry服务器，通过添加一些企业必需的功能特性，例如安全、标识和管理等，扩展了开源Docker Distribution。作为一个企业级私有Registry服务器，Harbor提供了更好的性能和安全。提升用户使用Registry构建和运行环境传输镜像的效率。Harbor支持安装在多个Registry节点的镜像资源复制，镜像全部保存在私有Registry中， 确保数据和知识产权在公司内部网络中管控。另外，Harbor也提供了高级的安全特性，诸如用户管理，访问控制和活动审计等。</p>
+<h3 id="20、部署系统工具"><a href="#20、部署系统工具" class="headerlink" title="20、部署系统工具"></a><strong>20、部署系统工具</strong></h3><p>名称：Walle瓦力 官网：<a target="_blank" rel="noopener" href="http://www.walle-web.io/">http://www.walle-web.io/</a> 简介：Walle 一个web部署系统工具，配置简单、功能完善、界面流畅、开箱即用！支持git、svn版本管理，支持各种web代码发布，PHP，Python，JAVA等代码的发布、回滚，可以通过web来一键完成。</p>
+<h3 id="21、知识管理"><a href="#21、知识管理" class="headerlink" title="21、知识管理"></a><strong>21、知识管理</strong></h3><p>名称：DokuWiki 官网：<a target="_blank" rel="noopener" href="https://www.dokuwiki.org/">https://www.dokuwiki.org</a> 简介：DokuWiki是一个开源wiki引擎程序，运行于PHP环境下。DokuWiki程序小巧而功能强大、灵活，适合中小团队和个人网站知识库的管理。 DokuWiki可以与多种CMS程序进行整合，例如WordPress、XOOPS、PostNuke等。由于这个原因，很多Blog作者对DokuWiki比较感兴趣。DokuWiki不需要数据库，直接采用文本文件直接存储。</p>
+<h3 id="22、堡垒机"><a href="#22、堡垒机" class="headerlink" title="22、堡垒机"></a><strong>22、堡垒机</strong></h3><p>名称：Jumpserver 官网：<a target="_blank" rel="noopener" href="http://www.jumpserver.org/">http://www.jumpserver.org/</a> 简介：Jumpserver 是全球首款完全开源的堡垒机，使用 GNU GPL v2.0 开源协议，是符合 4A 的专业运维审计系统。Jumpserver 使用 Python &#x2F; Django 进行开发，遵循 Web 2.0 规范，配备了业界领先的 Web Terminal 解决方案，交互界面美观、用户体验好。Jumpserver 采纳分布式架构，支持多机房跨区域部署，中心节点提供 API，各机房部署登录节点，可横向扩展、无并发访问限制。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/op/" rel="tag"># op</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/09/2018/11/2018-11-09-%E8%B7%83%E8%BF%81%EF%BC%9A%E6%88%90%E4%B8%BA%E9%AB%98%E6%89%8B%E7%9A%84%E6%8A%80%E6%9C%AF/index/" rel="prev" title="跃迁：成为高手的技术">
+      <i class="fa fa-chevron-left"></i> 跃迁：成为高手的技术
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/09/2018/11/2018-11-09-%E7%9F%A5%E8%A1%8C%E5%90%88%E4%B8%80%E7%9A%84%E4%BA%94%E7%A7%8D%E5%90%AB%E4%B9%89/index/" rel="next" title="知行合一的五种含义">
+      知行合一的五种含义 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">1、操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E4%BB%A3%E7%90%86%E7%AB%99%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">2、代理站点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%BC%93%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text">3、缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text">4、数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">5、消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81%E9%85%8D%E7%BD%AE%E7%BB%B4%E6%8A%A4"><span class="nav-number">6.</span> <span class="nav-text">6、配置维护</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E3%80%81%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E7%B3%BB%E7%BB%9F"><span class="nav-number">7.</span> <span class="nav-text">7、发布订阅系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%E3%80%81%E7%9B%91%E6%8E%A7"><span class="nav-number">8.</span> <span class="nav-text">8、监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9%E3%80%81%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">9.</span> <span class="nav-text">9、日志分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10%E3%80%81%E5%9B%BE%E5%BD%A2%E5%B1%95%E7%A4%BA"><span class="nav-number">10.</span> <span class="nav-text">10、图形展示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11%E3%80%81%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-number">11.</span> <span class="nav-text">11、大数据处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12%E3%80%81%E8%BF%90%E7%BB%B4%E8%AF%AD%E8%A8%80"><span class="nav-number">12.</span> <span class="nav-text">12、运维语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13%E3%80%81%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4"><span class="nav-number">13.</span> <span class="nav-text">13、自动化运维</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14%E3%80%81%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-number">14.</span> <span class="nav-text">14、虚拟化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15%E3%80%81%E4%BB%A3%E7%A0%81%E7%AE%A1%E7%90%86"><span class="nav-number">15.</span> <span class="nav-text">15、代码管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16%E3%80%81%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90"><span class="nav-number">16.</span> <span class="nav-text">16、持续集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17%E3%80%81%E5%AE%B9%E5%99%A8"><span class="nav-number">17.</span> <span class="nav-text">17、容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18%E3%80%81%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86"><span class="nav-number">18.</span> <span class="nav-text">18、容器管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19%E3%80%81%E7%A7%81%E6%9C%89%E9%95%9C%E5%83%8F%E5%BA%93"><span class="nav-number">19.</span> <span class="nav-text">19、私有镜像库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20%E3%80%81%E9%83%A8%E7%BD%B2%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7"><span class="nav-number">20.</span> <span class="nav-text">20、部署系统工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#21%E3%80%81%E7%9F%A5%E8%AF%86%E7%AE%A1%E7%90%86"><span class="nav-number">21.</span> <span class="nav-text">21、知识管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22%E3%80%81%E5%A0%A1%E5%9E%92%E6%9C%BA"><span class="nav-number">22.</span> <span class="nav-text">22、堡垒机</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

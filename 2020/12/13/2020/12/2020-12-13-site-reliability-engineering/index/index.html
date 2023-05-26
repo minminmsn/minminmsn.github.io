@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考SRE:Google运维解密贝特西 拜尔著 孙宇聪译SRE职责 一般来说，SRE团队要承担以下几类职责：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，紧急事务处理以及容量规划与管理。 运维工作50%内 SRE团队的运维工作限制在50%以内，SRE团队应该将剩余时间花在研发项目上。 On-call 准则 SRE在每8～12小时的on-call 轮值期间最多只处理两个紧急事件。这个准则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SRE方法论">
+<meta property="og:url" content="https://minminmsn.github.io/2020/12/13/2020/12/2020-12-13-site-reliability-engineering/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考SRE:Google运维解密贝特西 拜尔著 孙宇聪译SRE职责 一般来说，SRE团队要承担以下几类职责：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，紧急事务处理以及容量规划与管理。 运维工作50%内 SRE团队的运维工作限制在50%以内，SRE团队应该将剩余时间花在研发项目上。 On-call 准则 SRE在每8～12小时的on-call 轮值期间最多只处理两个紧急事件。这个准则">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-13T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:34.977Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="op">
+<meta property="article:tag" content="sre">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2020/12/13/2020/12/2020-12-13-site-reliability-engineering/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>SRE方法论 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2020/12/13/2020/12/2020-12-13-site-reliability-engineering/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SRE方法论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-13 08:00:00" itemprop="dateCreated datePublished" datetime="2020-12-13T08:00:00+08:00">2020-12-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:34" itemprop="dateModified" datetime="2023-05-26T15:06:34+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考SRE-Google运维解密"><a href="#参考SRE-Google运维解密" class="headerlink" title="参考SRE:Google运维解密"></a><strong>参考SRE:Google运维解密</strong></h3><h3 id="贝特西-拜尔著-孙宇聪译"><a href="#贝特西-拜尔著-孙宇聪译" class="headerlink" title="贝特西 拜尔著 孙宇聪译"></a><strong>贝特西 拜尔著 孙宇聪译</strong></h3><p><strong>SRE职责</strong> 一般来说，SRE团队要承担以下几类职责：可用性改进，延迟优化，性能优化，效率优化，变更管理，监控，紧急事务处理以及容量规划与管理。</p>
+<p><strong>运维工作50%内</strong> SRE团队的运维工作限制在50%以内，SRE团队应该将剩余时间花在研发项目上。</p>
+<p><strong>On-call 准则</strong> SRE在每8～12小时的on-call 轮值期间最多只处理两个紧急事件。这个准则保证了on-call工程师有足够的时间跟进紧急事件，这样SRE可以正确地处理故障、恢复服务，并且要撰写一份事后报告。</p>
+<p><strong>事后总结</strong> 事后总结应该包括以下内容：事故发生、发现、解决的全过程，事故的根本原因，预防或者优化的解决方案。</p>
+<p><strong>监控系统</strong></p>
+<ul>
+<li><p>紧急警报（alert）</p>
+</li>
+<li><p>工单（ticket）</p>
+</li>
+<li><p>日志（logging）</p>
+</li>
+</ul>
+<p><strong>应急事件处理</strong> 可靠性是MTTF（平均失败时间）和MTTR（平均恢复时间）的函数。评价一个团队将系统恢复到正常情况的最有效指标，就是MTTR。 任何需要人工操作的事情都只会延长恢复时间。一个可以自动恢复的系统即使有更多的故障发生，也要比事事都需要人工干预的系统可用性更高。</p>
+<p><strong>变更管理</strong> SRE的经验告诉我们，大概 70% 的生产事故由某种部署的变更而触发。变更管理的最佳实践是使用自动化来完成以下几个项目：</p>
+<ul>
+<li><p>采用渐进式发布机制。</p>
+</li>
+<li><p>迅速而准确地检测到问题的发生。</p>
+</li>
+<li><p>当出现问题时，安全迅速地回退改动。</p>
+</li>
+</ul>
+<p>这三点可以有效地降低变更给SRE和最终用户带来的时间成本和服务质量的下降。</p>
+<p><strong>容量规划</strong> 容量规划有几个步骤是必需的：</p>
+<ul>
+<li><p>必须有一个准确的自然增长需求预测模型，需求预测的时间应该超过资源获取的时间。</p>
+</li>
+<li><p>规划中必须有准确的非自然增长的需求来源的统计。</p>
+</li>
+<li><p>必须有周期性压力测试，以便准确地将系统原始资源信息与业务容量对应起来。</p>
+</li>
+</ul>
+<p><strong>资源部署</strong> 资源的部署（provisinging）是变更管理与容量规划的结合物。在我们的经验里，资源的部署和配置必须能够非常迅速地完成，而且仅仅是在必要的时候才执行，因为资源通常是非常昂贵的。而且这个部署和配置的过程必须要确保能够正确地执行完毕，否则资源就仍然处于不可用状态。</p>
+<p><strong>效率与性能</strong> 高效地利用各种资源是任何赢利性服务都要关心的。因为SRE最终负责容量的部署和配置，因此SRE也必须承担起任何有关利用率的讨论及改进。因为一个服务的利用率指标通常依赖于这个服务的工作方式以及对容量的配置与部署上。如果能够通过密切关注一个服务的容量配置策略，进而改进其资源利用率，这可以非常有效地降低系统的总成本。 一个业务总体资源的使用情况是由以下几个因素驱动的：用户需求（流量）、可用容量和软件的资源使用效率。SRE 可以通过模型预测用户需求，合理部署和配置可用容量，同时可以改进软件以提升资源使用效率。通过这三个因素能够大幅度推动一个服务的效率提升（但是并非全部）。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/op/" rel="tag"># op</a>
+              <a href="/tags/sre/" rel="tag"># sre</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/01/2020/12/2020-12-01-mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/index/" rel="prev" title="MySQL数据库知识点汇总">
+      <i class="fa fa-chevron-left"></i> MySQL数据库知识点汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/08/2021/01/2021-01-08-docker%E5%85%B3%E9%94%AE%E7%9F%A5%E8%AF%86%E7%82%B9%E5%84%BF%E6%B1%87%E6%80%BB/index/" rel="next" title="Docker关键知识点儿汇总">
+      Docker关键知识点儿汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83SRE-Google%E8%BF%90%E7%BB%B4%E8%A7%A3%E5%AF%86"><span class="nav-number">1.</span> <span class="nav-text">参考SRE:Google运维解密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E7%89%B9%E8%A5%BF-%E6%8B%9C%E5%B0%94%E8%91%97-%E5%AD%99%E5%AE%87%E8%81%AA%E8%AF%91"><span class="nav-number">2.</span> <span class="nav-text">贝特西 拜尔著 孙宇聪译</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Nginx1.10.2（2016.10.18）是最新稳定版，适合线上运行，最新开发版为1.11.8（2016.12.27） 系统版本CentOS6.8 64位，所有依赖都是系统rpm包，由于epel-release的nginx包不是最新的稳定版本所以选择源码包安装nginx通过源码编译安装 参考资料 https:&#x2F;&#x2F;www.biaodianfu.com&#x2F;centos-7-2-install-ngi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx1.10.2稳定版本tcp四层负载安装配置过程略解">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/15/2018/12/2018-12-15-nginx1-10-2%E7%A8%B3%E5%AE%9A%E7%89%88%E6%9C%ACtcp%E5%9B%9B%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B%E7%95%A5%E8%A7%A3/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="Nginx1.10.2（2016.10.18）是最新稳定版，适合线上运行，最新开发版为1.11.8（2016.12.27） 系统版本CentOS6.8 64位，所有依赖都是系统rpm包，由于epel-release的nginx包不是最新的稳定版本所以选择源码包安装nginx通过源码编译安装 参考资料 https:&#x2F;&#x2F;www.biaodianfu.com&#x2F;centos-7-2-install-ngi">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-12-15T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.653Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/15/2018/12/2018-12-15-nginx1-10-2%E7%A8%B3%E5%AE%9A%E7%89%88%E6%9C%ACtcp%E5%9B%9B%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B%E7%95%A5%E8%A7%A3/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Nginx1.10.2稳定版本tcp四层负载安装配置过程略解 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/15/2018/12/2018-12-15-nginx1-10-2%E7%A8%B3%E5%AE%9A%E7%89%88%E6%9C%ACtcp%E5%9B%9B%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B%E7%95%A5%E8%A7%A3/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nginx1.10.2稳定版本tcp四层负载安装配置过程略解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-15 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-15T08:00:00+08:00">2018-12-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Nginx1.10.2（2016.10.18）是最新稳定版，适合线上运行，最新开发版为1.11.8（2016.12.27） 系统版本CentOS6.8 64位，所有依赖都是系统rpm包，由于epel-release的nginx包不是最新的稳定版本所以选择源码包安装nginx通过源码编译安装 参考资料 <a target="_blank" rel="noopener" href="https://www.biaodianfu.com/centos-7-2-install-nginx-1-10-2.html">https://www.biaodianfu.com/centos-7-2-install-nginx-1-10-2.html</a></p>
+<h4 id="1、安装编译所需工具"><a href="#1、安装编译所需工具" class="headerlink" title="1、安装编译所需工具"></a><strong>1、安装编译所需工具</strong></h4><p>yum groupinstall “Development Tools” yum install wget</p>
+<h4 id="2、到官网下载最新的源代码（https-nginx-org-en-）"><a href="#2、到官网下载最新的源代码（https-nginx-org-en-）" class="headerlink" title="2、到官网下载最新的源代码（https://nginx.org/en/）"></a><strong>2、到官网下载最新的源代码（<a target="_blank" rel="noopener" href="https://nginx.org/en/%EF%BC%89">https://nginx.org/en/）</a></strong></h4><p>cd &#x2F;usr&#x2F;local&#x2F;src wget <a target="_blank" rel="noopener" href="http://nginx.org/download/nginx-1.10.2.tar.gz">http://nginx.org/download/nginx-1.10.2.tar.gz</a> tar zxvf nginx-1.10.2.tar.gz</p>
+<h4 id="3、安装依赖包"><a href="#3、安装依赖包" class="headerlink" title="3、安装依赖包"></a><strong>3、安装依赖包</strong></h4><p>yum install zlib-devel openssl-devel pcre-devel zlib: 为nginx提供gzip模块，需要zlib库支持，传输数据打包，省流量（但消耗资源） openssl: 为nginx提供ssl功能 pcre: 为支持地址重写rewrite功能</p>
+<h4 id="4、创建用来运行nginx的用户及组"><a href="#4、创建用来运行nginx的用户及组" class="headerlink" title="4、创建用来运行nginx的用户及组"></a><strong>4、创建用来运行nginx的用户及组</strong></h4><p>groupadd -g 58 www useradd -u 58 -g 58 -M www -s &#x2F;sbin&#x2F;nologin -g参数为www用户指定了一个组。-M参数保证其不 自动生成home目录。</p>
+<h4 id="5、编译源代码"><a href="#5、编译源代码" class="headerlink" title="5、编译源代码"></a><strong>5、编译源代码</strong></h4><p>先使用.&#x2F;configure –help 查看编译帮助： 我的线上编译参数，默认开启的不用写 .&#x2F;configure –with-http_ssl_module –with-http_v2_module –with-http_realip_module –with-http_stub_status_module –with-stream –with-stream_ssl_module –with-pcre</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">./configure --help</span><br><span class="line"></span><br><span class="line">  --help                             print this message</span><br><span class="line"></span><br><span class="line">  --prefix=PATH                      set installation prefix #Nginx安装的根路径,默认为 /usr/local/nginx。</span><br><span class="line">  --sbin-path=PATH                   set nginx binary pathname #指定nginx二进制文件的路径,默认为PATH/sbin/nginx。</span><br><span class="line">  --modules-path=PATH                set modules path #Perl模块位置</span><br><span class="line">  --conf-path=PATH                   set nginx.conf pathname #设定nginx配置文件地址，默认为PATH/conf/nginx.conf。</span><br><span class="line">  --error-log-path=PATH              set error log pathname #错误文件路径，默认为 PATH/logs/error.log。</span><br><span class="line">  --pid-path=PATH                    set nginx.pid pathname # master进程pid写入的文件位置,通常在var/run下，默认为 PATH/logs/nginx.pid。</span><br><span class="line">  --lock-path=PATH                   set nginx.lock pathname #共享存储器互斥锁文件路径</span><br><span class="line"></span><br><span class="line">  --user=USER                        set non-privileged user for worker processes #指定程序运行时的非特权用户</span><br><span class="line">  --group=GROUP                      set non-privileged group for worker processes #指定程序运行时的非特权用户组</span><br><span class="line"></span><br><span class="line">  --build=NAME                       set build name #编译名称</span><br><span class="line">  --builddir=DIR                     set build directory #指向编译目录</span><br><span class="line"></span><br><span class="line">  --with-select_module               enable select module 允许或不允许开启SELECT模式，如果configure没有找到合适的模式，比如，kqueue(sun os)、epoll(linux kenel 2.6+)、rtsig(实时信号)</span><br><span class="line">  --without-select_module            disable select module 禁用select模块支持</span><br><span class="line">  --with-poll_module                 enable poll module 启用poll模块支持（功能与select相同，与select特性相同，为一种轮询模式,不推荐在高载环境下使用）</span><br><span class="line">  --without-poll_module              disable poll module 禁用poll模块支持</span><br><span class="line"></span><br><span class="line">  --with-threads                     enable thread pool support</span><br><span class="line"></span><br><span class="line">  --with-file-aio                    enable file AIO support #为freeBSD4.3+和linux2.6.22+系统启用异步io</span><br><span class="line"></span><br><span class="line">  --with-ipv6                        enable IPv6 support #启用ipv6支持</span><br><span class="line"></span><br><span class="line">#默认禁用的模块</span><br><span class="line">  --with-http_ssl_module             enable ngx_http_ssl_module #使支持https请求，需已安装openssl</span><br><span class="line">  --with-http_v2_module              enable ngx_http_v2_module #启用HTTP V2</span><br><span class="line">  --with-http_realip_module          enable ngx_http_realip_module #此模块支持显示真实来源IP地址，主要用于NGINX做前端负载均衡服务器使用</span><br><span class="line">  --with-http_addition_module        enable ngx_http_addition_module #输出过滤器,使你能够在请求经过一个location前或后时在该location本身添加内容</span><br><span class="line">  --with-http_xslt_module            enable ngx_http_xslt_module #这个模块是一个过滤器，它可以通过XSLT模板转换XML应答</span><br><span class="line">  --with-http_xslt_module=dynamic    enable dynamic ngx_http_xslt_module </span><br><span class="line">  --with-http_image_filter_module    enable ngx_http_image_filter_module #图像过滤器,在将图像投递到客户之前进行处理(需要libgd库)</span><br><span class="line">  --with-http_image_filter_module=dynamic</span><br><span class="line">                                     enable dynamic ngx_http_image_filter_module </span><br><span class="line">  --with-http_geoip_module           enable ngx_http_geoip_module #创建基于与MaxMind GeoIP相配的客户端地址</span><br><span class="line">  --with-http_geoip_module=dynamic   enable dynamic ngx_http_geoip_module</span><br><span class="line">  --with-http_sub_module             enable ngx_http_sub_module #这个模块可以能够在nginx的应答中搜索并替换文本</span><br><span class="line">  --with-http_dav_module             enable ngx_http_dav_module #为文件和目录指定权限，限制不同类型的用户对于页面有不同的操作权限</span><br><span class="line">  --with-http_flv_module             enable ngx_http_flv_module #这个模块支持对FLV（flash）文件的拖动播放</span><br><span class="line">  --with-http_mp4_module             enable ngx_http_mp4_module #支持H.264/AAC文件为伪流媒体</span><br><span class="line">  --with-http_gunzip_module          enable ngx_http_gunzip_module #对于不支持gzip编码的客户,该模块用于为客户解压缩预压缩内容</span><br><span class="line">  --with-http_gzip_static_module     enable ngx_http_gzip_static_module #这个模块在一个预压缩文件传送到开启Gzip压缩的客户端之前检查是否已经存在以“.gz”结尾的压缩文件，这样可以防止文件被重复压缩</span><br><span class="line">  --with-http_auth_request_module    enable ngx_http_auth_request_module </span><br><span class="line">  --with-http_random_index_module    enable ngx_http_random_index_module #从目录中选择一个随机主页</span><br><span class="line">  --with-http_secure_link_module     enable ngx_http_secure_link_module #该模块提供一种机制,它会将一个哈希值链接到一个url中,因此,只有那些使用正确的密码能够计算链接</span><br><span class="line">  --with-http_degradation_module     enable ngx_http_degradation_module #允许在内存不足的情况下返回204或444码</span><br><span class="line">  --with-http_slice_module           enable ngx_http_slice_module </span><br><span class="line">  --with-http_stub_status_module     enable ngx_http_stub_status_module #取得一些nginx的运行状态，输出的状态信息可使用RRDtool或类似的工具绘制成图</span><br><span class="line">#默认启用的模块</span><br><span class="line">  --without-http_charset_module      disable ngx_http_charset_module #重新编码web页面</span><br><span class="line">  --without-http_gzip_module         disable ngx_http_gzip_module #同-with-http_gzip_static_module功能一样</span><br><span class="line">  --without-http_ssi_module          disable ngx_http_ssi_module #提供在输入端处理处理服务器包含文件（SSI）的过滤器，目前支持SSI命令的列表是不完整的</span><br><span class="line">  --without-http_userid_module       disable ngx_http_userid_module #用来处理用来确定客户端后续请求的cookies</span><br><span class="line">  --without-http_access_module       disable ngx_http_access_module #供了一个简单的基于主机的访问控制。允许/拒绝基于ip地址</span><br><span class="line">  --without-http_auth_basic_module   disable ngx_http_auth_basic_module #可以使用用户名和密码基于http基本认证方法来保护你的站点或其部分内容</span><br><span class="line">  --without-http_autoindex_module    disable ngx_http_autoindex_module #自动生成目录列表，只在ngx_http_index_module模块未找到索引文件时发出请求。</span><br><span class="line">  --without-http_geo_module          disable ngx_http_geo_module #创建一些变量，其值依赖于客户端的IP地址</span><br><span class="line">  --without-http_map_module          disable ngx_http_map_module #使用任意的键/值对设置配置变量</span><br><span class="line">  --without-http_split_clients_module disable ngx_http_split_clients_module #用来基于某些条件划分用户。条件如：ip地址、报头、cookies等等</span><br><span class="line">  --without-http_referer_module      disable ngx_http_referer_module #用来过滤请求，拒绝报头中Referer值不正确的请求</span><br><span class="line">  --without-http_rewrite_module      disable ngx_http_rewrite_module #允许使用正则表达式改变URI，并且根据变量来转向以及选择配置</span><br><span class="line">  --without-http_proxy_module        disable ngx_http_proxy_module #有关代理服务器</span><br><span class="line">  --without-http_fastcgi_module      disable ngx_http_fastcgi_module #允许Nginx 与FastCGI 进程交互，并通过传递参数来控制FastCGI 进程工作。</span><br><span class="line">  --without-http_uwsgi_module        disable ngx_http_uwsgi_module #用来使用uwsgi协议，uWSGI服务器相关</span><br><span class="line">  --without-http_scgi_module         disable ngx_http_scgi_module #用来启用SCGI协议支持，SCGI协议是CGI协议的替代。</span><br><span class="line">  --without-http_memcached_module    disable ngx_http_memcached_module #用来提供简单的缓存，以提高系统效率</span><br><span class="line">  --without-http_limit_conn_module   disable ngx_http_limit_conn_module #允许你对于一个地址进行连接数的限制用一个给定的session或一个特定的事件</span><br><span class="line">  --without-http_limit_req_module    disable ngx_http_limit_req_module #允许你对于一个地址进行请求数量的限制用一个给定的session或一个特定的事件</span><br><span class="line">  --without-http_empty_gif_module    disable ngx_http_empty_gif_module #在内存中常驻了一个1*1的透明GIF图像，可以被非常快速的调用</span><br><span class="line">  --without-http_browser_module      disable ngx_http_browser_module #用来创建依赖于请求报头的值</span><br><span class="line">  --without-http_upstream_hash_module</span><br><span class="line">                                     disable ngx_http_upstream_hash_module #用于简单的负载均衡</span><br><span class="line">  --without-http_upstream_ip_hash_module</span><br><span class="line">                                     disable ngx_http_upstream_ip_hash_module </span><br><span class="line">  --without-http_upstream_least_conn_module</span><br><span class="line">                                     disable ngx_http_upstream_least_conn_module </span><br><span class="line">  --without-http_upstream_keepalive_module</span><br><span class="line">                                     disable ngx_http_upstream_keepalive_module</span><br><span class="line">  --without-http_upstream_zone_module</span><br><span class="line">                                     disable ngx_http_upstream_zone_module</span><br><span class="line"></span><br><span class="line">  --with-http_perl_module            enable ngx_http_perl_module #这个模块允许nginx使用SSI调用perl或直接执行perl(使用会降低性能)</span><br><span class="line">  --with-http_perl_module=dynamic    enable dynamic ngx_http_perl_module</span><br><span class="line">  --with-perl_modules_path=PATH      set Perl modules path #设定perl模块路径</span><br><span class="line">  --with-perl=PATH                   set perl binary pathname #设定perl库文件路径</span><br><span class="line"></span><br><span class="line">  --http-log-path=PATH               set http access log pathname #设定access log路径</span><br><span class="line">  --http-client-body-temp-path=PATH  set path to store http client request body temporary files #设定http客户端请求临时文件路径</span><br><span class="line">  --http-proxy-temp-path=PATH        set path to store http proxy temporary files #设定http代理临时文件路径</span><br><span class="line">  --http-fastcgi-temp-path=PATH      set path to store http fastcgi temporary files #设定http fastcgi临时文件路径</span><br><span class="line">  --http-uwsgi-temp-path=PATH        set path to store http uwsgi temporary files #设定http uwsgi临时文件路径</span><br><span class="line">  --http-scgi-temp-path=PATH         set path to store http scgi temporary files #设定http scgi临时文件路径</span><br><span class="line"></span><br><span class="line">  --without-http                     disable HTTP server #完全禁用http模块,如果只想支持mall,可以使用此项设置</span><br><span class="line">  --without-http-cache               disable HTTP cache #在使用upstream模块时,nginx能够配置本地缓存内容,此选项可禁用缓存</span><br><span class="line"></span><br><span class="line">  --with-mail                        enable POP3/IMAP4/SMTP proxy module #激活POP3/IMAP4/SMTP代理模块,默认未激活</span><br><span class="line">  --with-mail=dynamic                enable dynamic POP3/IMAP4/SMTP proxy module</span><br><span class="line">  --with-mail_ssl_module             enable ngx_mail_ssl_module #SMTP可以使用SSL／TLS.配置已经定义了HTTP SSL模块，但是不支持客户端证书检测</span><br><span class="line">  --without-mail_pop3_module         disable ngx_mail_pop3_module #启用mail模块后,单独禁用pop3模块</span><br><span class="line">  --without-mail_imap_module         disable ngx_mail_imap_module #启用mail模块后,单独禁用imap模块</span><br><span class="line">  --without-mail_smtp_module         disable ngx_mail_smtp_module #启用mail模块后,单独禁用smtp模块</span><br><span class="line"></span><br><span class="line">  --with-stream                      enable TCP/UDP proxy module</span><br><span class="line">  --with-stream=dynamic              enable dynamic TCP/UDP proxy module</span><br><span class="line">  --with-stream_ssl_module           enable ngx_stream_ssl_module</span><br><span class="line">  --without-stream_limit_conn_module disable ngx_stream_limit_conn_module</span><br><span class="line">  --without-stream_access_module     disable ngx_stream_access_module</span><br><span class="line">  --without-stream_upstream_hash_module</span><br><span class="line">                                     disable ngx_stream_upstream_hash_module</span><br><span class="line">  --without-stream_upstream_least_conn_module</span><br><span class="line">                                     disable ngx_stream_upstream_least_conn_module</span><br><span class="line">  --without-stream_upstream_zone_module</span><br><span class="line">                                     disable ngx_stream_upstream_zone_module</span><br><span class="line"></span><br><span class="line">  --with-google_perftools_module     enable ngx_google_perftools_module #调试用，剖析程序性能瓶颈</span><br><span class="line">  --with-cpp_test_module             enable ngx_cpp_test_module</span><br><span class="line"></span><br><span class="line">  --add-module=PATH                  enable external module #启用外部模块支持</span><br><span class="line">  --add-dynamic-module=PATH          enable dynamic external module</span><br><span class="line">#编译相关的参数</span><br><span class="line">  --with-cc=PATH                     set C compiler pathname #如果想设置一个不在默认path下的c编译器</span><br><span class="line">  --with-cpp=PATH                    set C preprocessor pathname #设置c预处理器的相对路径</span><br><span class="line">  --with-cc-opt=OPTIONS              set additional C compiler options #设置C编译器参数</span><br><span class="line">  --with-ld-opt=OPTIONS              set additional linker options #包含连接库的路径和运行路径</span><br><span class="line">  --with-cpu-opt=CPU                 build for the specified CPU, valid values:pentium, pentiumpro, pentium3, pentium4,athlon, opteron, sparc32, sparc64, ppc64 #指定编译的CPU</span><br><span class="line"></span><br><span class="line">  --without-pcre                     disable PCRE library usage #禁用pcre库</span><br><span class="line">  --with-pcre                        force PCRE library usage #启用pcre库</span><br><span class="line">  --with-pcre=DIR                    set path to PCRE library sources #指向pcre库文件目录</span><br><span class="line">  --with-pcre-opt=OPTIONS            set additional build options for PCRE #在编译时为pcre库设置附加参数</span><br><span class="line">  --with-pcre-jit                    build PCRE with JIT compilation support</span><br><span class="line"></span><br><span class="line">  --with-md5=DIR                     set path to md5 library sources #指向md5库文件目录</span><br><span class="line">  --with-md5-opt=OPTIONS             set additional build options for md5 #在编译时为md5库设置附加参数</span><br><span class="line">  --with-md5-asm                     use md5 assembler sources #使用md5汇编源</span><br><span class="line"></span><br><span class="line">  --with-sha1=DIR                    set path to sha1 library sources #指向sha1库目录</span><br><span class="line">  --with-sha1-opt=OPTIONS            set additional build options for sha1 #在编译时为sha1库设置附加参数</span><br><span class="line">  --with-sha1-asm                    use sha1 assembler sources #使用sha1汇编源</span><br><span class="line"></span><br><span class="line">  --with-zlib=DIR                    set path to zlib library sources #指向zlib库目录</span><br><span class="line">  --with-zlib-opt=OPTIONS            set additional build options for zlib #在编译时为zlib设置附加参数</span><br><span class="line">  --with-zlib-asm=CPU                use zlib assembler sources optimized for the specified CPU, valid values: pentium, pentiumpro #为指定的CPU使用zlib汇编源进行优化</span><br><span class="line"></span><br><span class="line">  --with-libatomic                   force libatomic_ops library usage # 为原子内存的更新操作的实现提供一个架构</span><br><span class="line">  --with-libatomic=DIR               set path to libatomic_ops library sources #指向libatomic_ops安装目录</span><br><span class="line"></span><br><span class="line">  --with-openssl=DIR                 set path to OpenSSL library sources #指向openssl安装目录</span><br><span class="line">  --with-openssl-opt=OPTIONS         set additional build options for OpenSSL #在编译时为openssl设置附加参数</span><br><span class="line"></span><br><span class="line">  --with-debug                       enable debug logging #启用debug日志</span><br></pre></td></tr></table></figure>
+
+<h4 id="6、编译汇总"><a href="#6、编译汇总" class="headerlink" title="6、编译汇总"></a><strong>6、编译汇总</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Configuration summary</span><br><span class="line">+ using system PCRE library</span><br><span class="line">+ using system OpenSSL library</span><br><span class="line">+ md5: using OpenSSL library</span><br><span class="line">+ sha1: using OpenSSL library</span><br><span class="line">+ using system zlib library</span><br><span class="line">nginx path prefix: &quot;/usr/local/nginx&quot;</span><br><span class="line">nginx binary file: &quot;/usr/local/nginx/sbin/nginx&quot;</span><br><span class="line">nginx modules path: &quot;/usr/local/nginx/modules&quot;</span><br><span class="line">nginx configuration prefix: &quot;/usr/local/nginx/conf&quot;</span><br><span class="line">nginx configuration file: &quot;/usr/local/nginx/conf/nginx.conf&quot;</span><br><span class="line">nginx pid file: &quot;/usr/local/nginx/logs/nginx.pid&quot;</span><br><span class="line">nginx error log file: &quot;/usr/local/nginx/logs/error.log&quot;</span><br><span class="line">nginx http access log file: &quot;/usr/local/nginx/logs/access.log&quot;</span><br><span class="line">nginx http client request body temporary files: &quot;client_body_temp&quot;</span><br><span class="line">nginx http proxy temporary files: &quot;proxy_temp&quot;</span><br><span class="line">nginx http fastcgi temporary files: &quot;fastcgi_temp&quot;</span><br><span class="line">nginx http uwsgi temporary files: &quot;uwsgi_temp&quot;</span><br><span class="line">nginx http scgi temporary files: &quot;scgi_temp&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7、编译安装"><a href="#7、编译安装" class="headerlink" title="7、编译安装"></a><strong>7、编译安装</strong></h4><p>编译 make 安装 make install 加入PATH<br>ln -s &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin&#x2F;nginx &#x2F;usr&#x2F;sbin&#x2F;nginx 核查版本信息 nginx -V nginx version: nginx&#x2F;1.10.2 built by gcc 4.4.7 20120313 (Red Hat 4.4.7-17) (GCC) built with OpenSSL 1.0.1e-fips 11 Feb 2013 TLS SNI support enabled configure arguments: –with-http_ssl_module –with-http_v2_module –with-http_realip_module –with-http_stub_status_module –with-stream –with-stream_ssl_module –with-pcre</p>
+<h4 id="8、简单配置"><a href="#8、简单配置" class="headerlink" title="8、简单配置"></a><strong>8、简单配置</strong></h4><p>我这次主要使用到tcp四层负载，后续可能涉及到https http2等，所以编译时添加了那些参数。 nginx.conf配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">user  www www;</span><br><span class="line">worker_processes  auto;</span><br><span class="line">worker_cpu_affinity auto;</span><br><span class="line">error_log  logs/error.log  error;</span><br><span class="line">pid        logs/nginx.pid;</span><br><span class="line">worker_rlimit_nofile 653600;</span><br><span class="line">events</span><br><span class="line">&#123;</span><br><span class="line">  use epoll;</span><br><span class="line">  worker_connections 655350;</span><br><span class="line">&#125;</span><br><span class="line">stream &#123;</span><br><span class="line">    upstream server &#123;</span><br><span class="line">        hash $remote_addr consistent;</span><br><span class="line">        server 172.16.1.11:8081 weight=1 max_fails=3 fail_timeout=10s;</span><br><span class="line">        server 172.16.1.22:8081 weight=1 max_fails=3 fail_timeout=10s;</span><br><span class="line">    &#125;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen 8081;</span><br><span class="line">        proxy_connect_timeout 1s;</span><br><span class="line">        proxy_timeout 3s;</span><br><span class="line">        proxy_pass server;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="9、TCP-SSL配置"><a href="#9、TCP-SSL配置" class="headerlink" title="9、TCP SSL配置"></a><strong>9、TCP SSL配置</strong></h4><p>需要安装openssl-devel及激活ngx_stream_ssl_module模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">stream &#123;</span><br><span class="line">    upstream chat_wss &#123;</span><br><span class="line">       server 172.16.1.88:4001;</span><br><span class="line">       server 172.16.1.99:4001;</span><br><span class="line">    &#125;     </span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen              4002 ssl;</span><br><span class="line">        ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;</span><br><span class="line">        ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;</span><br><span class="line">        ssl_certificate     /usr/local/nginx/conf/ssl/minminmsn.crt;</span><br><span class="line">        ssl_certificate_key /usr/local/nginx/conf/ssl/minminmsn.key;</span><br><span class="line">        ssl_session_cache   shared:SSL:10m;</span><br><span class="line">        ssl_session_timeout 10m;</span><br><span class="line"></span><br><span class="line">        proxy_connect_timeout 3s;</span><br><span class="line">        proxy_timeout 1m;</span><br><span class="line">        proxy_pass chat_wss;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/12/2018/12/2018-12-12-centos7-4%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AEelasticsearch6-3-2%E9%9B%86%E7%BE%A4/index/" rel="prev" title="Centos7.4部署配置Elasticsearch6.3.2集群">
+      <i class="fa fa-chevron-left"></i> Centos7.4部署配置Elasticsearch6.3.2集群
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/18/2018/12/2018-12-18-%E8%84%9A%E6%9C%AC%E6%AC%A3%E8%B5%8F%E4%B9%8B%E7%A6%BD%E5%85%BD%E5%A4%A7%E4%BA%BA%E7%9A%84%E6%9D%B0%E4%BD%9C/index/" rel="next" title="脚本欣赏之禽兽大人的杰作">
+      脚本欣赏之禽兽大人的杰作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85%E7%BC%96%E8%AF%91%E6%89%80%E9%9C%80%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">1、安装编译所需工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%88%B0%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%9A%84%E6%BA%90%E4%BB%A3%E7%A0%81%EF%BC%88https-nginx-org-en-%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">2、到官网下载最新的源代码（https:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="nav-number">3.</span> <span class="nav-text">3、安装依赖包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E5%88%9B%E5%BB%BA%E7%94%A8%E6%9D%A5%E8%BF%90%E8%A1%8Cnginx%E7%9A%84%E7%94%A8%E6%88%B7%E5%8F%8A%E7%BB%84"><span class="nav-number">4.</span> <span class="nav-text">4、创建用来运行nginx的用户及组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5%E3%80%81%E7%BC%96%E8%AF%91%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">5、编译源代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E3%80%81%E7%BC%96%E8%AF%91%E6%B1%87%E6%80%BB"><span class="nav-number">6.</span> <span class="nav-text">6、编译汇总</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7%E3%80%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">7.</span> <span class="nav-text">7、编译安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8%E3%80%81%E7%AE%80%E5%8D%95%E9%85%8D%E7%BD%AE"><span class="nav-number">8.</span> <span class="nav-text">8、简单配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9%E3%80%81TCP-SSL%E9%85%8D%E7%BD%AE"><span class="nav-number">9.</span> <span class="nav-text">9、TCP SSL配置</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档1234https:&#x2F;&#x2F;blog.csdn.net&#x2F;aixiaoyang168&#x2F;article&#x2F;details&#x2F;79767649https:&#x2F;&#x2F;github.com&#x2F;jenkinsci&#x2F;kubernetes-plugin&#x2F;tree&#x2F;master&#x2F;src&#x2F;main&#x2F;kuberneteshttps:&#x2F;&#x2F;www.cnblogs.com&#x2F;cocowool&#x2F;p&#x2F;kubernetes_stateful">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins">
+<meta property="og:url" content="https://minminmsn.github.io/2019/01/24/2019/01/2019-01-24-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph-rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档1234https:&#x2F;&#x2F;blog.csdn.net&#x2F;aixiaoyang168&#x2F;article&#x2F;details&#x2F;79767649https:&#x2F;&#x2F;github.com&#x2F;jenkinsci&#x2F;kubernetes-plugin&#x2F;tree&#x2F;master&#x2F;src&#x2F;main&#x2F;kuberneteshttps:&#x2F;&#x2F;www.cnblogs.com&#x2F;cocowool&#x2F;p&#x2F;kubernetes_stateful">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s1.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s2.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s3.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s4.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s5.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s6.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/k8s7.png">
+<meta property="article:published_time" content="2019-01-24T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.053Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="jenkins">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/k8s1.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/01/24/2019/01/2019-01-24-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph-rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/01/24/2019/01/2019-01-24-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E7%BB%93%E5%90%88ceph-rbd%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%ACjenkins/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes1.13.1集群结合ceph rbd部署最新版本jenkins
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-24 08:00:00" itemprop="dateCreated datePublished" datetime="2019-01-24T08:00:00+08:00">2019-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https://blog.csdn.net/aixiaoyang168/article/details/79767649</span><br><span class="line">https://github.com/jenkinsci/kubernetes-plugin/tree/master/src/main/kubernetes</span><br><span class="line">https://www.cnblogs.com/cocowool/p/kubernetes_statefulset.html</span><br><span class="line">https://www.cnblogs.com/cocowool/p/kubernetes_storage.html</span><br></pre></td></tr></table></figure>
+
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p><strong>jenkins-kubernetes-plugin</strong> Jenkins plugin to run dynamic agents in a Kubernetes cluster. Based on the Scaling Docker with Kubernetes article, automates the scaling of Jenkins agents running in Kubernetes. The plugin creates a Kubernetes Pod for each agent started, defined by the Docker image to run, and stops it after each build. Agents are launched using JNLP, so it is expected that the image connects automatically to the Jenkins master. For that some environment variables are automatically injected: + JENKINS_URL: Jenkins web interface url + JENKINS_SECRET: the secret key for authentication + JENKINS_AGENT_NAME: the name of the Jenkins agent + JENKINS_NAME: the name of the Jenkins agent (Deprecated. Only here for backwards compatibility)</p>
+<h3 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a><strong>基本环境</strong></h3><p>k81集群1.13.1版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 ~]# kubectl get nodes</span><br><span class="line">NAME        STATUS   ROLES    AGE   VERSION</span><br><span class="line">10.2.8.34   Ready    &lt;none&gt;   25d   v1.13.1</span><br><span class="line">10.2.8.65   Ready    &lt;none&gt;   25d   v1.13.1</span><br></pre></td></tr></table></figure>
+
+<p>ceph集群 luminous版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# ceph -s</span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum ceph01,ceph02,ceph03</span><br><span class="line">    mgr: ceph03(active), standbys: ceph02, ceph01</span><br><span class="line">    osd: 24 osds: 24 up, 24 in</span><br><span class="line">    rgw: 3 daemons active</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a><strong>操作步骤</strong></h3><h4 id="一、使用ceph-rbd创建pv、pvc"><a href="#一、使用ceph-rbd创建pv、pvc" class="headerlink" title="一、使用ceph rbd创建pv、pvc"></a><strong>一、使用ceph rbd创建pv、pvc</strong></h4><p>官网使用的是自带创建pv与pvc这里使用的是手动创建 <strong>1、创建pv</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# cat jenkins-pv.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins-home-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 40Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  rbd:</span><br><span class="line">    monitors:</span><br><span class="line">      - &#x27;10.0.4.10:6789&#x27;</span><br><span class="line">      - &#x27;10.0.4.13:6789&#x27;</span><br><span class="line">      - &#x27;10.0.4.15:6789&#x27;</span><br><span class="line">    pool: rbd-k8s</span><br><span class="line">    image: cephimage3</span><br><span class="line">    user: admin</span><br><span class="line">    secretRef:</span><br><span class="line">      name: ceph-secret</span><br><span class="line">    fsType: ext4</span><br><span class="line">    readOnly: false</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl create -f jenkins-pv.yaml </span><br><span class="line">persistentvolume/jenkins-home-pv created</span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl get pv</span><br><span class="line">NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                       STORAGECLASS   REASON   AGE</span><br><span class="line">ceph-rbd-pv       20Gi       RWO            Recycle          Bound       default/ceph-rbd-pv-claim                           22h</span><br><span class="line">jenkins-home-pv   40Gi       RWO            Recycle          Available                                                       4s</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、创建pvc</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# cat jenkins-pvc.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins-home-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 20Gi</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl create -f jenkins-pvc.yaml </span><br><span class="line">persistentvolumeclaim/jenkins-home-pvc created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl get pvc</span><br><span class="line">NAME                STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">ceph-rbd-pv-claim   Bound    ceph-rbd-pv       20Gi       RWO                           22h</span><br><span class="line">jenkins-home-pvc    Bound    jenkins-home-pv   40Gi       RWO                           3s</span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl get pv</span><br><span class="line">NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                       STORAGECLASS   REASON   AGE</span><br><span class="line">ceph-rbd-pv       20Gi       RWO            Recycle          Bound    default/ceph-rbd-pv-claim                           22h</span><br><span class="line">jenkins-home-pv   40Gi       RWO            Recycle          Bound    default/jenkins-home-pvc                            77s</span><br></pre></td></tr></table></figure>
+
+<h4 id="二、跟进实际情况修改jenkins-yml文件"><a href="#二、跟进实际情况修改jenkins-yml文件" class="headerlink" title="二、跟进实际情况修改jenkins.yml文件"></a><strong>二、跟进实际情况修改jenkins.yml文件</strong></h4><p>主要修改的配置从上到下分别是： <strong>1、拉取镜像策略</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">imagePullPolicy: IfNotPresent</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、自动存储storage class改成voulumes的pvc方式实现</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line">- name: jenkins-home</span><br><span class="line">  persistentVolumeClaim:</span><br><span class="line">    claimName: jenkins-home-pvc</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、ingress的host改成实际的</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">host: jenkins.minminmsn.com</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、ingres的tls证书改成实际的</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tls:</span><br><span class="line">- hosts:</span><br><span class="line">  - jenkins.minminmsn.com</span><br><span class="line">  secretName: ingress-secret</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、具体如下</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# cat jenkins.yml </span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1beta1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins</span><br><span class="line">  labels:</span><br><span class="line">    name: jenkins</span><br><span class="line">spec:</span><br><span class="line">  serviceName: jenkins</span><br><span class="line">  replicas: 1</span><br><span class="line">  updateStrategy:</span><br><span class="line">    type: RollingUpdate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: jenkins</span><br><span class="line">      labels:</span><br><span class="line">        name: jenkins</span><br><span class="line">    spec:</span><br><span class="line">      terminationGracePeriodSeconds: 10</span><br><span class="line">      serviceAccountName: jenkins</span><br><span class="line">      containers:</span><br><span class="line">        - name: jenkins</span><br><span class="line">          image: jenkins/jenkins:lts-alpine</span><br><span class="line">          imagePullPolicy: IfNotPresent</span><br><span class="line">          ports:</span><br><span class="line">            - containerPort: 8080</span><br><span class="line">            - containerPort: 50000</span><br><span class="line">          resources:</span><br><span class="line">            limits:</span><br><span class="line">              cpu: 1</span><br><span class="line">              memory: 1Gi</span><br><span class="line">            requests:</span><br><span class="line">              cpu: 0.5</span><br><span class="line">              memory: 500Mi</span><br><span class="line">          env:</span><br><span class="line">            - name: LIMITS_MEMORY</span><br><span class="line">              valueFrom:</span><br><span class="line">                resourceFieldRef:</span><br><span class="line">                  resource: limits.memory</span><br><span class="line">                  divisor: 1Mi</span><br><span class="line">            - name: JAVA_OPTS</span><br><span class="line">              # value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XshowSettings:vm -Dhudson.slaves.NodeProvisioner.initialDelay=0 -Dhudson.slaves.NodeProvisioner.MARGIN=50 -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85</span><br><span class="line">              value: -Xmx$(LIMITS_MEMORY)m -XshowSettings:vm -Dhudson.slaves.NodeProvisioner.initialDelay=0 -Dhudson.slaves.NodeProvisioner.MARGIN=50 -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: jenkins-home</span><br><span class="line">              mountPath: /var/jenkins_home</span><br><span class="line">              readOnly: false</span><br><span class="line">          livenessProbe:</span><br><span class="line">            httpGet:</span><br><span class="line">              path: /login</span><br><span class="line">              port: 8080</span><br><span class="line">            initialDelaySeconds: 60</span><br><span class="line">            timeoutSeconds: 5</span><br><span class="line">            failureThreshold: 12 # ~2 minutes</span><br><span class="line">          readinessProbe:</span><br><span class="line">            httpGet:</span><br><span class="line">              path: /login</span><br><span class="line">              port: 8080</span><br><span class="line">            initialDelaySeconds: 60</span><br><span class="line">            timeoutSeconds: 5</span><br><span class="line">            failureThreshold: 12 # ~2 minutes</span><br><span class="line">      securityContext:</span><br><span class="line">        fsGroup: 1000</span><br><span class="line">      volumes:</span><br><span class="line">      - name: jenkins-home</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: jenkins-home-pvc</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins</span><br><span class="line">spec:</span><br><span class="line">  # type: LoadBalancer</span><br><span class="line">  selector:</span><br><span class="line">    name: jenkins</span><br><span class="line">  # ensure the client ip is propagated to avoid the invalid crumb issue when using LoadBalancer (k8s &gt;=1.7)</span><br><span class="line">  #externalTrafficPolicy: Local</span><br><span class="line">  ports:</span><br><span class="line">    -</span><br><span class="line">      name: http</span><br><span class="line">      port: 80</span><br><span class="line">      targetPort: 8080</span><br><span class="line">      protocol: TCP</span><br><span class="line">    -</span><br><span class="line">      name: agent</span><br><span class="line">      port: 50000</span><br><span class="line">      protocol: TCP</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: jenkins</span><br><span class="line">  annotations:</span><br><span class="line">    nginx.ingress.kubernetes.io/ssl-redirect: &quot;true&quot;</span><br><span class="line">    kubernetes.io/tls-acme: &quot;true&quot;</span><br><span class="line">    # &quot;413 Request Entity Too Large&quot; uploading plugins, increase client_max_body_size</span><br><span class="line">    nginx.ingress.kubernetes.io/proxy-body-size: 50m</span><br><span class="line">    nginx.ingress.kubernetes.io/proxy-request-buffering: &quot;off&quot;</span><br><span class="line">    # For nginx-ingress controller &lt; 0.9.0.beta-18</span><br><span class="line">    ingress.kubernetes.io/ssl-redirect: &quot;true&quot;</span><br><span class="line">    # &quot;413 Request Entity Too Large&quot; uploading plugins, increase client_max_body_size</span><br><span class="line">    ingress.kubernetes.io/proxy-body-size: 50m</span><br><span class="line">    ingress.kubernetes.io/proxy-request-buffering: &quot;off&quot;</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - http:</span><br><span class="line">      paths:</span><br><span class="line">      - path: /</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: jenkins</span><br><span class="line">          servicePort: 80</span><br><span class="line">    host: jenkins.minminmsn.com</span><br><span class="line">  tls:</span><br><span class="line">  - hosts:</span><br><span class="line">    - jenkins.minminmsn.com</span><br><span class="line">    secretName: ingress-secret</span><br></pre></td></tr></table></figure>
+
+<h4 id="三、创建状态集、svc、pod、ingress"><a href="#三、创建状态集、svc、pod、ingress" class="headerlink" title="三、创建状态集、svc、pod、ingress"></a><strong>三、创建状态集、svc、pod、ingress</strong></h4><p><strong>1、创建rbac认证角色</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# kubectl create -f service-account.yml </span><br><span class="line">serviceaccount/jenkins created</span><br><span class="line">role.rbac.authorization.k8s.io/jenkins created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/jenkins created</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、创建jenkins服务等</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# kubectl create -f jenkins.yml </span><br><span class="line">statefulset.apps/jenkins created</span><br><span class="line">service/jenkins created</span><br><span class="line">ingress.extensions/jenkins created        4s</span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl get pods</span><br><span class="line">NAME               READY   STATUS              RESTARTS   AGE</span><br><span class="line">busybox            1/1     Running             454        18d</span><br><span class="line">ceph-rbd-pv-pod1   1/1     Running             1          21h</span><br><span class="line">jenkins-0          0/1     ContainerCreating   0          7s</span><br><span class="line">[root@elasticsearch01 jenkins]# kubectl get pods</span><br><span class="line">NAME               READY   STATUS    RESTARTS   AGE</span><br><span class="line">busybox            1/1     Running   454        18d</span><br><span class="line">ceph-rbd-pv-pod1   1/1     Running   1          21h</span><br><span class="line">jenkins-0          1/1     Running   0          4m52s</span><br></pre></td></tr></table></figure>
+
+<h4 id="四、通过ingress访问"><a href="#四、通过ingress访问" class="headerlink" title="四、通过ingress访问"></a><strong>四、通过ingress访问</strong></h4><p>获取ingress-nginx对外端口，<a target="_blank" rel="noopener" href="https://jenkins.minminmsn.com:47215/%E8%AE%BF%E9%97%AE%E5%8D%B3%E5%8F%AF%EF%BC%8C%E9%9C%80%E8%A6%81%E9%85%8D%E7%BD%AEdns%E8%A7%A3%E6%9E%90%E5%88%B0pod%E6%89%80%E5%9C%A8node%E7%9A%84ip">https://jenkins.minminmsn.com:47215/访问即可，需要配置dns解析到pod所在node的ip</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 jenkins]# kubectl get svc -n ingress-nginx|grep ingress-nginx</span><br><span class="line">ingress-nginx       LoadBalancer   10.254.125.151   &lt;pending&gt;     80:33003/TCP,443:47215/TCP   14d</span><br></pre></td></tr></table></figure>
+
+<h4 id="五、初始化jenkins"><a href="#五、初始化jenkins" class="headerlink" title="五、初始化jenkins"></a><strong>五、初始化jenkins</strong></h4><p><strong>1、查找密码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch02 ~]# df -h|grep rbd</span><br><span class="line">/dev/rbd0                  493G  163G  306G  35% /data</span><br><span class="line">/dev/rbd1                   20G   45M   20G   1% /var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage2</span><br><span class="line">/dev/rbd2                   40G  138M   40G   1% /var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage3</span><br><span class="line">[root@elasticsearch02 ~]# cd //var/lib/kubelet/plugins/kubernetes.io/rbd/mounts/rbd-k8s-image-cephimage3</span><br><span class="line">[root@elasticsearch02 rbd-k8s-image-cephimage3]# ls</span><br><span class="line">config.xml                     init.groovy.d                        jobs              nodes                     secrets      war</span><br><span class="line">copy_reference_file.log        jenkins.CLI.xml                      logs              plugins                   updates</span><br><span class="line">hudson.model.UpdateCenter.xml  jenkins.install.UpgradeWizard.state  lost+found        secret.key                userContent</span><br><span class="line">identity.key.enc               jenkins.telemetry.Correlator.xml     nodeMonitors.xml  secret.key.not-so-secret  users</span><br><span class="line">[root@elasticsearch02 rbd-k8s-image-cephimage3]# cat secrets/initialAdminPassword </span><br><span class="line">92c145b796cc48b0af8b5ef0f7afce28</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><img src="/images/k8s1.png"></p>
+</blockquote>
+<p><strong>2、选择安装插件</strong></p>
+<blockquote>
+<p><img src="/images/k8s2.png"> <img src="/images/k8s3.png"></p>
+</blockquote>
+<p><strong>3、创建初始管理账号</strong></p>
+<blockquote>
+<p><img src="/images/k8s4.png"></p>
+</blockquote>
+<p><strong>4、设置jenkins url默认<a target="_blank" rel="noopener" href="https://jenkins.minminmsn.com:47215/">https://jenkins.minminmsn.com:47215/</a></strong></p>
+<blockquote>
+<p><img src="/images/k8s5.png"></p>
+</blockquote>
+<p><strong>5、开始使用jenkins</strong></p>
+<blockquote>
+<p><img src="/images/k8s6.png"></p>
+</blockquote>
+<p><strong>6、jenkins控制台界面，主要配置都在系统管理中</strong></p>
+<blockquote>
+<p><img src="/images/k8s7.png"></p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><blockquote>
+<p>使用ceph rbd 这种只能读写一次的设备不能用在线上，线上应该使用分布式存储例如nfs，cephfs，glusterfs等，这里只是测试jenkins结合ceph，pv，pvc完成有状态pod的测试</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/21/2019/01/2019-01-21-kubernets1-13-1%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8/index/" rel="prev" title="kubernets1.13.1集群使用ceph rbd块存储">
+      <i class="fa fa-chevron-left"></i> kubernets1.13.1集群使用ceph rbd块存储
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/27/2019/01/2019-01-27-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7helm/index/" rel="next" title="kubernetes1.13.1集群安装包管理工具helm">
+      kubernetes1.13.1集群安装包管理工具helm <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">基本环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.</span> <span class="nav-text">操作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8ceph-rbd%E5%88%9B%E5%BB%BApv%E3%80%81pvc"><span class="nav-number">4.1.</span> <span class="nav-text">一、使用ceph rbd创建pv、pvc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%B7%9F%E8%BF%9B%E5%AE%9E%E9%99%85%E6%83%85%E5%86%B5%E4%BF%AE%E6%94%B9jenkins-yml%E6%96%87%E4%BB%B6"><span class="nav-number">4.2.</span> <span class="nav-text">二、跟进实际情况修改jenkins.yml文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BA%E7%8A%B6%E6%80%81%E9%9B%86%E3%80%81svc%E3%80%81pod%E3%80%81ingress"><span class="nav-number">4.3.</span> <span class="nav-text">三、创建状态集、svc、pod、ingress</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%80%9A%E8%BF%87ingress%E8%AE%BF%E9%97%AE"><span class="nav-number">4.4.</span> <span class="nav-text">四、通过ingress访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96jenkins"><span class="nav-number">4.5.</span> <span class="nav-text">五、初始化jenkins</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

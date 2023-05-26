@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档12https:&#x2F;&#x2F;www.virtualtothecore.com&#x2F;en&#x2F;upgrade-ceph-cluster-luminous&#x2F;http:&#x2F;&#x2F;www.chinastor.com&#x2F;distristor&#x2F;11033L502017.html  缘起 首先看之前安装版本链接及测试 https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;379d313c2bf9 https:&#x2F;&#x2F;www.jian">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ceph集群由Jewel版本升级到Luminous版本">
+<meta property="og:url" content="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-ceph%E9%9B%86%E7%BE%A4%E7%94%B1jewel%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0luminous%E7%89%88%E6%9C%AC/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档12https:&#x2F;&#x2F;www.virtualtothecore.com&#x2F;en&#x2F;upgrade-ceph-cluster-luminous&#x2F;http:&#x2F;&#x2F;www.chinastor.com&#x2F;distristor&#x2F;11033L502017.html  缘起 首先看之前安装版本链接及测试 https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;379d313c2bf9 https:&#x2F;&#x2F;www.jian">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/7535971-b0a2d62a6fa79789.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="article:published_time" content="2018-12-06T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:30.528Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/7535971-b0a2d62a6fa79789.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<link rel="canonical" href="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-ceph%E9%9B%86%E7%BE%A4%E7%94%B1jewel%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0luminous%E7%89%88%E6%9C%AC/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Ceph集群由Jewel版本升级到Luminous版本 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2018/12/06/2018/12/2018-12-06-ceph%E9%9B%86%E7%BE%A4%E7%94%B1jewel%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E5%88%B0luminous%E7%89%88%E6%9C%AC/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ceph集群由Jewel版本升级到Luminous版本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-06 08:00:00" itemprop="dateCreated datePublished" datetime="2018-12-06T08:00:00+08:00">2018-12-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:30" itemprop="dateModified" datetime="2023-05-26T15:06:30+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bigdata/" itemprop="url" rel="index"><span itemprop="name">bigdata</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://www.virtualtothecore.com/en/upgrade-ceph-cluster-luminous/</span><br><span class="line">http://www.chinastor.com/distristor/11033L502017.html</span><br></pre></td></tr></table></figure>
+
+<h3 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a><strong>缘起</strong></h3><blockquote>
+<p>首先看之前安装版本链接及测试 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/379d313c2bf9">https://www.jianshu.com/p/379d313c2bf9</a> <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b11144ea407f">https://www.jianshu.com/p/b11144ea407f</a> mon ceph0、ceph2、cphe3 osd ceph0、ceph1、ceph2、ceph3 rgw ceph1 deploy ceph0 之前在Centos7.5上测试了Jewel版本的集群，随着对Ceph了解深入，计划线上运行比较新的LTS版本Ceph集群，最终选择了Luminous版本。 本来计划重新部署Luminous版本，看到这是测试环境数据丢失风险小就想尝试升级Jewel版本到Luminous版本，由于之前是Yum安装的根据之前经验原理是更新二进制文件，最后重启服务即可。看介绍文档升级步骤比较简单，但是测试中发现国内用户肯定会遇到一个坑，升级过程中会自动修改yum源到国外的站点，由于网络延迟大300s反应不及时会自动断开连接停止升级服务，故后续的操作我改成了国内源，并找出rpm包手工升级，由于本身有依赖关系故最终就收到yum install ceph ceph-radosgw即可全部升级所有的ceph包，最后重启相关服务即完成升级，最终数据没有丢失，各个功能也正常。</p>
+</blockquote>
+<h3 id="升级过程"><a href="#升级过程" class="headerlink" title="升级过程"></a><strong>升级过程</strong></h3><p>参照官方的升级指南一步一步的小心操作，要注意，升级时候要确保系统是健康运行的状态。 1、登录，确认sortbitwise是enabled状态：</p>
+<blockquote>
+<p>[root@idcv-ceph0 yum.repos.d]# ceph osd set sortbitwise set sortbitwise</p>
+</blockquote>
+<p>2、设置noout标志，告诉Ceph不要重新去做集群的负载均衡，虽然这是可选项，但是建议设置一下，避免每次停止节点的时候，Ceph就尝试通过复制数据到其他可用节点来重新平衡集群。</p>
+<blockquote>
+<p>[root@idcv-ceph0 yum.repos.d]# ceph osd set noout set noout</p>
+</blockquote>
+<p>3、升级时，可以选择手工升级每个节点，也可以使用使用Ceph-deploy实现自动升级。如果选择手动升级，在CentOS系统里，你需要先编辑Ceph yum repo获取新的Luminous版本来替换老版本Jewel，这就需要一个简单的文本替换操作：</p>
+<blockquote>
+<p>[root@idcv-ceph0 yum.repos.d]# sed -i ‘s&#x2F;jewel&#x2F;luminous&#x2F;‘ &#x2F;etc&#x2F;yum.repos.d&#x2F;ceph.repo</p>
+</blockquote>
+<p>4、使用Ceph-deploy可以实现一个命令完成集群的自动升级</p>
+<blockquote>
+<p>[root@idcv-ceph0 yum.repos.d]# yum install ceph-deploy python-pushy Running transaction Updating : ceph-deploy-2.0.0-0.noarch 1&#x2F;2 Cleanup : ceph-deploy-1.5.39-0.noarch 2&#x2F;2 Verifying : ceph-deploy-2.0.0-0.noarch 1&#x2F;2 Verifying : ceph-deploy-1.5.39-0.noarch 2&#x2F;2 Updated: ceph-deploy.noarch 0:2.0.0-0<br>Complete! [root@idcv-ceph0 yum.repos.d]# rpm -qa |grep ceph-deploy ceph-deploy-2.0.0-0.noarch</p>
+</blockquote>
+<p>5、一旦Ceph-deploy升级完成，首先要做的是在同一台机器上升级Ceph。 发现从这个时候开始按照官网的步骤在国内行不通了，主要原因是yum源改成了国外的网速达不到，后续就是手工升级结合官网步骤了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br></pre></td><td class="code"><pre><span class="line">[root@idcv-ceph0 yum.repos.d]# ceph -s</span><br><span class="line">    cluster 812d3acb-eaa8-4355-9a74-64f2cd5209b3</span><br><span class="line">     health HEALTH_WARN</span><br><span class="line">            noout flag(s) set</span><br><span class="line">     monmap e2: 3 mons at &#123;idcv-ceph0=172.20.1.138:6789/0,idcv-ceph2=172.20.1.140:6789/0,idcv-ceph3=172.20.1.141:6789/0&#125;</span><br><span class="line">            election epoch 8, quorum 0,1,2 idcv-ceph0,idcv-ceph2,idcv-ceph3</span><br><span class="line">     osdmap e49: 4 osds: 4 up, 4 in</span><br><span class="line">            flags noout,sortbitwise,require_jewel_osds</span><br><span class="line">      pgmap v53288: 272 pgs, 12 pools, 97496 MB data, 1785 kobjects</span><br><span class="line">            296 GB used, 84824 MB / 379 GB avail</span><br><span class="line">                 272 active+clean</span><br><span class="line">[root@idcv-ceph0 yum.repos.d]# ceph -v</span><br><span class="line">ceph version 10.2.10 (5dc1e4c05cb68dbf62ae6fce3f0700e4654fdbbe)</span><br><span class="line">[root@idcv-ceph0 yum.repos.d]# cd /root/cluster/</span><br><span class="line">[root@idcv-ceph0 cluster]# ls</span><br><span class="line">ceph.bootstrap-mds.keyring  ceph.bootstrap-osd.keyring  ceph.client.admin.keyring  ceph-deploy-ceph.log</span><br><span class="line">ceph.bootstrap-mgr.keyring  ceph.bootstrap-rgw.keyring  ceph.conf               </span><br><span class="line">[root@idcv-ceph0 cluster]# ceph-deploy install --release luminous idcv-ceph0</span><br><span class="line">[ceph_deploy.conf][DEBUG ] found configuration file at: /root/.cephdeploy.conf</span><br><span class="line">[ceph_deploy.cli][INFO  ] Invoked (2.0.0): /usr/bin/ceph-deploy install --release luminous idcv-ceph0</span><br><span class="line">[ceph_deploy.cli][INFO  ] ceph-deploy options:</span><br><span class="line">[ceph_deploy.cli][INFO  ]  verbose                       : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  testing                       : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  cd_conf                       : &lt;ceph_deploy.conf.cephdeploy.Conf instance at 0x7f38ae7a1d40&gt;</span><br><span class="line">[ceph_deploy.cli][INFO  ]  cluster                       : ceph</span><br><span class="line">[ceph_deploy.cli][INFO  ]  dev_commit                    : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_mds                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  stable                        : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  default_release               : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  username                      : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  adjust_repos                  : True</span><br><span class="line">[ceph_deploy.cli][INFO  ]  func                          : &lt;function install at 0x7f38ae9d8ed8&gt;</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_mgr                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_all                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  repo                          : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  host                          : [&#x27;idcv-ceph0&#x27;]</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_rgw                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_tests                 : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  repo_url                      : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  ceph_conf                     : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_osd                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  version_kind                  : stable</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_common                : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  overwrite_conf                : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  quiet                         : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  dev                           : master</span><br><span class="line">[ceph_deploy.cli][INFO  ]  nogpgcheck                    : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  local_mirror                  : None</span><br><span class="line">[ceph_deploy.cli][INFO  ]  release                       : luminous</span><br><span class="line">[ceph_deploy.cli][INFO  ]  install_mon                   : False</span><br><span class="line">[ceph_deploy.cli][INFO  ]  gpg_url                       : None</span><br><span class="line">[ceph_deploy.install][DEBUG ] Installing stable version luminous on cluster ceph hosts idcv-ceph0</span><br><span class="line">[ceph_deploy.install][DEBUG ] Detecting platform for host idcv-ceph0 ...</span><br><span class="line">[idcv-ceph0][DEBUG ] connected to host: idcv-ceph0 </span><br><span class="line">[idcv-ceph0][DEBUG ] detect platform information from remote host</span><br><span class="line">[idcv-ceph0][DEBUG ] detect machine type</span><br><span class="line">[ceph_deploy.install][INFO  ] Distro info: CentOS Linux 7.5.1804 Core</span><br><span class="line">[idcv-ceph0][INFO  ] installing Ceph on idcv-ceph0</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum clean all</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Cleaning repos: Ceph Ceph-noarch base ceph-source epel extras updates</span><br><span class="line">[idcv-ceph0][DEBUG ] Cleaning up everything</span><br><span class="line">[idcv-ceph0][DEBUG ] Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos</span><br><span class="line">[idcv-ceph0][DEBUG ] Cleaning up list of fastest mirrors</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum -y install epel-release</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Determining fastest mirrors</span><br><span class="line">[idcv-ceph0][DEBUG ]  * base: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * epel: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * extras: mirrors.neusoft.edu.cn</span><br><span class="line">[idcv-ceph0][DEBUG ]  * updates: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ] 8 packages excluded due to repository priority protections</span><br><span class="line">[idcv-ceph0][DEBUG ] Package epel-release-7-11.noarch already installed and latest version</span><br><span class="line">[idcv-ceph0][DEBUG ] Nothing to do</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum -y install yum-plugin-priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Loading mirror speeds from cached hostfile</span><br><span class="line">[idcv-ceph0][DEBUG ]  * base: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * epel: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * extras: mirrors.neusoft.edu.cn</span><br><span class="line">[idcv-ceph0][DEBUG ]  * updates: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ] 8 packages excluded due to repository priority protections</span><br><span class="line">[idcv-ceph0][DEBUG ] Package yum-plugin-priorities-1.1.31-45.el7.noarch already installed and latest version</span><br><span class="line">[idcv-ceph0][DEBUG ] Nothing to do</span><br><span class="line">[idcv-ceph0][DEBUG ] Configure Yum priorities to include obsoletes</span><br><span class="line">[idcv-ceph0][WARNIN] check_obsoletes has been enabled for Yum priorities plugin</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: rpm --import https://download.ceph.com/keys/release.asc</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum remove -y ceph-release</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Resolving Dependencies</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-release.noarch 0:1-1.el7 will be erased</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Finished Dependency Resolution</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Dependencies Resolved</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ]  Package              Arch           Version            Repository         Size</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Removing:</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-release         noarch         1-1.el7            installed         535  </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Transaction Summary</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Remove  1 Package</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Installed size: 535  </span><br><span class="line">[idcv-ceph0][DEBUG ] Downloading packages:</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction test</span><br><span class="line">[idcv-ceph0][DEBUG ] Transaction test succeeded</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction</span><br><span class="line">[idcv-ceph0][DEBUG ]   Erasing    : ceph-release-1-1.el7.noarch                                  1/1 </span><br><span class="line">[idcv-ceph0][DEBUG ] warning: /etc/yum.repos.d/ceph.repo saved as /etc/yum.repos.d/ceph.repo.rpmsave</span><br><span class="line">[idcv-ceph0][DEBUG ]   Verifying  : ceph-release-1-1.el7.noarch                                  1/1 </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Removed:</span><br><span class="line">[idcv-ceph0][DEBUG ]   ceph-release.noarch 0:1-1.el7                                                 </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Complete!</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum install -y https://download.ceph.com/rpm-luminous/el7/noarch/ceph-release-1-0.el7.noarch.rpm</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Examining /var/tmp/yum-root-dPpRu6/ceph-release-1-0.el7.noarch.rpm: ceph-release-1-1.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] Marking /var/tmp/yum-root-dPpRu6/ceph-release-1-0.el7.noarch.rpm to be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] Resolving Dependencies</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-release.noarch 0:1-1.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Finished Dependency Resolution</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Dependencies Resolved</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ]  Package          Arch       Version     Repository                        Size</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Installing:</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-release     noarch     1-1.el7     /ceph-release-1-0.el7.noarch     544  </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Transaction Summary</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Install  1 Package</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Total size: 544  </span><br><span class="line">[idcv-ceph0][DEBUG ] Installed size: 544  </span><br><span class="line">[idcv-ceph0][DEBUG ] Downloading packages:</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction test</span><br><span class="line">[idcv-ceph0][DEBUG ] Transaction test succeeded</span><br><span class="line">[idcv-ceph0][DEBUG ] Running transaction</span><br><span class="line">[idcv-ceph0][DEBUG ]   Installing : ceph-release-1-1.el7.noarch                                  1/1 </span><br><span class="line">[idcv-ceph0][DEBUG ]   Verifying  : ceph-release-1-1.el7.noarch                                  1/1 </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Installed:</span><br><span class="line">[idcv-ceph0][DEBUG ]   ceph-release.noarch 0:1-1.el7                                                 </span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Complete!</span><br><span class="line">[idcv-ceph0][WARNIN] ensuring that /etc/yum.repos.d/ceph.repo contains a high priority</span><br><span class="line">[idcv-ceph0][WARNIN] altered ceph.repo priorities to contain: priority=1</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: yum -y install ceph ceph-radosgw</span><br><span class="line">[idcv-ceph0][DEBUG ] Loaded plugins: fastestmirror, priorities</span><br><span class="line">[idcv-ceph0][DEBUG ] Loading mirror speeds from cached hostfile</span><br><span class="line">[idcv-ceph0][DEBUG ]  * base: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * epel: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ]  * extras: mirrors.neusoft.edu.cn</span><br><span class="line">[idcv-ceph0][DEBUG ]  * updates: mirrors.huaweicloud.com</span><br><span class="line">[idcv-ceph0][DEBUG ] 8 packages excluded due to repository priority protections</span><br><span class="line">[idcv-ceph0][DEBUG ] Resolving Dependencies</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-osd = 2:12.2.5-0.el7 for package: 2:ceph-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-mon = 2:12.2.5-0.el7 for package: 2:ceph-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-mgr = 2:12.2.5-0.el7 for package: 2:ceph-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-mds = 2:12.2.5-0.el7 for package: 2:ceph-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-radosgw.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-radosgw.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-selinux = 2:12.2.5-0.el7 for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: librgw2 = 2:12.2.5-0.el7 for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: librados2 = 2:12.2.5-0.el7 for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-common = 2:12.2.5-0.el7 for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: libibverbs.so.1()(64bit) for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: libceph-common.so.0()(64bit) for package: 2:ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-common.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: ceph-common = 1:10.2.10-0.el7 for package: 1:ceph-base-10.2.10-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-common.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-rbd = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: libcephfs2 = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-rgw = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-cephfs = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-rados = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: librbd1 = 2:12.2.5-0.el7 for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-prettytable for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: libcephfs.so.2()(64bit) for package: 2:ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-mds.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-mds.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-mgr.x86_64 2:12.2.5-0.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-cherrypy for package: 2:ceph-mgr-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: pyOpenSSL for package: 2:ceph-mgr-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-pecan for package: 2:ceph-mgr-12.2.5-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-mon.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-mon.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-osd.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-osd.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-selinux.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-selinux.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package libibverbs.x86_64 0:15-7.el7_5 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: rdma-core(x86-64) = 15-7.el7_5 for package: libibverbs-15-7.el7_5.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librados2.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: librados2 = 1:10.2.10-0.el7 for package: 1:rbd-nbd-10.2.10-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: librados2 = 1:10.2.10-0.el7 for package: 1:libradosstriper1-10.2.10-0.el7.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librados2.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librgw2.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librgw2.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-base.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package ceph-base.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package libcephfs1.x86_64 1:10.2.10-0.el7 will be obsoleted</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package libcephfs2.x86_64 2:12.2.5-0.el7 will be obsoleting</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package libradosstriper1.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package libradosstriper1.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librbd1.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package librbd1.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package pyOpenSSL.x86_64 0:0.13.1-3.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-cephfs.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-cephfs.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-cherrypy.noarch 0:3.2.2-4.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-pecan.noarch 0:0.4.5-2.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-webtest &gt;= 1.3.1 for package: python-pecan-0.4.5-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-webob &gt;= 1.2 for package: python-pecan-0.4.5-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-simplegeneric &gt;= 0.8 for package: python-pecan-0.4.5-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-mako &gt;= 0.4.0 for package: python-pecan-0.4.5-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-singledispatch for package: python-pecan-0.4.5-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-prettytable.noarch 0:0.7.2-3.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-rados.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-rados.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-rbd.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-rbd.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-rgw.x86_64 2:12.2.5-0.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package rbd-nbd.x86_64 1:10.2.10-0.el7 will be updated</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package rbd-nbd.x86_64 2:12.2.5-0.el7 will be an update</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package rdma-core.x86_64 0:15-7.el7_5 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: pciutils for package: rdma-core-15-7.el7_5.x86_64</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package pciutils.x86_64 0:3.5.1-3.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-mako.noarch 0:0.8.1-2.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-beaker for package: python-mako-0.8.1-2.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-simplegeneric.noarch 0:0.8-7.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-singledispatch.noarch 0:3.4.0.2-2.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-webob.noarch 0:1.2.3-7.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-webtest.noarch 0:1.3.4-6.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-beaker.noarch 0:1.5.4-10.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-paste for package: python-beaker-1.5.4-10.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-paste.noarch 0:1.7.5.1-9.20111221hg1498.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Processing Dependency: python-tempita for package: python-paste-1.7.5.1-9.20111221hg1498.el7.noarch</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Running transaction check</span><br><span class="line">[idcv-ceph0][DEBUG ] ---&gt; Package python-tempita.noarch 0:0.5.1-6.el7 will be installed</span><br><span class="line">[idcv-ceph0][DEBUG ] --&gt; Finished Dependency Resolution</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Dependencies Resolved</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ]  Package                Arch    Version                          Repository</span><br><span class="line">[idcv-ceph0][DEBUG ]                                                                            Size</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Installing:</span><br><span class="line">[idcv-ceph0][DEBUG ]  libcephfs2             x86_64  2:12.2.5-0.el7                   Ceph     432 k</span><br><span class="line">[idcv-ceph0][DEBUG ]      replacing  libcephfs1.x86_64 1:10.2.10-0.el7</span><br><span class="line">[idcv-ceph0][DEBUG ] Updating:</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph                   x86_64  2:12.2.5-0.el7                   Ceph     3.0 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-radosgw           x86_64  2:12.2.5-0.el7                   Ceph     3.8 M</span><br><span class="line">[idcv-ceph0][DEBUG ] Installing for dependencies:</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-mgr               x86_64  2:12.2.5-0.el7                   Ceph     3.6 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  libibverbs             x86_64  15-7.el7_5                       updates  224 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  pciutils               x86_64  3.5.1-3.el7                      base      93 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  pyOpenSSL              x86_64  0.13.1-3.el7                     base     133 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-beaker          noarch  1.5.4-10.el7                     base      80 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-cherrypy        noarch  3.2.2-4.el7                      base     422 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-mako            noarch  0.8.1-2.el7                      base     307 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-paste           noarch  1.7.5.1-9.20111221hg1498.el7     base     866 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-pecan           noarch  0.4.5-2.el7                      epel     255 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-prettytable     noarch  0.7.2-3.el7                      base      37 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-rgw             x86_64  2:12.2.5-0.el7                   Ceph      73 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-simplegeneric   noarch  0.8-7.el7                        epel      12 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-singledispatch  noarch  3.4.0.2-2.el7                    epel      18 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-tempita         noarch  0.5.1-6.el7                      base      33 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-webob           noarch  1.2.3-7.el7                      base     202 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-webtest         noarch  1.3.4-6.el7                      base     102 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  rdma-core              x86_64  15-7.el7_5                       updates   48 k</span><br><span class="line">[idcv-ceph0][DEBUG ] Updating for dependencies:</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-base              x86_64  2:12.2.5-0.el7                   Ceph     3.9 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-common            x86_64  2:12.2.5-0.el7                   Ceph      15 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-mds               x86_64  2:12.2.5-0.el7                   Ceph     3.6 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-mon               x86_64  2:12.2.5-0.el7                   Ceph     5.0 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-osd               x86_64  2:12.2.5-0.el7                   Ceph      13 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  ceph-selinux           x86_64  2:12.2.5-0.el7                   Ceph      20 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  librados2              x86_64  2:12.2.5-0.el7                   Ceph     2.9 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  libradosstriper1       x86_64  2:12.2.5-0.el7                   Ceph     330 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  librbd1                x86_64  2:12.2.5-0.el7                   Ceph     1.1 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  librgw2                x86_64  2:12.2.5-0.el7                   Ceph     1.7 M</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-cephfs          x86_64  2:12.2.5-0.el7                   Ceph      82 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-rados           x86_64  2:12.2.5-0.el7                   Ceph     172 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  python-rbd             x86_64  2:12.2.5-0.el7                   Ceph     105 k</span><br><span class="line">[idcv-ceph0][DEBUG ]  rbd-nbd                x86_64  2:12.2.5-0.el7                   Ceph      81 k</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Transaction Summary</span><br><span class="line">[idcv-ceph0][DEBUG ] ================================================================================</span><br><span class="line">[idcv-ceph0][DEBUG ] Install  1 Package  (+17 Dependent packages)</span><br><span class="line">[idcv-ceph0][DEBUG ] Upgrade  2 Packages (+14 Dependent packages)</span><br><span class="line">[idcv-ceph0][DEBUG ] </span><br><span class="line">[idcv-ceph0][DEBUG ] Total download size: 57 M</span><br><span class="line">[idcv-ceph0][DEBUG ] Downloading packages:</span><br><span class="line">[idcv-ceph0][DEBUG ] Delta RPMs disabled because /usr/bin/applydeltarpm not installed.</span><br><span class="line">[idcv-ceph0][WARNIN] No data was received after 300 seconds, disconnecting...</span><br><span class="line">[idcv-ceph0][INFO  ] Running command: ceph --version</span><br><span class="line">[idcv-ceph0][DEBUG ] ceph version 10.2.10 (5dc1e4c05cb68dbf62ae6fce3f0700e4654fdbbe)</span><br></pre></td></tr></table></figure>
+
+<p>报错一</p>
+<blockquote>
+<p>Delta RPMs disabled because &#x2F;usr&#x2F;bin&#x2F;applydeltarpm not installed.</p>
+</blockquote>
+<p>解决方案</p>
+<blockquote>
+<p>[root@idcv-ceph0 cluster]# yum install deltarpm -y Loaded plugins: fastestmirror, priorities Existing lock &#x2F;var&#x2F;run&#x2F;yum.pid: another copy is running as pid 90654. Another app is currently holding the yum lock; waiting for it to exit… The other application is: yum Memory : 132 M RSS (523 MB VSZ) Started: Tue Jul 10 16:15:59 2018 - 10:22 ago State : Sleeping, pid: 90654 Another app is currently holding the yum lock; waiting for it to exit… The other application is: yum Memory : 132 M RSS (523 MB VSZ) Started: Tue Jul 10 16:15:59 2018 - 10:24 ago State : Sleeping, pid: 90654 ^C Exiting on user cancel. [root@idcv-ceph0 cluster]# kill -9 90654 [root@idcv-ceph0 cluster]# yum install deltarpm -y</p>
+</blockquote>
+<p>报错二</p>
+<blockquote>
+<p>No data was received after 300 seconds, disconnecting…</p>
+</blockquote>
+<p>解决方案</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">另外需要修改ceph源为国内yum源，比如阿里yum,否则会报错No data was received after 300 seconds, disconnecting...</span><br><span class="line">[root@idcv-ceph0 cluster]# sed -i &#x27;s#download.ceph.com#mirrors.aliyun.com/ceph#g&#x27; /etc/yum.repos.d/ceph.repo</span><br><span class="line">但是命令会自动改成国外源，这里的解决方案是rpm -qa |grep cphe相关，修改成国内yum源后直接手动安装yum install或者使用ceph-deploy install服务</span><br><span class="line">[root@idcv-ceph0 ceph]# cat /etc/yum.repos.d/ceph.repo</span><br><span class="line">[Ceph]</span><br><span class="line">name=Ceph packages for $basearch</span><br><span class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-luminous/el7/$basearch</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">type=rpm-md</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc</span><br><span class="line">priority=1</span><br><span class="line"></span><br><span class="line">[Ceph-noarch]</span><br><span class="line">name=Ceph noarch packages</span><br><span class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-luminous/el7/noarch</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">type=rpm-md</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc</span><br><span class="line">priority=1</span><br><span class="line"></span><br><span class="line">[ceph-source]</span><br><span class="line">name=Ceph source packages</span><br><span class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-luminous/el7/SRPMS</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=1</span><br><span class="line">type=rpm-md</span><br><span class="line">gpgkey=https://mirrors.aliyun.com/ceph/keys/release.asc</span><br><span class="line">priority=1</span><br><span class="line">[root@idcv-ceph0 yum.repos.d]#yum -y install ceph ceph-radosgw</span><br><span class="line">[root@idcv-ceph0 yum.repos.d]# rpm -qa |grep ceph</span><br><span class="line">ceph-deploy-2.0.0-0.noarch</span><br><span class="line">libcephfs2-12.2.5-0.el7.x86_64</span><br><span class="line">python-cephfs-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-selinux-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-radosgw-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-release-1-1.el7.noarch</span><br><span class="line">ceph-base-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-mon-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-osd-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-common-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-mds-12.2.5-0.el7.x86_64</span><br><span class="line">ceph-mgr-12.2.5-0.el7.x86_64</span><br><span class="line">[root@idcv-ceph0 yum.repos.d]# ceph -s</span><br><span class="line">    cluster 812d3acb-eaa8-4355-9a74-64f2cd5209b3</span><br><span class="line">     health HEALTH_WARN</span><br><span class="line">            noout flag(s) set</span><br><span class="line">     monmap e2: 3 mons at &#123;idcv-ceph0=172.20.1.138:6789/0,idcv-ceph2=172.20.1.140:6789/0,idcv-ceph3=172.20.1.141:6789/0&#125;</span><br><span class="line">            election epoch 8, quorum 0,1,2 idcv-ceph0,idcv-ceph2,idcv-ceph3</span><br><span class="line">     osdmap e49: 4 osds: 4 up, 4 in</span><br><span class="line">            flags noout,sortbitwise,require_jewel_osds</span><br><span class="line">      pgmap v53473: 272 pgs, 12 pools, 97496 MB data, 1785 kobjects</span><br><span class="line">            296 GB used, 84819 MB / 379 GB avail</span><br><span class="line">                 272 active+clean</span><br></pre></td></tr></table></figure>
+
+<p>6、在每一个监控节点，需要重启mon服务，命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@idcv-ceph0 cluster]# systemctl restart ceph-mon.target</span><br><span class="line">[root@idcv-ceph0 cluster]# systemctl status ceph-mon.target</span><br><span class="line">● ceph-mon.target - ceph target allowing to start/stop all ceph-mon@.service instances at once</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/ceph-mon.target; enabled; vendor preset: enabled)</span><br><span class="line">   Active: active since Tue 2018-07-10 17:27:39 CST; 11s agoJul 10 17:27:39 idcv-ceph0 systemd[1]: Reached target ceph target allowing to start/stop all ceph-mon@.service instances at once.</span><br><span class="line">Jul 10 17:27:39 idcv-ceph0 systemd[1]: Starting ceph target allowing to start/stop all ceph-mon@.service instances at once.</span><br><span class="line">[root@idcv-ceph0 cluster]# ceph -v</span><br><span class="line">ceph version 12.2.5 (cad919881333ac92274171586c827e01f554a70a) luminous (stable)</span><br><span class="line">[root@idcv-ceph0 cluster]# ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     812d3acb-eaa8-4355-9a74-64f2cd5209b3</span><br><span class="line">    health: HEALTH_WARN</span><br><span class="line">            too many PGs per OSD (204 &gt; max 200)</span><br><span class="line">            noout flag(s) set</span><br><span class="line"></span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum idcv-ceph0,idcv-ceph2,idcv-ceph3</span><br><span class="line">    mgr: no daemons active</span><br><span class="line">    osd: 4 osds: 4 up, 4 in</span><br><span class="line">         flags noout</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    pools:   12 pools, 272 pgs</span><br><span class="line">    objects: 1785k objects, 97496 MB</span><br><span class="line">    usage:   296 GB used, 84817 MB / 379 GB avail</span><br><span class="line">    pgs:     272 active+clean</span><br></pre></td></tr></table></figure>
+
+
+<p>7、在Kraken版本里，曾介绍过有一个Ceph管理器，在Luninous版本之后，这个ceph-mgr进程是日常操作必须的，而在Kraken版本时可选的。所以我的Jewel集群里没有这个管理区，在这里我们必须要安装它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\[root@idcv-ceph0 cluster\]# ceph-deploy mgr create idcv-ceph0 idcv-ceph1 idcv-ceph2 idcv-ceph3 \[ceph\_deploy.conf\]\[DEBUG \] found configuration file at: /root/.cephdeploy.conf \[ceph\_deploy.cli\]\[INFO \] Invoked (2.0.0): /usr/bin/ceph-deploy mgr create idcv-ceph0 idcv-ceph1 idcv-ceph2 idcv-ceph3 \[ceph\_deploy.cli\]\[INFO \] ceph-deploy options: \[ceph\_deploy.cli\]\[INFO \] username : None \[ceph\_deploy.cli\]\[INFO \] verbose : False \[ceph\_deploy.cli\]\[INFO \] mgr : \[(&#x27;idcv-ceph0&#x27;, &#x27;idcv-ceph0&#x27;), (&#x27;idcv-ceph1&#x27;, &#x27;idcv-ceph1&#x27;), (&#x27;idcv-ceph2&#x27;, &#x27;idcv-ceph2&#x27;), (&#x27;idcv-ceph3&#x27;, &#x27;idcv-ceph3&#x27;)\] \[ceph\_deploy.cli\]\[INFO \] overwrite\_conf : False \[ceph\_deploy.cli\]\[INFO \] subcommand : create \[ceph\_deploy.cli\]\[INFO \] quiet : False \[ceph\_deploy.cli\]\[INFO \] cd\_conf : &lt;ceph\_deploy.conf.cephdeploy.Conf instance at 0x7f229723e320&gt; \[ceph\_deploy.cli\]\[INFO \] cluster : ceph \[ceph\_deploy.cli\]\[INFO \] func : \[ceph\_deploy.cli\]\[INFO \] ceph\_conf : None \[ceph\_deploy.cli\]\[INFO \] default\_release : False \[ceph\_deploy.mgr\]\[DEBUG \] Deploying mgr, cluster ceph hosts idcv-ceph0:idcv-ceph0 idcv-ceph1:idcv-ceph1 idcv-ceph2:idcv-ceph2 idcv-ceph3:idcv-ceph3 \[idcv-ceph0\]\[DEBUG \] connected to host: idcv-ceph0 \[idcv-ceph0\]\[DEBUG \] detect platform information from remote host \[idcv-ceph0\]\[DEBUG \] detect machine type \[ceph\_deploy.mgr\]\[INFO \] Distro info: CentOS Linux 7.5.1804 Core \[ceph\_deploy.mgr\]\[DEBUG \] remote host will use systemd \[ceph\_deploy.mgr\]\[DEBUG \] deploying mgr bootstrap to idcv-ceph0 \[idcv-ceph0\]\[DEBUG \] write cluster configuration to /etc/ceph/&#123;cluster&#125;.conf \[idcv-ceph0\]\[WARNIN\] mgr keyring does not exist yet, creating one \[idcv-ceph0\]\[DEBUG \] create a keyring file \[idcv-ceph0\]\[DEBUG \] create path recursively if it doesn&#x27;t exist \[idcv-ceph0\]\[INFO \] Running command: ceph --cluster ceph --name client.bootstrap-mgr --keyring /var/lib/ceph/bootstrap-mgr/ceph.keyring auth get-or-create mgr.idcv-ceph0 mon allow profile mgr osd allow \* mds allow \* -o /var/lib/ceph/mgr/ceph-idcv-ceph0/keyring \[idcv-ceph0\]\[INFO \] Running command: systemctl enable ceph-mgr@idcv-ceph0 \[idcv-ceph0\]\[WARNIN\] Created symlink from /etc/systemd/system/ceph-mgr.target.wants/ceph-mgr@idcv-ceph0.service to /usr/lib/systemd/system/ceph-mgr@.service. \[idcv-ceph0\]\[INFO \] Running command: systemctl start ceph-mgr@idcv-ceph0 \[idcv-ceph0\]\[INFO \] Running command: systemctl enable ceph.target \[idcv-ceph1\]\[DEBUG \] connection detected need for sudo \[idcv-ceph1\]\[DEBUG \] connected to host: idcv-ceph1 \[idcv-ceph1\]\[DEBUG \] detect platform information from remote host \[idcv-ceph1\]\[DEBUG \] detect machine type \[ceph\_deploy.mgr\]\[INFO \] Distro info: CentOS Linux 7.5.1804 Core \[ceph\_deploy.mgr\]\[DEBUG \] remote host will use systemd \[ceph\_deploy.mgr\]\[DEBUG \] deploying mgr bootstrap to idcv-ceph1 \[idcv-ceph1\]\[DEBUG \] write cluster configuration to /etc/ceph/&#123;cluster&#125;.conf \[idcv-ceph1\]\[WARNIN\] mgr keyring does not exist yet, creating one \[idcv-ceph1\]\[DEBUG \] create a keyring file \[idcv-ceph1\]\[DEBUG \] create path recursively if it doesn&#x27;t exist \[idcv-ceph1\]\[INFO \] Running command: sudo ceph --cluster ceph --name client.bootstrap-mgr --keyring /var/lib/ceph/bootstrap-mgr/ceph.keyring auth get-or-create mgr.idcv-ceph1 mon allow profile mgr osd allow \* mds allow \* -o /var/lib/ceph/mgr/ceph-idcv-ceph1/keyring \[idcv-ceph1\]\[INFO \] Running command: sudo systemctl enable ceph-mgr@idcv-ceph1 \[idcv-ceph1\]\[WARNIN\] Created symlink from /etc/systemd/system/ceph-mgr.target.wants/ceph-mgr@idcv-ceph1.service to /usr/lib/systemd/system/ceph-mgr@.service. \[idcv-ceph1\]\[INFO \] Running command: sudo systemctl start ceph-mgr@idcv-ceph1 \[idcv-ceph1\]\[INFO \] Running command: sudo systemctl enable ceph.target \[idcv-ceph2\]\[DEBUG \] connection detected need for sudo \[idcv-ceph2\]\[DEBUG \] connected to host: idcv-ceph2 \[idcv-ceph2\]\[DEBUG \] detect platform information from remote host \[idcv-ceph2\]\[DEBUG \] detect machine type \[ceph\_deploy.mgr\]\[INFO \] Distro info: CentOS Linux 7.5.1804 Core \[ceph\_deploy.mgr\]\[DEBUG \] remote host will use systemd \[ceph\_deploy.mgr\]\[DEBUG \] deploying mgr bootstrap to idcv-ceph2 \[idcv-ceph2\]\[DEBUG \] write cluster configuration to /etc/ceph/&#123;cluster&#125;.conf \[idcv-ceph2\]\[WARNIN\] mgr keyring does not exist yet, creating one \[idcv-ceph2\]\[DEBUG \] create a keyring file \[idcv-ceph2\]\[DEBUG \] create path recursively if it doesn&#x27;t exist \[idcv-ceph2\]\[INFO \] Running command: sudo ceph --cluster ceph --name client.bootstrap-mgr --keyring /var/lib/ceph/bootstrap-mgr/ceph.keyring auth get-or-create mgr.idcv-ceph2 mon allow profile mgr osd allow \* mds allow \* -o /var/lib/ceph/mgr/ceph-idcv-ceph2/keyring \[idcv-ceph2\]\[INFO \] Running command: sudo systemctl enable ceph-mgr@idcv-ceph2 \[idcv-ceph2\]\[WARNIN\] Created symlink from /etc/systemd/system/ceph-mgr.target.wants/ceph-mgr@idcv-ceph2.service to /usr/lib/systemd/system/ceph-mgr@.service. \[idcv-ceph2\]\[INFO \] Running command: sudo systemctl start ceph-mgr@idcv-ceph2 \[idcv-ceph2\]\[INFO \] Running command: sudo systemctl enable ceph.target \[idcv-ceph3\]\[DEBUG \] connection detected need for sudo \[idcv-ceph3\]\[DEBUG \] connected to host: idcv-ceph3 \[idcv-ceph3\]\[DEBUG \] detect platform information from remote host \[idcv-ceph3\]\[DEBUG \] detect machine type \[ceph\_deploy.mgr\]\[INFO \] Distro info: CentOS Linux 7.5.1804 Core \[ceph\_deploy.mgr\]\[DEBUG \] remote host will use systemd \[ceph\_deploy.mgr\]\[DEBUG \] deploying mgr bootstrap to idcv-ceph3 \[idcv-ceph3\]\[DEBUG \] write cluster configuration to /etc/ceph/&#123;cluster&#125;.conf \[idcv-ceph3\]\[WARNIN\] mgr keyring does not exist yet, creating one \[idcv-ceph3\]\[DEBUG \] create a keyring file \[idcv-ceph3\]\[DEBUG \] create path recursively if it doesn&#x27;t exist \[idcv-ceph3\]\[INFO \] Running command: sudo ceph --cluster ceph --name client.bootstrap-mgr --keyring /var/lib/ceph/bootstrap-mgr/ceph.keyring auth get-or-create mgr.idcv-ceph3 mon allow profile mgr osd allow \* mds allow \* -o /var/lib/ceph/mgr/ceph-idcv-ceph3/keyring \[idcv-ceph3\]\[INFO \] Running command: sudo systemctl enable ceph-mgr@idcv-ceph3 \[idcv-ceph3\]\[WARNIN\] Created symlink from /etc/systemd/system/ceph-mgr.target.wants/ceph-mgr@idcv-ceph3.service to /usr/lib/systemd/system/ceph-mgr@.service. \[idcv-ceph3\]\[INFO \] Running command: sudo systemctl start ceph-mgr@idcv-ceph3 \[idcv-ceph3\]\[INFO \] Running command: sudo systemctl enable ceph.target \[root@idcv-ceph0 cluster\]# ceph -s cluster: id: 812d3acb-eaa8-4355-9a74-64f2cd5209b3 health: HEALTH\_WARN too many PGs per OSD (204 &gt; max 200) noout flag(s) set</span><br><span class="line"></span><br><span class="line">services: mon: 3 daemons, quorum idcv-ceph0,idcv-ceph2,idcv-ceph3 mgr: idcv-ceph0(active), standbys: idcv-ceph1, idcv-ceph2, idcv-ceph3 osd: 4 osds: 4 up, 4 in flags noout</span><br><span class="line"></span><br><span class="line">data: pools: 12 pools, 272 pgs objects: 1785k objects, 97496 MB usage: 296 GB used, 84816 MB / 379 GB avail pgs: 272 active+clean</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>8、重启osd<br>前题是所有节点都修改了国内L版本yum源第6步骤又介绍，执行了yum -y install ceph ceph-radosgw，他会升级二进制文件</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph]#systemctl restart ceph-osd.target<br>[root@idcv-ceph0 ceph]# ceph versions<br>{<br>    “mon”: {<br>        “ceph version 12.2.5 (cad919881333ac92274171586c827e01f554a70a) luminous (stable)”: 3<br>    },<br>    “mgr”: {<br>        “ceph version 12.2.5 (cad919881333ac92274171586c827e01f554a70a) luminous (stable)”: 4<br>    },<br>    “osd”: {<br>        “ceph version 12.2.5 (cad919881333ac92274171586c827e01f554a70a) luminous (stable)”: 4<br>    },<br>    “mds”: {},<br>    “overall”: {<br>        “ceph version 12.2.5 (cad919881333ac92274171586c827e01f554a70a) luminous (stable)”: 11<br>    }<br>}</p>
+</blockquote>
+<p>9、现在所有的组件都是最新的12.5版本了，我们可以禁止Luminous版本之前的OSD，运行Luminous的独有功能：</p>
+<blockquote>
+<p>[root@idcv-ceph0 ceph]# ceph osd require-osd-release luminous<br>recovery_deletes is set</p>
+</blockquote>
+<p>这也意味着现在只有Luminous节点才能加入这个集群了。</p>
+<p>10、rgw服务也需要重启在ceph1上</p>
+<blockquote>
+<p>[root@idcv-ceph1 system]# systemctl restart ceph-radosgw.target<br>[root@idcv-ceph1 system]# systemctl status ceph-radosgw.target<br>● ceph-radosgw.target - ceph target allowing to start&#x2F;stop all ceph-radosgw@.service instances at once<br>   Loaded: loaded (&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;ceph-radosgw.target; enabled; vendor preset: enabled)<br>   Active: active since Tue 2018-07-10 18:02:25 CST; 6s ago<br>Jul 10 18:02:25 idcv-ceph1 systemd[1]: Reached target ceph target allowing to start&#x2F;stop all ceph-radosgw@.service instances at once.<br>Jul 10 18:02:25 idcv-ceph1 systemd[1]: Starting ceph target allowing to start&#x2F;stop all ceph-radosgw@.service instances at once.</p>
+</blockquote>
+<p>11、启动dashboard</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\[root@idcv-ceph0 ceph\]# rpm -qa |grep mgr ceph-mgr-12.2.5-0.el7.x86\_64 \[root@idcv-ceph0 ceph\]# ceph mgr module enable dashboard  </span><br><span class="line">\[root@idcv-ceph0 ceph\]# ceph mgr dump &#123; &quot;epoch&quot;: 53, &quot;active\_gid&quot;: 34146, &quot;active\_name&quot;: &quot;idcv-ceph0&quot;, &quot;active\_addr&quot;: &quot;172.20.1.138:6804/95951&quot;, &quot;available&quot;: true, &quot;standbys&quot;: \[ &#123; &quot;gid&quot;: 44129, &quot;name&quot;: &quot;idcv-ceph2&quot;, &quot;available\_modules&quot;: \[ &quot;balancer&quot;, &quot;dashboard&quot;, &quot;influx&quot;, &quot;localpool&quot;, &quot;prometheus&quot;, &quot;restful&quot;, &quot;selftest&quot;, &quot;status&quot;, &quot;zabbix&quot; \] &#125;, &#123; &quot;gid&quot;: 44134, &quot;name&quot;: &quot;idcv-ceph1&quot;, &quot;available\_modules&quot;: \[ &quot;balancer&quot;, &quot;dashboard&quot;, &quot;influx&quot;, &quot;localpool&quot;, &quot;prometheus&quot;, &quot;restful&quot;, &quot;selftest&quot;, &quot;status&quot;, &quot;zabbix&quot; \] &#125;, &#123; &quot;gid&quot;: 44135, &quot;name&quot;: &quot;idcv-ceph3&quot;, &quot;available\_modules&quot;: \[ &quot;balancer&quot;, &quot;dashboard&quot;, &quot;influx&quot;, &quot;localpool&quot;, &quot;prometheus&quot;, &quot;restful&quot;, &quot;selftest&quot;, &quot;status&quot;, &quot;zabbix&quot; \] &#125; \], &quot;modules&quot;: \[ &quot;balancer&quot;, &quot;dashboard&quot;, &quot;restful&quot;, &quot;status&quot; \], &quot;available\_modules&quot;: \[ &quot;balancer&quot;, &quot;dashboard&quot;, &quot;influx&quot;, &quot;localpool&quot;, &quot;prometheus&quot;, &quot;restful&quot;, &quot;selftest&quot;, &quot;status&quot;, &quot;zabbix&quot; \], &quot;services&quot;: &#123; &quot;dashboard&quot;: &quot;http://idcv-ceph0:7000/&quot; &#125; &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>浏览器访问<a target="_blank" rel="noopener" href="http://172.20.1.138:7000/">http://172.20.1.138:7000</a></p>
+<blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/7535971-b0a2d62a6fa79789.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+</blockquote>
+<p>12、最后一步，禁止noot，以后集群就可以在需要的时候自己做负载均衡了：</p>
+<pre><code>
+\[root@idcv-ceph0 ceph\]# ceph osd unset noout noout is unset \[root@idcv-ceph0 ceph\]# ceph -s cluster: id: 812d3acb-eaa8-4355-9a74-64f2cd5209b3 health: HEALTH\_WARN application not enabled on 1 pool(s)
+
+services: mon: 3 daemons, quorum idcv-ceph0,idcv-ceph2,idcv-ceph3 mgr: idcv-ceph0(active), standbys: idcv-ceph2, idcv-ceph1, idcv-ceph3 osd: 4 osds: 4 up, 4 in rgw: 1 daemon active
+
+data: pools: 12 pools, 272 pgs objects: 1785k objects, 97496 MB usage: 296 GB used, 84830 MB / 379 GB avail pgs: 272 active+clean
+
+io: client: 0 B/s rd, 0 op/s rd, 0 op/s wr
+
+报错 health: HEALTH\_WARN application not enabled on 1 pool(s)
+
+解决方案 \[root@idcv-ceph0 ceph\]# ceph health detail HEALTH\_WARN application not enabled on 1 pool(s) POOL\_APP\_NOT\_ENABLED application not enabled on 1 pool(s) application not enabled on pool &#39;test\_pool&#39; use &#39;ceph osd pool application enable &#39;, where is &#39;cephfs&#39;, &#39;rbd&#39;, &#39;rgw&#39;, or freeform for custom applications. \[root@idcv-ceph0 ceph\]# ceph osd pool application enable test\_pool Invalid command: missing required parameter app(&lt;string(goodchars \[A-Za-z0-9-\_.\])&gt;) osd pool application enable &#123;--yes-i-really-mean-it&#125; : enable use of an application \[cephfs,rbd,rgw\] on pool Error EINVAL: invalid command \[root@idcv-ceph0 ceph\]# ceph osd pool application enable test\_pool rbd enabled application &#39;rbd&#39; on pool &#39;test\_pool&#39; \[root@idcv-ceph0 ceph\]# ceph -s cluster: id: 812d3acb-eaa8-4355-9a74-64f2cd5209b3 health: HEALTH\_OK
+
+services: mon: 3 daemons, quorum idcv-ceph0,idcv-ceph2,idcv-ceph3 mgr: idcv-ceph0(active), standbys: idcv-ceph2, idcv-ceph1, idcv-ceph3 osd: 4 osds: 4 up, 4 in rgw: 1 daemon active
+
+data: pools: 12 pools, 272 pgs objects: 1785k objects, 97496 MB usage: 296 GB used, 84829 MB / 379 GB avail pgs: 272 active+clean
+
+io: client: 0 B/s rd, 0 op/s rd, 0 op/s wr \`\`\`
+
+### **总结**
+
+整个升级过程大概1个多小时，主要是结合国内情况否则升级还是比较简单的，另外L版本新增了mgr和dashboard功能，升级完成后测试了对象存储功能和块存储功能都正常。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ceph/" rel="tag"># ceph</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/06/2018/12/2018-12-06-jewel%E7%89%88%E6%9C%ACceph%E9%9B%86%E7%BE%A4%E5%8A%9F%E8%83%BD%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/index/" rel="prev" title="Jewel版本Ceph集群功能性能测试">
+      <i class="fa fa-chevron-left"></i> Jewel版本Ceph集群功能性能测试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/06/2018/12/2018-12-06-centos-7-5%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2jewel%E7%89%88%E6%9C%ACceph%E9%9B%86%E7%BE%A4/index/" rel="next" title="CentOS-7-5安装部署Jewel版本Ceph集群">
+      CentOS-7-5安装部署Jewel版本Ceph集群 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%98%E8%B5%B7"><span class="nav-number">2.</span> <span class="nav-text">缘起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">升级过程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

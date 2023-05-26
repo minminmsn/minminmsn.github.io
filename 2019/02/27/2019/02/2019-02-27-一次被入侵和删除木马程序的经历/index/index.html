@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="首先剧透一下后门木马如下：  （当然这是事后平静下来后慢慢搜出来的，那个时候喝着咖啡感觉像个自由人） 木马名称 Linux.BackDoor.Gates.5 http:&#x2F;&#x2F;forum.antichat.ru&#x2F;threads&#x2F;413337&#x2F;  首先是下午14点左右有几台服务器出现流量超高，平时只有几百M的流量，那时候发现流量上G了，达到这个量第一感觉就是遭受了DDOS流量攻击，那时候手上的服务器比较">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次被入侵和删除木马程序的经历">
+<meta property="og:url" content="https://minminmsn.github.io/2019/02/27/2019/02/2019-02-27-%E4%B8%80%E6%AC%A1%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%92%8C%E5%88%A0%E9%99%A4%E6%9C%A8%E9%A9%AC%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%8F%E5%8E%86/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="首先剧透一下后门木马如下：  （当然这是事后平静下来后慢慢搜出来的，那个时候喝着咖啡感觉像个自由人） 木马名称 Linux.BackDoor.Gates.5 http:&#x2F;&#x2F;forum.antichat.ru&#x2F;threads&#x2F;413337&#x2F;  首先是下午14点左右有几台服务器出现流量超高，平时只有几百M的流量，那时候发现流量上G了，达到这个量第一感觉就是遭受了DDOS流量攻击，那时候手上的服务器比较">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-02-27T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.302Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="op">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/02/27/2019/02/2019-02-27-%E4%B8%80%E6%AC%A1%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%92%8C%E5%88%A0%E9%99%A4%E6%9C%A8%E9%A9%AC%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%8F%E5%8E%86/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>一次被入侵和删除木马程序的经历 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/02/27/2019/02/2019-02-27-%E4%B8%80%E6%AC%A1%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%92%8C%E5%88%A0%E9%99%A4%E6%9C%A8%E9%A9%AC%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%8F%E5%8E%86/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一次被入侵和删除木马程序的经历
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-27 08:00:00" itemprop="dateCreated datePublished" datetime="2019-02-27T08:00:00+08:00">2019-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>首先剧透一下后门木马如下：</strong></p>
+<blockquote>
+<p>（当然这是事后平静下来后慢慢搜出来的，那个时候喝着咖啡感觉像个自由人） 木马名称 Linux.BackDoor.Gates.5 <a target="_blank" rel="noopener" href="http://forum.antichat.ru/threads/413337/">http://forum.antichat.ru/threads/413337/</a></p>
+</blockquote>
+<p>首先是下午14点左右有几台服务器出现流量超高，平时只有几百M的流量，那时候发现流量上G了，达到这个量第一感觉就是遭受了DDOS流量攻击，那时候手上的服务器比较多，出现几台并没有放在眼里，觉得查查就可以出来结果。随便说一句为了达到最好的性能，我们这些服务器都没有开防火墙（包括硬件及iptables），也就是服务器一直处于裸奔的状态。这些服务器裸奔了几年一直没有出现问题，看来linux服务器安全这块还是挺让人满意的。</p>
+<p>开始也没有什么头绪，就是ps查进程啊，netstat查端口号，iftop查流量，估计大家一开始出现这种情况都是这样操作，又得剧透下（这样做估计也是黑客希望的，显然他们对我等非常了解哈），一时也没发现什么异常，只是iftop发现我们的服务器一直向外大量发包，对某个IP的流量能到达600多M,这时我们意识到服务器被黑了，但是只是当成了肉鸡，去攻击别的服务器，当然攻击的IP也是一直在变化的，就好像有人在远程控制一样。</p>
+<p>转眼都快到下班时间了，这时大概有3台服务器有这种的情况，此时大家把各自了解的情况汇总了一下:</p>
+<ul>
+<li><p>a、&#x2F;bin&#x2F;ps,&#x2F;bin&#x2F;netsta程序都是1.2M的大小，显然是被人掉包了</p>
+</li>
+<li><p>b、&#x2F;usr&#x2F;bin&#x2F;.dbus-daemon–system 进程还带了一个点，跟哪个不带点的很像，但终归是假的，你咋不给真的删掉替换呢，看来写这种程序的人法律意识很强，要不然程序推广起来了，死了一大片CIA会放过他吗</p>
+</li>
+<li><p>c、&#x2F;etc&#x2F;rc.local权限改了，而且添加了一个开机启动项</p>
+</li>
+<li><p>d、lsattr、chattr命令删除了</p>
+</li>
+<li><p>e 、进程杀掉了立即又起来了这点很让人头痛</p>
+</li>
+<li><p>f、找到了一些最近修改的文件，显然这些都是黑客留下的</p>
+</li>
+<li><p>g、开机自动启动文件增加2个启动项</p>
+</li>
+</ul>
+<p>刚开始进程杀了又起来，文件删了又自动生成，线上环境又没有防火墙配置，无奈之下只好想了一个怪招，把&#x2F;bin&#x2F;bash重命名一下，果然流量下来了，这种杀敌1万自损8千的招果然有用。</p>
+<p>其实这时候还没有找到真正的木马，但是已经有时间去分析查找病毒源了，这3台其中两台修改了bash名字，突然断开了，这样就登陆不了，只好重装系统了。后来这台我就慢慢查找了，差不多都找到了，然后删除。这时心情大好，准备写博文记录一下，毕竟这是线上环境第一次遭遇木马。</p>
+<p>大概22点的时候，博文写了一半，突然又接到故障，这次一下子又7台服务器出故障了，好心情一下子没了，原来那3台只是个开场白，真正的战斗还没有开始。所以后面的博客是续上的，调调要是有些不一样将就的看吧。</p>
+<p>由于这段时间网上查了些资料，慢慢的对这个木马熟悉起来了。这时我上传了一些正常的二进制程序如：ls，netstat,chattr,lsattr这样用自动的程序一下子就查到了木马程序，我分析了一下，这些木马程序名字变着花样来，但万变不离其宗，名字都写在&#x2F;etc&#x2F;rc.d&#x2F;init.d&#x2F;DbSecuritySpt和&#x2F;etc&#x2F;rc.d&#x2F;init.d&#x2F;selinux里面，而且名字和正常的服务很像。</p>
+<p>有&#x2F;usr&#x2F;local&#x2F;zabbix&#x2F;sbin&#x2F;zabbix_AgentD、&#x2F;usr&#x2F;bin&#x2F;bsd-port&#x2F;getty、&#x2F;usr&#x2F;bin&#x2F;dpkgd&#x2F;ps、&#x2F;usr&#x2F;bin&#x2F;.dbus-daemon–system、&#x2F;usr&#x2F;bin&#x2F;.sshd、&#x2F;usr&#x2F;bin&#x2F;sshd反正你系统有什么类似的进程在运行，他就改成差不多的来迷惑你，其实他们都是一个程序大小也一样。</p>
+<p>现在就是删除这些文件，杀死这些进程，说个小插曲由于某台服务器漏掉了一些没有删，第二天有激活了，这些东西当你用上面的命令时就可以激活，所以要千万小心仔细。在大概凌晨4点多的时候这7台服务器的木马清理了差不多了，现在综合总结了大概步骤如下：</p>
+<p><strong>0，简单判断有无木马</strong> 有无下列文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/rc.d/init.d/selinux</span><br><span class="line">cat /etc/rc.d/init.d/DbSecuritySpt</span><br><span class="line">ls /usr/bin/bsd-port </span><br><span class="line">ls /usr/bin/dpkgd</span><br></pre></td></tr></table></figure>
+
+<p>查看大小是否正常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ls -lh /bin/netstat</span><br><span class="line">ls -lh /bin/ps</span><br><span class="line">ls -lh /usr/sbin/lsof</span><br><span class="line">ls -lh /usr/sbin/ss</span><br></pre></td></tr></table></figure>
+
+<p><strong>1，上传如下命令到&#x2F;root下</strong> lsattr chattr ps netstat ss lsof</p>
+<p><strong>2，删除如下目录及文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /usr/bin/dpkgd  （ps netstat lsof ss）</span><br><span class="line">rm -rf /usr/bin/bsd-port  (木马程序）</span><br><span class="line">rm -f  /usr/local/zabbix/sbin/zabbix_AgentD （木马程序）</span><br><span class="line">rm -f  /usr/local/zabbix/sbin/conf.n</span><br><span class="line">rm -f  /usr/bin/.sshd </span><br><span class="line">rm -f  /usr/bin/sshd </span><br><span class="line">rm -f  /root/cmd.n</span><br><span class="line">rm -f  /root/conf.n</span><br><span class="line">rm -f  /root/IP</span><br><span class="line">rm -f  /tmp/gates.lod   </span><br><span class="line">rm -f  /tmp/moni.lod</span><br><span class="line">rm -f  /tmp/notify.file  程序</span><br><span class="line">rm -f  /tmp/gates.lock   进程号</span><br><span class="line">rm -f  /etc/rc.d/init.d/DbSecuritySpt（启动上述描述的那些木马变种程序）</span><br><span class="line">rm -f  /etc/rc.d/rc1.d/S97DbSecuritySpt</span><br><span class="line">rm -f  /etc/rc.d/rc2.d/S97DbSecuritySpt</span><br><span class="line">rm -f  /etc/rc.d/rc3.d/S97DbSecuritySpt</span><br><span class="line">rm -f  /etc/rc.d/rc4.d/S97DbSecuritySpt</span><br><span class="line">rm -f  /etc/rc.d/rc5.d/S97DbSecuritySpt</span><br><span class="line">rm -f  /etc/rc.d/init.d/selinux（默认是启动/usr/bin/bsd-port/getty）</span><br><span class="line">rm -f  /etc/rc.d/rc1.d/S99selinux</span><br><span class="line">rm -f  /etc/rc.d/rc2.d/S99selinux</span><br><span class="line">rm -f  /etc/rc.d/rc3.d/S99selinux</span><br><span class="line">rm -f  /etc/rc.d/rc4.d/S99selinux</span><br><span class="line">rm -f  /etc/rc.d/rc5.d/S99selinux</span><br></pre></td></tr></table></figure>
+
+<p><strong>3，找出下列程序进程号并杀死</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">top 一眼就看到那个木马cpu利用率特高</span><br><span class="line">/root/ps aux |grep -i jul29（主要是最近开启的进程）</span><br><span class="line">/root/ps aux |grep -i jul30</span><br><span class="line">/root/ps aux |grep -i jul31</span><br><span class="line">/root/ps aux |grep sshd</span><br><span class="line">/root/ps aux |grep ps</span><br><span class="line">/root/ps aux |grep getty</span><br><span class="line">/root/ps aux |grep netstat</span><br><span class="line">/root/ps aux |grep lsof</span><br><span class="line">/root/ps aux |grep ss</span><br><span class="line">/root/ps aux |grep zabbix_Agetntd</span><br><span class="line">/root/ps aux |grep .dbus</span><br></pre></td></tr></table></figure>
+
+<p>举例如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/root/ps aux |grep getty</span><br><span class="line">root      6215  0.0  0.0  93636   868 ?        Ssl  20:54   0:05 /usr/bin/bsd-port/getty</span><br><span class="line">kill 6215</span><br><span class="line">/root/ps aux |grep zabbix_AgentD</span><br><span class="line">root      2558 71.0  0.0 106052  1048 ?        Ssl  20:54 117:29 ./zabbix_AgentD</span><br><span class="line">kill 2558</span><br><span class="line">/root/ps aux |grep &quot;/dpkgd/ps&quot;</span><br><span class="line">root     11173 67.8  0.0 105924  1020 ?        Ssl  01:39   8:00 /usr/bin/dpkgd/ps -p 11148 -o comm=</span><br><span class="line">kill 11173</span><br></pre></td></tr></table></figure>
+
+<p>注意如果kill后删除后还会再出现就这样操作（破坏木马程序）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;/usr/bin/dpkgd/ps &amp;&amp; /root/chattr +i /usr/bin/dpkgd/ps</span><br><span class="line">&gt;/usr/bin/bsd-port/getty &amp;&amp; /root/chattr +i /usr/bin/bsd-port/getty</span><br></pre></td></tr></table></figure>
+
+<p><strong>4，删除含木马命令并重新安装（或者把上传的正常程序复制过去也行）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">ps</span><br><span class="line">/root/chattr  -i -a /bin/ps &amp;&amp; rm /bin/ps -f</span><br><span class="line">yum reinstall procps -y</span><br><span class="line">或</span><br><span class="line">cp /root/ps /bin</span><br><span class="line">netstat </span><br><span class="line"> /root/chattr -i -a /bin/netstat &amp;&amp; rm /bin/netstat -f</span><br><span class="line">yum reinstall net-tools    -y</span><br><span class="line">或</span><br><span class="line">cp /root/netstat /bin</span><br><span class="line">lsof</span><br><span class="line">/root/chattr  -i -a /bin/lsof &amp;&amp; rm /usr/sbin/lsof -f</span><br><span class="line">yum reinstall lsof -y</span><br><span class="line">或</span><br><span class="line">cp /root/lsof /usr/sbin</span><br><span class="line">chattr &amp;&amp; lsattr</span><br><span class="line">yum -y reinstall e2fsprogs</span><br><span class="line">ss</span><br><span class="line">/root/chattr  -i -a /usr/sbin/ss &amp;&amp; rm /usr/sbin/ss -f</span><br><span class="line">yum -y reinstall iproute</span><br><span class="line">或</span><br><span class="line">cp /root/ss /usr/sbin</span><br></pre></td></tr></table></figure>
+
+<p>修改下面两个程序的权限，这个是意外发现有的改了这两个程序的权限，让你发现了木马既不能下载正常程序也不能杀进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/killall </span><br><span class="line">/usr/bin/wget</span><br></pre></td></tr></table></figure>
+
+<p>另外他们还修改了DNS怕我们识别不了有的域名吧，想得很周到哈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/resolv.conf </span><br><span class="line">nameserver 8.8.8.8</span><br><span class="line">nameserver 8.8.4.4</span><br></pre></td></tr></table></figure>
+
+<p><strong>5,工具扫描</strong> 安装杀毒工具 安装 yum -y install clamav* 启动 service clamd restart 更新病毒库 freshclam<br>扫描方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clamscan -r /etc --max-dir-recursion=5 -l /root/etcclamav.log</span><br><span class="line">clamscan -r /bin --max-dir-recursion=5 -l /root/binclamav.log</span><br><span class="line">clamscan -r /usr --max-dir-recursion=5 -l /root/usrclamav.log</span><br><span class="line">clamscan -r  --remove  /usr/bin/bsd-port </span><br><span class="line">clamscan -r  --remove  /usr/bin/ </span><br><span class="line">clamscan -r --remove  /usr/local/zabbix/sbin</span><br><span class="line">查看日志发现</span><br><span class="line">/bin/netstat: Linux.Trojan.Agent FOUND为病毒</span><br><span class="line">grep FOUND /root/usrclamav.log</span><br><span class="line">/usr/bin/.sshd: Linux.Trojan.Agent FOUND</span><br><span class="line">/usr/sbin/ss: Linux.Trojan.Agent FOUND</span><br><span class="line">/usr/sbin/lsof: Linux.Trojan.Agent FOUND</span><br></pre></td></tr></table></figure>
+
+<p><strong>6，加强自身安全</strong> 但是此时还不知道系统入侵的原因，只能从两个方面考虑：暴力破解和系统及服务漏洞 a、yum update 更新系统（特别是bash、openssh和openssl） b、关闭一些不必要的服务 c、设置ssh普通用户登陆并用hosts.all、hosts.deny限制登陆的网段 d、记录登陆系统后操作的命令 发现有如下操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/messages</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/httpd/access_log</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/httpd/error_log</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/xferlog</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/secure</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/auth.log</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/user.log</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/wtmp</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/lastlog</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/log/btmp</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/run/utmp</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; /var/spool/mail/root</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]echo &gt; ./.bash_history</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]rm -rf /root/.bash_history</span><br><span class="line">Jul 31 00:26:37 CHN-LZ-131 logger: [euid=root]::[/root]</span><br></pre></td></tr></table></figure>
+
+<p><strong>7，木马分析</strong> 后续，我把木马程序转换成了16进制的，大概看了一眼， 发现只是一个木马并能DDOS攻击，确实没有删除服务器配置，对服务器没有造成太大的危害。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/op/" rel="tag"># op</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/24/2019/02/2019-02-24-%E4%BA%BA%E7%94%9F%E4%B9%8B%E7%99%8C/index/" rel="prev" title="人生之癌">
+      <i class="fa fa-chevron-left"></i> 人生之癌
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/03/2019/03/2019-03-03-http%E8%AF%B7%E6%B1%82%E7%9A%8411%E4%B8%AA%E5%A4%84%E7%90%86%E9%98%B6%E6%AE%B5/index/" rel="next" title="HTTP请求的11个处理阶段">
+      HTTP请求的11个处理阶段 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

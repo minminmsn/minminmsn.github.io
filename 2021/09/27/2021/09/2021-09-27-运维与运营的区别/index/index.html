@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="运维的定义百度百科上是这样解释运维的： 运维，这里指互联网运维。 一个互联网产品的生成一般经历的过程是：产品经理、需求分析、研发部门开发、测试部门测试、运维部门部署发布以及长期的运行维护。 运维，本质上是对网络、服务器、服务的生命周期各个阶段的运营与维护，在成本、稳定性、效率上达成一致可接受的状态。 运维的职责运维的职责覆盖了产品从设计到发布、运行维护、变更升级及至下线的生命周期，各个阶段的职责包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运维与运营的区别">
+<meta property="og:url" content="https://minminmsn.github.io/2021/09/27/2021/09/2021-09-27-%E8%BF%90%E7%BB%B4%E4%B8%8E%E8%BF%90%E8%90%A5%E7%9A%84%E5%8C%BA%E5%88%AB/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="运维的定义百度百科上是这样解释运维的： 运维，这里指互联网运维。 一个互联网产品的生成一般经历的过程是：产品经理、需求分析、研发部门开发、测试部门测试、运维部门部署发布以及长期的运行维护。 运维，本质上是对网络、服务器、服务的生命周期各个阶段的运营与维护，在成本、稳定性、效率上达成一致可接受的状态。 运维的职责运维的职责覆盖了产品从设计到发布、运行维护、变更升级及至下线的生命周期，各个阶段的职责包">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-09-27T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:35.278Z">
+<meta property="article:author" content="Jerry Min">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2021/09/27/2021/09/2021-09-27-%E8%BF%90%E7%BB%B4%E4%B8%8E%E8%BF%90%E8%90%A5%E7%9A%84%E5%8C%BA%E5%88%AB/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>运维与运营的区别 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2021/09/27/2021/09/2021-09-27-%E8%BF%90%E7%BB%B4%E4%B8%8E%E8%BF%90%E8%90%A5%E7%9A%84%E5%8C%BA%E5%88%AB/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          运维与运营的区别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-27 08:00:00" itemprop="dateCreated datePublished" datetime="2021-09-27T08:00:00+08:00">2021-09-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:35" itemprop="dateModified" datetime="2023-05-26T15:06:35+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/op/" itemprop="url" rel="index"><span itemprop="name">op</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="运维的定义"><a href="#运维的定义" class="headerlink" title="运维的定义"></a>运维的定义</h3><p>百度百科上是这样解释运维的： 运维，这里指互联网运维。 一个互联网产品的生成一般经历的过程是：产品经理、需求分析、研发部门开发、测试部门测试、运维部门部署发布以及长期的运行维护。 运维，本质上是对网络、服务器、服务的生命周期各个阶段的运营与维护，在成本、稳定性、效率上达成一致可接受的状态。</p>
+<h3 id="运维的职责"><a href="#运维的职责" class="headerlink" title="运维的职责"></a>运维的职责</h3><p>运维的职责覆盖了产品从设计到发布、运行维护、变更升级及至下线的生命周期，各个阶段的职责包括：</p>
+<ul>
+<li><p>产品发布前 这个阶段运维工程师的职责是参与设计并把有关运维准入，主要包括： （1） 产品的业务熟悉； （2） 产品架构设计的合理性评估，包括是否存在单点，是否可容错，是否有强耦合等，同时需要提供产品设计的合理性建议以使产品能够满足上线发布并稳定运行的基本要求； （3） 资源评估，包括所需的服务器资源、网络资源以及资源的分布等，同时把相关产品对资源预算申请的合理性，控制服务成本； （4） 资源就位，将申请的服务器及基础环境&#x2F;域名准备就位。</p>
+</li>
+<li><p>产品发布 这个阶段运维工程师负责发布的具体工作，将具体的软件和系统&#x2F;硬件资源整合形成产品并对外提供服务。 对于已在线服务的更新也属于发布范畴，这个时候的产品发布一般要保障在线发布，在不中断对外服务的情况下完成产品的升级。对于大型复杂的变更也存在中止服务部署完成后再重新提供服务的情况，但这种情况需要运维工程师通过尽可能的技术手段来避免。</p>
+</li>
+<li><p>产品运行维护 这个阶段的主要工作包括： （1） 监控：对服务运行的状态进行实时的监控，随时发现服务的运行异常和资源消耗情况；输出重要的日常服务运行报表以评估服务&#x2F;业务整体运行状况，发现服务隐患； （2） 故障处理：对服务出现的任何异常进行及时处理，尽可能避免问题的扩大化甚至中止服务。这之前运维工程师需要针对各类服务异常，如机房&#x2F;网络故障、程序bug等问题制定处理的预案，问题出现时可以自动或手动执行预案达到止损的目的。除了日常小故障外，运维工程师还需要考虑产品不同程度受损情况下的灾难恢复，包括诸如地震等不可抗力导致大规模机房故障、在线产品被删除等对产品造成致命伤害的情况。 容量管理：包括服务规模扩张后的资源评估、扩容、机房迁移、流量调度等规划和具体实施。 产品性能&#x2F;成本优化 产品对外提供服务最重要的一点是用户体验，用户体验中非常重要的是产品的可用性和响应速度。而如何用最合理的资源（如机器、带宽等）支持产品提供高可用和高速度的用户体验，这也是运维工程师的重要职责。</p>
+</li>
+<li><p>产品下线 发展良好的互联网产品将始终在线对外提供服务，但互联网产品快速迭代，也存在相当多孵化的产品最后被淘汰的情况，这些产品都需要做下线处理，这个过程运维工程师主要做好资源回收的工作，将机器&#x2F;网络等资源回收后纳入资源池中供其它服务使用。</p>
+</li>
+</ul>
+<h3 id="运营的定义"><a href="#运营的定义" class="headerlink" title="运营的定义"></a>运营的定义</h3><p>百度百科上是这样解释运营的： 运营就是对运营过程的计划、组织、实施和控制，是与产品生产和服务创造密切相关的各项管理工作的总称。从另一个角度来讲，运营管理也可以指为对生产和提供公司主要的产品和服务的系统进行设计、运行、评价和改进的管理工作。</p>
+<h3 id="运维与运营的区别"><a href="#运维与运营的区别" class="headerlink" title="运维与运营的区别"></a>运维与运营的区别</h3><p>运维的核心是基于技术的系统、平台、数据库运行维护。 运营是基于产品和用户的。 具体区别如下：</p>
+<ul>
+<li><p>1.目标不同。运维是以系统稳定运行作为导向的，而运营则是以客户价值为导向。</p>
+</li>
+<li><p>2.工作内容。运维更多指的是交付层面的内容，而运营则需要在运维的基础上具备更多的经营思维。</p>
+</li>
+<li><p>3.关注点不同，运维偏技术，而运营偏业务。</p>
+</li>
+<li><p>4.对团队要求不同，运维偏向于做，更强调技术能力；运营偏向于想，强调规划管理能力。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/30/2021/08/2021-08-30-xavier%E5%BC%80%E5%8F%91%E8%80%85%E5%B9%B3%E5%8F%B0docker%E4%B8%AD%E5%AE%89%E8%A3%85pcan/index/" rel="prev" title="Xavier开发者平台Docker中安装PCAN">
+      <i class="fa fa-chevron-left"></i> Xavier开发者平台Docker中安装PCAN
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/10/13/2021/10/2021-10-13-can%E6%80%BB%E7%BA%BF%E8%B0%83%E8%AF%95%E6%AD%A5%E9%AA%A4/index/" rel="next" title="CAN总线调试步骤">
+      CAN总线调试步骤 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">运维的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4%E7%9A%84%E8%81%8C%E8%B4%A3"><span class="nav-number">2.</span> <span class="nav-text">运维的职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%90%A5%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">运营的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4%E4%B8%8E%E8%BF%90%E8%90%A5%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">运维与运营的区别</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

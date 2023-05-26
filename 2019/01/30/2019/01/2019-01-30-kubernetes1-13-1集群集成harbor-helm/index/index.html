@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文章12345678https:&#x2F;&#x2F;github.com&#x2F;goharbor&#x2F;harbor-helmhttps:&#x2F;&#x2F;www.hi-linux.com&#x2F;posts&#x2F;14136.htmlhttps:&#x2F;&#x2F;github.com&#x2F;kubernetes-incubator&#x2F;external-storage&#x2F;tree&#x2F;master&#x2F;ceph&#x2F;rbdhttps:&#x2F;&#x2F;github.com&#x2F;kubernetes-i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes1.13.1集群集成harbor-helm">
+<meta property="og:url" content="https://minminmsn.github.io/2019/01/30/2019/01/2019-01-30-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E9%9B%86%E6%88%90harbor-helm/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文章12345678https:&#x2F;&#x2F;github.com&#x2F;goharbor&#x2F;harbor-helmhttps:&#x2F;&#x2F;www.hi-linux.com&#x2F;posts&#x2F;14136.htmlhttps:&#x2F;&#x2F;github.com&#x2F;kubernetes-incubator&#x2F;external-storage&#x2F;tree&#x2F;master&#x2F;ceph&#x2F;rbdhttps:&#x2F;&#x2F;github.com&#x2F;kubernetes-i">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c50fed828261.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c50ff0dacd5f.png">
+<meta property="article:published_time" content="2019-01-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.103Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="ceph">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="helm">
+<meta property="article:tag" content="harbor">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/5c50fed828261.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/01/30/2019/01/2019-01-30-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E9%9B%86%E6%88%90harbor-helm/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>kubernetes1.13.1集群集成harbor-helm | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/01/30/2019/01/2019-01-30-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E9%9B%86%E6%88%90harbor-helm/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes1.13.1集群集成harbor-helm
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-30 08:00:00" itemprop="dateCreated datePublished" datetime="2019-01-30T08:00:00+08:00">2019-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/goharbor/harbor-helm</span><br><span class="line">https://www.hi-linux.com/posts/14136.html</span><br><span class="line">https://github.com/kubernetes-incubator/external-storage/tree/master/ceph/rbd</span><br><span class="line">https://github.com/kubernetes-incubator/external-storage/tree/master/ceph/rbd/deploy/rbac</span><br><span class="line">https://github.com/helm/helm/issues/3130</span><br><span class="line">https://www.kancloud.cn/huyipow/kubernetes/531999</span><br><span class="line">https://www.hi-linux.com/posts/14136.html</span><br><span class="line">https://li-sen.github.io/2018/10/08/k8s%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8harbor/</span><br></pre></td></tr></table></figure>
+
+<h3 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Kubernetes cluster 1.10+</span><br><span class="line">kubernetes集群版本1.13.1</span><br><span class="line"></span><br><span class="line">Helm 2.8.0+</span><br><span class="line"></span><br><span class="line">ingress</span><br><span class="line">用于外部访问集群内部环境</span><br><span class="line"></span><br><span class="line">rbd-provisioner</span><br><span class="line">ceph rbd 客户端，可以创建、删除ceph rbd pool、image等</span><br><span class="line"></span><br><span class="line">storageclass</span><br><span class="line">用于自动创建pv与pvc</span><br><span class="line"></span><br><span class="line">ceph rbd</span><br><span class="line">ceph集群luminous版本</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h3><h5 id="一、部署rbd-provisioner"><a href="#一、部署rbd-provisioner" class="headerlink" title="一、部署rbd-provisioner"></a>一、部署rbd-provisioner</h5><p><strong>1、下载external-storage</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# git clone https://github.com/kubernetes-incubator/external-storage</span><br><span class="line">[root@elasticsearch01 yaml]# cd external-storage/ceph/rbd/deploy/rbac/</span><br><span class="line">[root@elasticsearch01 rbac]# ls</span><br><span class="line">clusterrolebinding.yaml  deployment.yaml          role.yaml                </span><br><span class="line">clusterrole.yaml         rolebinding.yaml         serviceaccount.yaml </span><br><span class="line">[root@elasticsearch01 rbac]# mkdir /k8s/yaml/volumes/rbd-provisioner</span><br><span class="line">[root@elasticsearch01 rbac]# cp * /k8s/yaml/volumes/rbd-provisioner/</span><br><span class="line">[root@elasticsearch01 rbac]# cd /k8s/yaml/volumes/rbd-provisioner/</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、创建rbd-provisioner角色、pod</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd-provisioner]# ls</span><br><span class="line">clusterrolebinding.yaml  deployment.yaml          role.yaml                </span><br><span class="line">clusterrole.yaml         rolebinding.yaml         serviceaccount.yaml      </span><br><span class="line">[root@elasticsearch01 rbd-provisioner]# kubectl create -f ./</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/rbd-provisioner created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/rbd-provisioner created</span><br><span class="line">deployment.extensions/rbd-provisioner created</span><br><span class="line">role.rbac.authorization.k8s.io/rbd-provisioner created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rbd-provisioner created</span><br><span class="line">serviceaccount/rbd-provisioner created</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、验证rbd-provisioner</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd-provisioner]# kubectl get pods</span><br><span class="line">NAME                               READY   STATUS    RESTARTS   AGE</span><br><span class="line">busybox                            1/1     Running   600        25d</span><br><span class="line">ceph-rbd-pv-pod1                   1/1     Running   10         6d23h</span><br><span class="line">jenkins-0                          1/1     Running   0          6d1h</span><br><span class="line">rbd-provisioner-67b4857bcd-xxwx5   1/1     Running   0          9s</span><br></pre></td></tr></table></figure>
+
+<h5 id="二、部署storageclass"><a href="#二、部署storageclass" class="headerlink" title="二、部署storageclass"></a>二、部署storageclass</h5><p><strong>1、修改storageclass配置</strong> 参考external-storage&#x2F;gluster&#x2F;glusterfs&#x2F;deploy&#x2F;storageclass.yaml样例根据自己情况修改，其中secretName在kubernetes集群使用ceph rbd块存储时已经创建过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 rbd-provisioner]# cat storageclass.yaml </span><br><span class="line">kind: StorageClass</span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: rbd</span><br><span class="line">provisioner: ceph.com/rbd</span><br><span class="line">parameters:</span><br><span class="line">  monitors: 10.0.4.10:6789</span><br><span class="line">  pool: rbd-k8s</span><br><span class="line">  adminId: admin</span><br><span class="line">  adminSecretNamespace: default</span><br><span class="line">  adminSecretName: ceph-secret</span><br><span class="line">  userSecretName: ceph-secret</span><br><span class="line">  userId: admin</span><br><span class="line">  userSecretNamespace: default</span><br><span class="line">  userSecretName: ceph-secret</span><br><span class="line">  imageFormat: &quot;2&quot;</span><br><span class="line">  imageFeatures: layering</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、创建storageclass rbd</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl create -f storageclass.yaml </span><br><span class="line">storageclass.storage.k8s.io/rbd created</span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get storageclasses</span><br><span class="line">NAME   PROVISIONER    AGE</span><br><span class="line">rbd    ceph.com/rbd   2m</span><br></pre></td></tr></table></figure>
+
+<h5 id="三、部署harbor-helm"><a href="#三、部署harbor-helm" class="headerlink" title="三、部署harbor-helm"></a>三、部署harbor-helm</h5><p><strong>1、下载harbor-helm 1.0.0版本的源码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 yaml]# git clone https://github.com/goharbor/harbor-helm.git</span><br><span class="line">[root@elasticsearch01 yaml]# cd harbor-helm/</span><br><span class="line">[root@elasticsearch01 harbor-helm]# git checkout 1.0.0</span><br><span class="line">[root@elasticsearch01 harbor-helm]# ls</span><br><span class="line">Chart.yaml  CONTRIBUTING.md  docs  LICENSE  README.md    templates  values.yaml</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、修改values.yaml配置</strong> 需要根据实际情况修改values.yaml配置文件，主要修改如下几个地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">admin</span><br><span class="line">登陆密码</span><br><span class="line"></span><br><span class="line">storageclass</span><br><span class="line">这里是rbd</span><br><span class="line"></span><br><span class="line">ingress</span><br><span class="line">修改自己的域名</span><br><span class="line"></span><br><span class="line">secretName</span><br><span class="line">tls的秘钥</span><br></pre></td></tr></table></figure>
+
+<p>修改后具体如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# cat values.yaml </span><br><span class="line">expose:</span><br><span class="line">  # Set the way how to expose the service. Set the type as &quot;ingress&quot;, </span><br><span class="line">  # &quot;clusterIP&quot; or &quot;nodePort&quot; and fill the information in the corresponding </span><br><span class="line">  # section</span><br><span class="line">  type: ingress</span><br><span class="line">  tls:</span><br><span class="line">    # Enable the tls or not. Note: if the type is &quot;ingress&quot; and the tls </span><br><span class="line">    # is disabled, the port must be included in the command when pull/push</span><br><span class="line">    # images. Refer to https://github.com/goharbor/harbor/issues/5291 </span><br><span class="line">    # for the detail.</span><br><span class="line">    enabled: true</span><br><span class="line">    # Fill the name of secret if you want to use your own TLS certificate</span><br><span class="line">    # and private key. The secret must contain keys named tls.crt and </span><br><span class="line">    # tls.key that contain the certificate and private key to use for TLS</span><br><span class="line">    # The certificate and private key will be generated automatically if </span><br><span class="line">    # it is not set</span><br><span class="line">    secretName: &quot;ingress-secret&quot;</span><br><span class="line">    # By default, the Notary service will use the same cert and key as</span><br><span class="line">    # described above. Fill the name of secret if you want to use a </span><br><span class="line">    # separated one. Only needed when the type is &quot;ingress&quot;.</span><br><span class="line">    notarySecretName: &quot;&quot;</span><br><span class="line">    # The commmon name used to generate the certificate, it&#x27;s necessary</span><br><span class="line">    # when the type is &quot;clusterIP&quot; or &quot;nodePort&quot; and &quot;secretName&quot; is null</span><br><span class="line">    commonName: &quot;&quot;</span><br><span class="line">  ingress:</span><br><span class="line">    hosts:</span><br><span class="line">      core: core-harbor.minminmsn.com</span><br><span class="line">      notary: notary-harbor.minminmsn.com</span><br><span class="line">    annotations:</span><br><span class="line">      ingress.kubernetes.io/ssl-redirect: &quot;true&quot;</span><br><span class="line">      nginx.ingress.kubernetes.io/ssl-redirect: &quot;true&quot;</span><br><span class="line">      ingress.kubernetes.io/proxy-body-size: &quot;0&quot;</span><br><span class="line">      nginx.ingress.kubernetes.io/proxy-body-size: &quot;0&quot;</span><br><span class="line">  clusterIP:</span><br><span class="line">    # The name of ClusterIP service</span><br><span class="line">    name: harbor</span><br><span class="line">    ports:</span><br><span class="line">      # The service port Harbor listens on when serving with HTTP</span><br><span class="line">      httpPort: 80</span><br><span class="line">      # The service port Harbor listens on when serving with HTTPS</span><br><span class="line">      httpsPort: 443</span><br><span class="line">      # The service port Notary listens on. Only needed when notary.enabled </span><br><span class="line">      # is set to true</span><br><span class="line">      notaryPort: 4443</span><br><span class="line">  nodePort:</span><br><span class="line">    # The name of NodePort service</span><br><span class="line">    name: harbor</span><br><span class="line">    ports:</span><br><span class="line">      http:</span><br><span class="line">        # The service port Harbor listens on when serving with HTTP</span><br><span class="line">        port: 80</span><br><span class="line">        # The node port Harbor listens on when serving with HTTP</span><br><span class="line">        nodePort: 30002</span><br><span class="line">      https: </span><br><span class="line">        # The service port Harbor listens on when serving with HTTPS</span><br><span class="line">        port: 443</span><br><span class="line">        # The node port Harbor listens on when serving with HTTPS</span><br><span class="line">        nodePort: 30003</span><br><span class="line">      # Only needed when notary.enabled is set to true</span><br><span class="line">      notary: </span><br><span class="line">        # The service port Notary listens on</span><br><span class="line">        port: 4443</span><br><span class="line">        # The node port Notary listens on</span><br><span class="line">        nodePort: 30004</span><br><span class="line"></span><br><span class="line"># The external URL for Harbor core service. It is used to</span><br><span class="line"># 1) populate the docker/helm commands showed on portal</span><br><span class="line"># 2) populate the token service URL returned to docker/notary client</span><br><span class="line"># </span><br><span class="line"># Format: protocol://domain[:port]. Usually:</span><br><span class="line"># 1) if &quot;expose.type&quot; is &quot;ingress&quot;, the &quot;domain&quot; should be </span><br><span class="line"># the value of &quot;expose.ingress.hosts.core&quot;</span><br><span class="line"># 2) if &quot;expose.type&quot; is &quot;clusterIP&quot;, the &quot;domain&quot; should be</span><br><span class="line"># the value of &quot;expose.clusterIP.name&quot;</span><br><span class="line"># 3) if &quot;expose.type&quot; is &quot;nodePort&quot;, the &quot;domain&quot; should be</span><br><span class="line"># the IP address of k8s node </span><br><span class="line"># </span><br><span class="line"># If Harbor is deployed behind the proxy, set it as the URL of proxy</span><br><span class="line">externalURL: https://core-harbor.minminmsn.com</span><br><span class="line"></span><br><span class="line"># The persistence is enabled by default and a default StorageClass</span><br><span class="line"># is needed in the k8s cluster to provision volumes dynamicly. </span><br><span class="line"># Specify another StorageClass in the &quot;storageClass&quot; or set &quot;existingClaim&quot;</span><br><span class="line"># if you have already existing persistent volumes to use</span><br><span class="line">#</span><br><span class="line"># For storing images and charts, you can also use &quot;azure&quot;, &quot;gcs&quot;, &quot;s3&quot;, </span><br><span class="line"># &quot;swift&quot; or &quot;oss&quot;. Set it in the &quot;imageChartStorage&quot; section</span><br><span class="line">persistence:</span><br><span class="line">  enabled: true</span><br><span class="line">  # Setting it to &quot;keep&quot; to avoid removing PVCs during a helm delete </span><br><span class="line">  # operation. Leaving it empty will delete PVCs after the chart deleted</span><br><span class="line">  resourcePolicy: &quot;keep&quot;</span><br><span class="line">  persistentVolumeClaim:</span><br><span class="line">    registry:</span><br><span class="line">      # Use the existing PVC which must be created manually before bound</span><br><span class="line">      existingClaim: &quot;&quot;</span><br><span class="line">      # Specify the &quot;storageClass&quot; used to provision the volume. Or the default</span><br><span class="line">      # StorageClass will be used(the default).</span><br><span class="line">      # Set it to &quot;-&quot; to disable dynamic provisioning</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 50Gi</span><br><span class="line">    chartmuseum:</span><br><span class="line">      existingClaim: &quot;&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 5Gi</span><br><span class="line">    jobservice:</span><br><span class="line">      existingClaim: &quot;&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 2Gi</span><br><span class="line">    # If external database is used, the following settings for database will </span><br><span class="line">    # be ignored</span><br><span class="line">    database:</span><br><span class="line">      existingClaim: &quot;&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 2Gi</span><br><span class="line">    # If external Redis is used, the following settings for Redis will </span><br><span class="line">    # be ignored</span><br><span class="line">    redis:</span><br><span class="line">      existingClaim: &quot;&quot;</span><br><span class="line">      storageClass: &quot;rbd&quot;</span><br><span class="line">      subPath: &quot;&quot;</span><br><span class="line">      accessMode: ReadWriteOnce</span><br><span class="line">      size: 2Gi</span><br><span class="line">  # Define which storage backend is used for registry and chartmuseum to store</span><br><span class="line">  # images and charts. Refer to </span><br><span class="line">  # https://github.com/docker/distribution/blob/master/docs/configuration.md#storage </span><br><span class="line">  # for the detail.</span><br><span class="line">  imageChartStorage:</span><br><span class="line">    # Specify the type of storage: &quot;filesystem&quot;, &quot;azure&quot;, &quot;gcs&quot;, &quot;s3&quot;, &quot;swift&quot;, </span><br><span class="line">    # &quot;oss&quot; and fill the information needed in the corresponding section. The type</span><br><span class="line">    # must be &quot;filesystem&quot; if you want to use persistent volumes for registry</span><br><span class="line">    # and chartmuseum</span><br><span class="line">    type: filesystem</span><br><span class="line">    filesystem:</span><br><span class="line">      rootdirectory: /storage</span><br><span class="line">      #maxthreads: 100</span><br><span class="line">    azure:</span><br><span class="line">      accountname: accountname</span><br><span class="line">      accountkey: base64encodedaccountkey</span><br><span class="line">      container: containername</span><br><span class="line">      #realm: core.windows.net</span><br><span class="line">    gcs:</span><br><span class="line">      bucket: bucketname</span><br><span class="line">      # TODO: support the keyfile of gcs</span><br><span class="line">      #keyfile: /path/to/keyfile</span><br><span class="line">      #rootdirectory: /gcs/object/name/prefix</span><br><span class="line">      #chunksize: &quot;5242880&quot;</span><br><span class="line">    s3:</span><br><span class="line">      region: us-west-1</span><br><span class="line">      bucket: bucketname</span><br><span class="line">      #accesskey: awsaccesskey</span><br><span class="line">      #secretkey: awssecretkey</span><br><span class="line">      #regionendpoint: http://myobjects.local</span><br><span class="line">      #encrypt: false</span><br><span class="line">      #keyid: mykeyid</span><br><span class="line">      #secure: true</span><br><span class="line">      #v4auth: true</span><br><span class="line">      #chunksize: &quot;5242880&quot;</span><br><span class="line">      #rootdirectory: /s3/object/name/prefix</span><br><span class="line">      #storageclass: STANDARD</span><br><span class="line">    swift:</span><br><span class="line">      authurl: https://storage.myprovider.com/v3/auth</span><br><span class="line">      username: username</span><br><span class="line">      password: password</span><br><span class="line">      container: containername</span><br><span class="line">      #region: fr</span><br><span class="line">      #tenant: tenantname</span><br><span class="line">      #tenantid: tenantid</span><br><span class="line">      #domain: domainname</span><br><span class="line">      #domainid: domainid</span><br><span class="line">      #trustid: trustid</span><br><span class="line">      #insecureskipverify: false</span><br><span class="line">      #chunksize: 5M</span><br><span class="line">      #prefix:</span><br><span class="line">      #secretkey: secretkey</span><br><span class="line">      #accesskey: accesskey</span><br><span class="line">      #authversion: 3</span><br><span class="line">      #endpointtype: public</span><br><span class="line">      #tempurlcontainerkey: false</span><br><span class="line">      #tempurlmethods:</span><br><span class="line">    oss:</span><br><span class="line">      accesskeyid: accesskeyid</span><br><span class="line">      accesskeysecret: accesskeysecret</span><br><span class="line">      region: regionname</span><br><span class="line">      bucket: bucketname</span><br><span class="line">      #endpoint: endpoint</span><br><span class="line">      #internal: false</span><br><span class="line">      #encrypt: false</span><br><span class="line">      #secure: true</span><br><span class="line">      #chunksize: 10M</span><br><span class="line">      #rootdirectory: rootdirectory</span><br><span class="line"></span><br><span class="line">imagePullPolicy: IfNotPresent</span><br><span class="line"></span><br><span class="line">logLevel: debug</span><br><span class="line"># The initial password of Harbor admin. Change it from portal after launching Harbor</span><br><span class="line">harborAdminPassword: &quot;newpassword&quot;</span><br><span class="line"># The secret key used for encryption. Must be a string of 16 chars.</span><br><span class="line">secretKey: &quot;not-a-secure-key&quot;</span><br><span class="line"></span><br><span class="line"># If expose the service via &quot;ingress&quot;, the Nginx will not be used</span><br><span class="line">nginx:</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/nginx-photon</span><br><span class="line">    tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  # resources:</span><br><span class="line">  #  requests:</span><br><span class="line">  #    memory: 256Mi</span><br><span class="line">  #    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">portal:</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/harbor-portal</span><br><span class="line">    tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line"># resources:</span><br><span class="line">#  requests:</span><br><span class="line">#    memory: 256Mi</span><br><span class="line">#    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">core:</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/harbor-core</span><br><span class="line">    tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line"># resources:</span><br><span class="line">#  requests:</span><br><span class="line">#    memory: 256Mi</span><br><span class="line">#    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">adminserver:</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/harbor-adminserver</span><br><span class="line">    tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  # resources:</span><br><span class="line">  #  requests:</span><br><span class="line">  #    memory: 256Mi</span><br><span class="line">  #    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">jobservice:</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/harbor-jobservice</span><br><span class="line">    tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  maxJobWorkers: 10</span><br><span class="line">  # The logger for jobs: &quot;file&quot;, &quot;database&quot; or &quot;stdout&quot;</span><br><span class="line">  jobLogger: file</span><br><span class="line"># resources:</span><br><span class="line">#   requests:</span><br><span class="line">#     memory: 256Mi</span><br><span class="line">#     cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">registry:</span><br><span class="line">  registry:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/registry-photon</span><br><span class="line">      tag: v2.6.2-v1.7.0</span><br><span class="line">  controller:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/harbor-registryctl</span><br><span class="line">      tag: v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  # resources:</span><br><span class="line">  #  requests:</span><br><span class="line">  #    memory: 256Mi</span><br><span class="line">  #    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">chartmuseum:</span><br><span class="line">  enabled: true</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/chartmuseum-photon</span><br><span class="line">    tag: v0.7.1-v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  # resources:</span><br><span class="line">  #  requests:</span><br><span class="line">  #    memory: 256Mi</span><br><span class="line">  #    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">clair:</span><br><span class="line">  enabled: true</span><br><span class="line">  image:</span><br><span class="line">    repository: goharbor/clair-photon</span><br><span class="line">    tag: v2.0.7-v1.7.0</span><br><span class="line">  replicas: 1</span><br><span class="line">  # The http(s) proxy used to update vulnerabilities database from internet</span><br><span class="line">  httpProxy:</span><br><span class="line">  httpsProxy:</span><br><span class="line">  # The interval of clair updaters, the unit is hour, set to 0 to </span><br><span class="line">  # disable the updaters</span><br><span class="line">  updatersInterval: 12</span><br><span class="line">  # resources:</span><br><span class="line">  #  requests:</span><br><span class="line">  #    memory: 256Mi</span><br><span class="line">  #    cpu: 100m</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">notary:</span><br><span class="line">  enabled: true</span><br><span class="line">  server:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/notary-server-photon</span><br><span class="line">      tag: v0.6.1-v1.7.0</span><br><span class="line">    replicas: 1</span><br><span class="line">  signer:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/notary-signer-photon</span><br><span class="line">      tag: v0.6.1-v1.7.0</span><br><span class="line">    replicas: 1</span><br><span class="line">  nodeSelector: &#123;&#125;</span><br><span class="line">  tolerations: []</span><br><span class="line">  affinity: &#123;&#125;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">database:</span><br><span class="line">  # if external database is used, set &quot;type&quot; to &quot;external&quot;</span><br><span class="line">  # and fill the connection informations in &quot;external&quot; section</span><br><span class="line">  type: internal</span><br><span class="line">  internal:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/harbor-db</span><br><span class="line">      tag: v1.7.0</span><br><span class="line">    # The initial superuser password for internal database</span><br><span class="line">    password: &quot;changeit&quot;</span><br><span class="line">    # resources:</span><br><span class="line">    #  requests:</span><br><span class="line">    #    memory: 256Mi</span><br><span class="line">    #    cpu: 100m</span><br><span class="line">    nodeSelector: &#123;&#125;</span><br><span class="line">    tolerations: []</span><br><span class="line">    affinity: &#123;&#125;</span><br><span class="line">  external:</span><br><span class="line">    host: &quot;192.168.0.1&quot;</span><br><span class="line">    port: &quot;5432&quot;</span><br><span class="line">    username: &quot;user&quot;</span><br><span class="line">    password: &quot;password&quot;</span><br><span class="line">    coreDatabase: &quot;registry&quot;</span><br><span class="line">    clairDatabase: &quot;clair&quot;</span><br><span class="line">    notaryServerDatabase: &quot;notary_server&quot;</span><br><span class="line">    notarySignerDatabase: &quot;notary_signer&quot;</span><br><span class="line">    sslmode: &quot;disable&quot;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br><span class="line"></span><br><span class="line">redis:</span><br><span class="line">  # if external Redis is used, set &quot;type&quot; to &quot;external&quot;</span><br><span class="line">  # and fill the connection informations in &quot;external&quot; section</span><br><span class="line">  type: internal</span><br><span class="line">  internal:</span><br><span class="line">    image:</span><br><span class="line">      repository: goharbor/redis-photon</span><br><span class="line">      tag: v1.7.0</span><br><span class="line">    # resources:</span><br><span class="line">    #  requests:</span><br><span class="line">    #    memory: 256Mi</span><br><span class="line">    #    cpu: 100m</span><br><span class="line">    nodeSelector: &#123;&#125;</span><br><span class="line">    tolerations: []</span><br><span class="line">    affinity: &#123;&#125;</span><br><span class="line">  external:</span><br><span class="line">    host: &quot;10.2.8.44&quot;</span><br><span class="line">    port: &quot;6379&quot;</span><br><span class="line">    # The &quot;coreDatabaseIndex&quot; must be &quot;0&quot; as the library Harbor</span><br><span class="line">    # used doesn&#x27;t support configuring it</span><br><span class="line">    coreDatabaseIndex: &quot;0&quot;</span><br><span class="line">    jobserviceDatabaseIndex: &quot;1&quot;</span><br><span class="line">    registryDatabaseIndex: &quot;2&quot;</span><br><span class="line">    chartmuseumDatabaseIndex: &quot;3&quot;</span><br><span class="line">    password: &quot;&quot;</span><br><span class="line">  ## Additional deployment annotations</span><br><span class="line">  podAnnotations: &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、helm 初始化安装harbor</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# helm install . --name min</span><br><span class="line">NAME:   min</span><br><span class="line">LAST DEPLOYED: Mon Jan 28 17:01:09 2019</span><br><span class="line">NAMESPACE: default</span><br><span class="line">STATUS: DEPLOYED</span><br><span class="line"></span><br><span class="line">RESOURCES:</span><br><span class="line">==&gt; v1/PersistentVolumeClaim</span><br><span class="line">NAME                    STATUS   VOLUME  CAPACITY  ACCESS MODES  STORAGECLASS  AGE</span><br><span class="line">min-harbor-chartmuseum  Pending  1s</span><br><span class="line">min-harbor-jobservice   Pending  1s</span><br><span class="line">min-harbor-registry     Pending  1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Service</span><br><span class="line">NAME                      TYPE       CLUSTER-IP      EXTERNAL-IP  PORT(S)            AGE</span><br><span class="line">min-harbor-adminserver    ClusterIP  10.254.7.52     &lt;none&gt;       80/TCP             1s</span><br><span class="line">min-harbor-chartmuseum    ClusterIP  10.254.80.86    &lt;none&gt;       80/TCP             1s</span><br><span class="line">min-harbor-clair          ClusterIP  10.254.221.71   &lt;none&gt;       6060/TCP           0s</span><br><span class="line">min-harbor-core           ClusterIP  10.254.114.190  &lt;none&gt;       80/TCP             0s</span><br><span class="line">min-harbor-database       ClusterIP  10.254.146.141  &lt;none&gt;       5432/TCP           0s</span><br><span class="line">min-harbor-jobservice     ClusterIP  10.254.21.20    &lt;none&gt;       80/TCP             0s</span><br><span class="line">min-harbor-notary-server  ClusterIP  10.254.255.218  &lt;none&gt;       4443/TCP           0s</span><br><span class="line">min-harbor-notary-signer  ClusterIP  10.254.203.88   &lt;none&gt;       7899/TCP           0s</span><br><span class="line">min-harbor-portal         ClusterIP  10.254.73.42    &lt;none&gt;       80/TCP             0s</span><br><span class="line">min-harbor-redis          ClusterIP  10.254.134.216  &lt;none&gt;       6379/TCP           0s</span><br><span class="line">min-harbor-registry       ClusterIP  10.254.69.96    &lt;none&gt;       5000/TCP,8080/TCP  0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Deployment</span><br><span class="line">NAME                      DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE</span><br><span class="line">min-harbor-adminserver    1        1        1           0          0s</span><br><span class="line">min-harbor-chartmuseum    1        1        1           0          0s</span><br><span class="line">min-harbor-clair          1        1        1           0          0s</span><br><span class="line">min-harbor-core           1        0        0           0          0s</span><br><span class="line">min-harbor-jobservice     1        0        0           0          0s</span><br><span class="line">min-harbor-notary-server  1        0        0           0          0s</span><br><span class="line">min-harbor-notary-signer  1        0        0           0          0s</span><br><span class="line">min-harbor-portal         1        0        0           0          0s</span><br><span class="line">min-harbor-registry       1        0        0           0          0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/StatefulSet</span><br><span class="line">NAME                 DESIRED  CURRENT  AGE</span><br><span class="line">min-harbor-database  1        1        0s</span><br><span class="line">min-harbor-redis     1        1        0s</span><br><span class="line"></span><br><span class="line">==&gt; v1beta1/Ingress</span><br><span class="line">NAME                HOSTS                                                    ADDRESS  PORTS  AGE</span><br><span class="line">min-harbor-ingress  core-harbor.minminmsn.com,notary-harbor.minminmsn.com  80, 443  0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Pod(related)</span><br><span class="line">NAME                                       READY  STATUS             RESTARTS  AGE</span><br><span class="line">min-harbor-adminserver-54877f95bd-45vq2    0/1    ContainerCreating  0         0s</span><br><span class="line">min-harbor-chartmuseum-7d59b659df-jkt9f    0/1    Pending            0         0s</span><br><span class="line">min-harbor-clair-69f89c644-hg6qp           0/1    ContainerCreating  0         0s</span><br><span class="line">min-harbor-core-5cdff64cc8-9vw2w           0/1    ContainerCreating  0         0s</span><br><span class="line">min-harbor-jobservice-bbdf5bbcd-qsz9h      0/1    Pending            0         0s</span><br><span class="line">min-harbor-notary-server-dcbccf89b-9gpsp   0/1    Pending            0         0s</span><br><span class="line">min-harbor-notary-signer-5d45d46d64-d4sjg  0/1    ContainerCreating  0         0s</span><br><span class="line">min-harbor-database-0                      0/1    Pending            0         0s</span><br><span class="line">min-harbor-redis-0                         0/1    Pending            0         0s</span><br><span class="line"></span><br><span class="line">==&gt; v1/Secret</span><br><span class="line">NAME                    TYPE               DATA  AGE</span><br><span class="line">min-harbor-adminserver  Opaque             4     1s</span><br><span class="line">min-harbor-chartmuseum  Opaque             1     1s</span><br><span class="line">min-harbor-core         Opaque             4     1s</span><br><span class="line">min-harbor-database     Opaque             1     1s</span><br><span class="line">min-harbor-ingress      kubernetes.io/tls  3     1s</span><br><span class="line">min-harbor-jobservice   Opaque             1     1s</span><br><span class="line">min-harbor-registry     Opaque             1     1s</span><br><span class="line"></span><br><span class="line">==&gt; v1/ConfigMap</span><br><span class="line">NAME                      DATA  AGE</span><br><span class="line">min-harbor-adminserver    39    1s</span><br><span class="line">min-harbor-chartmuseum    24    1s</span><br><span class="line">min-harbor-clair          1     1s</span><br><span class="line">min-harbor-core           1     1s</span><br><span class="line">min-harbor-jobservice     1     1s</span><br><span class="line">min-harbor-notary-server  5     1s</span><br><span class="line">min-harbor-registry       2     1s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NOTES:</span><br><span class="line">Please wait for several minutes for Harbor deployment to complete.</span><br><span class="line">Then you should be able to visit the Harbor portal at https://core-harbor.minminmsn.com. </span><br><span class="line">For more details, please visit https://github.com/goharbor/harbor.</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、验证pv与pvc</strong> 主要是pv与pvc如果没有自动创建存储的条件需要提前手动创建好pv几pvc，然后value.yaml文件里选择existingClaim，填写各自pvc的名字即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pv</span><br><span class="line">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                         STORAGECLASS   REASON   AGE</span><br><span class="line">ceph-rbd-pv                                20Gi       RWO            Recycle          Bound    default/ceph-rbd-pv-claim                                             7d1h</span><br><span class="line">jenkins-home-pv                            40Gi       RWO            Recycle          Bound    default/jenkins-home-pvc                                              6d2h</span><br><span class="line">pvc-84079273-22de-11e9-a09d-52540089b2b6   5Gi        RWO            Delete           Bound    default/min-harbor-chartmuseum                rbd                     43s</span><br><span class="line">pvc-84085284-22de-11e9-a09d-52540089b2b6   2Gi        RWO            Delete           Bound    default/min-harbor-jobservice                 rbd                     56s</span><br><span class="line">pvc-840a9404-22de-11e9-a09d-52540089b2b6   50Gi       RWO            Delete           Bound    default/min-harbor-registry                   rbd                     56s</span><br><span class="line">pvc-844d2f2d-22de-11e9-a09d-52540089b2b6   2Gi        RWO            Delete           Bound    default/database-data-min-harbor-database-0   rbd                     43s</span><br><span class="line">pvc-8455d703-22de-11e9-a09d-52540089b2b6   2Gi        RWO            Delete           Bound    default/data-min-harbor-redis-0               rbd                     43s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pvc</span><br><span class="line">NAME                                  STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">ceph-rbd-pv-claim                     Bound    ceph-rbd-pv                                20Gi       RWO                           7d1h</span><br><span class="line">data-min-harbor-redis-0               Bound    pvc-8455d703-22de-11e9-a09d-52540089b2b6   2Gi        RWO            rbd            46s</span><br><span class="line">database-data-min-harbor-database-0   Bound    pvc-844d2f2d-22de-11e9-a09d-52540089b2b6   2Gi        RWO            rbd            46s</span><br><span class="line">jenkins-home-pvc                      Bound    jenkins-home-pv                            40Gi       RWO                           6d2h</span><br><span class="line">min-harbor-chartmuseum                Bound    pvc-84079273-22de-11e9-a09d-52540089b2b6   5Gi        RWO            rbd            46s</span><br><span class="line">min-harbor-jobservice                 Bound    pvc-84085284-22de-11e9-a09d-52540089b2b6   2Gi        RWO            rbd            46s</span><br><span class="line">min-harbor-registry                   Bound    pvc-840a9404-22de-11e9-a09d-52540089b2b6   50Gi       RWO            rbd            46s</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、验证ceph rbd</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph01 ~]# rbd list rbd-k8s</span><br><span class="line">cephimage1</span><br><span class="line">cephimage2</span><br><span class="line">cephimage3</span><br><span class="line">kubernetes-dynamic-pvc-8420311c-22de-11e9-b7ec-02420afe4907</span><br><span class="line">kubernetes-dynamic-pvc-84203268-22de-11e9-b7ec-02420afe4907</span><br><span class="line">kubernetes-dynamic-pvc-8bfd862e-22de-11e9-b7ec-02420afe4907</span><br><span class="line">kubernetes-dynamic-pvc-8bfe7a4f-22de-11e9-b7ec-02420afe4907</span><br><span class="line">kubernetes-dynamic-pvc-8bfe9445-22de-11e9-b7ec-02420afe4907</span><br></pre></td></tr></table></figure>
+
+<p><strong>7、验证pods</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get pods</span><br><span class="line">NAME                                        READY   STATUS    RESTARTS   AGE</span><br><span class="line">busybox                                     1/1     Running   600        25d</span><br><span class="line">ceph-rbd-pv-pod1                            1/1     Running   10         6d23h</span><br><span class="line">jenkins-0                                   1/1     Running   0          6d2h</span><br><span class="line">min-harbor-adminserver-685ccf67d7-k6z4p     1/1     Running   1          5m10s</span><br><span class="line">min-harbor-chartmuseum-7d59b659df-nglbx     1/1     Running   0          5m10s</span><br><span class="line">min-harbor-clair-69f89c644-62428            1/1     Running   1          5m10s</span><br><span class="line">min-harbor-core-5cdd9c7bc9-z2lnd            1/1     Running   1          5m10s</span><br><span class="line">min-harbor-database-0                       1/1     Running   0          5m10s</span><br><span class="line">min-harbor-jobservice-9889c95b9-s656x       1/1     Running   0          5m10s</span><br><span class="line">min-harbor-notary-server-588bc8bf45-t7mkz   1/1     Running   0          5m10s</span><br><span class="line">min-harbor-notary-signer-6d967d4c-jhvfs     1/1     Running   0          5m10s</span><br><span class="line">min-harbor-portal-798ff99d56-vxnnx          1/1     Running   0          5m9s</span><br><span class="line">min-harbor-redis-0                          1/1     Running   0          5m10s</span><br><span class="line">min-harbor-registry-54b5cd848d-4nr95        2/2     Running   0          5m9s</span><br><span class="line">rbd-provisioner-67b4857bcd-xxwx5            1/1     Running   0          42m</span><br></pre></td></tr></table></figure>
+
+<p><strong>期间遇到各种报错可以重置helm环境</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# helm install . --name min</span><br><span class="line">helm delete --purge min</span><br><span class="line">These resources were kept due to the resource policy:</span><br><span class="line">[PersistentVolumeClaim] min-harbor-chartmuseum</span><br><span class="line">[PersistentVolumeClaim] min-harbor-jobservice</span><br><span class="line">[PersistentVolumeClaim] min-harbor-registry</span><br><span class="line"></span><br><span class="line">release &quot;min&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、访问harobr"><a href="#四、访问harobr" class="headerlink" title="四、访问harobr"></a>四、访问harobr</h3><p><strong>1、获取harbor ingress 服务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch01 harbor-helm]# kubectl get ingress</span><br><span class="line">NAME                 HOSTS                                                     ADDRESS   PORTS     AGE</span><br><span class="line">jenkins              jenkins.minminmsn.com                                              80, 443   6d2h</span><br><span class="line">min-harbor-ingress   core-harbor.minminmsn.com,notary-harbor.minminmsn.com             80, 443   6m43s</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、docker login登陆验证</strong> 注意这里docker login默认是走https协议，需要ingress的node节点443对外开放，之前部署的ingress没有启动hostNetwork为true，这里需要启动，可以通过kubectl edit deployment&#x2F;nginx-ingress-controller -n ingress-nginx修改，然后docker login就没问题了 登陆测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch02 ~]# docker login core-harbor.minminmsn.com</span><br><span class="line">Username: admin</span><br><span class="line">Password: </span><br><span class="line">WARNING! Your password will be stored unencrypted in /root/.docker/config.json.</span><br><span class="line">Configure a credential helper to remove this warning. See</span><br><span class="line">https://docs.docker.com/engine/reference/commandline/login/#credentials-store</span><br><span class="line"></span><br><span class="line">Login Succeeded</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上传下载测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@elasticsearch02 ~]# docker tag registry.cn-beijing.aliyuncs.com/minminmsn/kubernetes-dashboard:v1.10.1 core-harbor.minminmsn.com/public/kubernetes-dashboard:v1.10.1</span><br><span class="line">[root@elasticsearch02 ~]# docker push core-harbor.minminmsn.com/public/kubernetes-dashboard:v1.10.1</span><br><span class="line">The push refers to repository [core-harbor.minminmsn.com/public/kubernetes-dashboard]</span><br><span class="line">fbdfe08b001c: Pushed </span><br><span class="line">v1.10.1: digest: sha256:54cc02a35d33a5ff9f8aa1a1b43f375728bcd85034cb311bdaf5c14f48340733 size: 529</span><br><span class="line"></span><br><span class="line">[root@elasticsearch03 ~]# docker pull core-harbor.minminmsn.com/public/kubernetes-dashboard:v1.10.1</span><br><span class="line">v1.10.1: Pulling from public/kubernetes-dashboard</span><br><span class="line">Digest: sha256:54cc02a35d33a5ff9f8aa1a1b43f375728bcd85034cb311bdaf5c14f48340733</span><br><span class="line">Status: Downloaded newer image for core-harbor.minminmsn.com/public/kubernetes-dashboard:v1.10.1</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3、配置解析浏览器访问</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://core-harbor.minminmsn.com/">https://core-harbor.minminmsn.com</a> <a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/30/5c50fed828261.png"><img src="/images/5c50fed828261.png"></a> <a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/30/5c50ff0dacd5f.png"><img src="/images/5c50ff0dacd5f.png"></a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ceph/" rel="tag"># ceph</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/helm/" rel="tag"># helm</a>
+              <a href="/tags/harbor/" rel="tag"># harbor</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/27/2019/01/2019-01-27-kubernetes1-13-1%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E5%8C%85%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7helm/index/" rel="prev" title="kubernetes1.13.1集群安装包管理工具helm">
+      <i class="fa fa-chevron-left"></i> kubernetes1.13.1集群安装包管理工具helm
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/03/2019/02/2019-02-03-%E9%A2%86%E5%AF%BC%E5%8A%9B21%E6%B3%95%E5%88%99/index/" rel="next" title="领导力21法则">
+      领导力21法则 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">参考文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">依赖关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">操作步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%83%A8%E7%BD%B2rbd-provisioner"><span class="nav-number">3.0.1.</span> <span class="nav-text">一、部署rbd-provisioner</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2storageclass"><span class="nav-number">3.0.2.</span> <span class="nav-text">二、部署storageclass</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%83%A8%E7%BD%B2harbor-helm"><span class="nav-number">3.0.3.</span> <span class="nav-text">三、部署harbor-helm</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%AE%BF%E9%97%AEharobr"><span class="nav-number">4.</span> <span class="nav-text">四、访问harobr</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

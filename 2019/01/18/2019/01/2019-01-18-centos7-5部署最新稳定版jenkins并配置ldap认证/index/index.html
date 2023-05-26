@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考文档12https:&#x2F;&#x2F;wiki.jenkins.io&#x2F;display&#x2F;JENKINS&#x2F;Installing+Jenkins+on+Red+Hat+distributionshttps:&#x2F;&#x2F;wiki.jenkins.io&#x2F;display&#x2F;JENKINS&#x2F;LDAP+Plugin  一、部署jenkins1、设置jenkins家目录环境 12345[root@VM_8_24_centos ~]#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos7.5部署最新稳定版jenkins并配置ldap认证">
+<meta property="og:url" content="https://minminmsn.github.io/2019/01/18/2019/01/2019-01-18-centos7-5%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%A8%B3%E5%AE%9A%E7%89%88jenkins%E5%B9%B6%E9%85%8D%E7%BD%AEldap%E8%AE%A4%E8%AF%81/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="参考文档12https:&#x2F;&#x2F;wiki.jenkins.io&#x2F;display&#x2F;JENKINS&#x2F;Installing+Jenkins+on+Red+Hat+distributionshttps:&#x2F;&#x2F;wiki.jenkins.io&#x2F;display&#x2F;JENKINS&#x2F;LDAP+Plugin  一、部署jenkins1、设置jenkins家目录环境 12345[root@VM_8_24_centos ~]#">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e451a5b2.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e52f1168.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e61e86b0.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e6ab2ebe.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e7fb97bf.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412e8968e1f.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412ef129292.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412f0dc4a47.png">
+<meta property="og:image" content="https://minminmsn.github.io/images/5c412f2972ee1.png">
+<meta property="article:published_time" content="2019-01-18T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:31.003Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="jenkins">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://minminmsn.github.io/images/5c412e451a5b2.png">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/01/18/2019/01/2019-01-18-centos7-5%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%A8%B3%E5%AE%9A%E7%89%88jenkins%E5%B9%B6%E9%85%8D%E7%BD%AEldap%E8%AE%A4%E8%AF%81/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Centos7.5部署最新稳定版jenkins并配置ldap认证 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/01/18/2019/01/2019-01-18-centos7-5%E9%83%A8%E7%BD%B2%E6%9C%80%E6%96%B0%E7%A8%B3%E5%AE%9A%E7%89%88jenkins%E5%B9%B6%E9%85%8D%E7%BD%AEldap%E8%AE%A4%E8%AF%81/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Centos7.5部署最新稳定版jenkins并配置ldap认证
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-18 08:00:00" itemprop="dateCreated datePublished" datetime="2019-01-18T08:00:00+08:00">2019-01-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:31" itemprop="dateModified" datetime="2023-05-26T15:06:31+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/middleware/" itemprop="url" rel="index"><span itemprop="name">middleware</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a><strong>参考文档</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://wiki.jenkins.io/display/JENKINS/Installing+Jenkins+on+Red+Hat+distributions</span><br><span class="line">https://wiki.jenkins.io/display/JENKINS/LDAP+Plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="一、部署jenkins"><a href="#一、部署jenkins" class="headerlink" title="一、部署jenkins"></a><strong>一、部署jenkins</strong></h3><p><strong>1、设置jenkins家目录环境</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# yum -y install java</span><br><span class="line">[root@VM_8_24_centos builds]# java -version</span><br><span class="line">java version &quot;1.8.0_171&quot;</span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_171-b11)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.171-b11, mixed mode)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、安装jenkins</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo</span><br><span class="line">[root@VM_8_24_centos ~]# rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key</span><br><span class="line">[root@VM_8_24_centos ~]# yum -y install jenkins</span><br><span class="line">Loaded plugins: fastestmirror, langpacks</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line">Resolving Dependencies</span><br><span class="line">--&gt; Running transaction check</span><br><span class="line">---&gt; Package jenkins.noarch 0:2.150.2-1.1 will be installed</span><br><span class="line">--&gt; Finished Dependency Resolution</span><br><span class="line"></span><br><span class="line">Installed:</span><br><span class="line">  jenkins.noarch 0:2.150.2-1.1                                                                                                       </span><br><span class="line"></span><br><span class="line">Complete!</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、修改jenkins家目录位置</strong> 默认是&#x2F;var&#x2F;lib&#x2F;jenkins，修改后启动服务，如果之前启动过，这边重启服务会重新安装插件等到新目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# mkdir /data1/jenkins/</span><br><span class="line">[root@VM_8_24_centos ~]# chown jenkins:jenkins /data1/jenkins/</span><br><span class="line">[root@VM_8_24_centos ~]# source /etc/profile</span><br><span class="line">[root@VM_8_24_centos ~]# echo $JENKINS_HOME</span><br><span class="line">/data1/jenkins</span><br><span class="line">[root@VM_8_24_centos ~]# grep JENKINS_HOME /etc/sysconfig/jenkins </span><br><span class="line">JENKINS_HOME=&quot;/data1/jenkins&quot;</span><br><span class="line"># permissions of $JENKINS_HOME and /var/log/jenkins.</span><br><span class="line"># $JENKINS_HOME location. Do not enable this, &quot;true&quot;, unless</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、启动jenkins服务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_24_centos ~]# systemctl start jenkins</span><br><span class="line">[root@VM_8_24_centos ~]# systemctl status jenkins</span><br><span class="line">● jenkins.service - LSB: Jenkins Automation Server</span><br><span class="line">   Loaded: loaded (/etc/rc.d/init.d/jenkins; bad; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Thu 2019-01-17 10:54:27 CST; 6s ago</span><br><span class="line">     Docs: man:systemd-sysv-generator(8)</span><br><span class="line">  Process: 14935 ExecStart=/etc/rc.d/init.d/jenkins start (code=exited, status=0/SUCCESS)</span><br><span class="line">   Memory: 391.4M</span><br><span class="line">   CGroup: /system.slice/jenkins.service</span><br><span class="line">           └─14960 /usr/bin/java -Dcom.sun.akuma.Daemon=daemonized -Djava.awt.headless=true -DJENKINS_HOME=/var/lib/jenkins -jar /...</span><br><span class="line">[root@VM_8_24_centos ~]# cat /data1/jenkins/secrets/initialAdminPassword</span><br><span class="line">96a4e031a951464690c093c918410793</span><br><span class="line">[root@VM_8_24_centos ~]# ls /data1/jenkins/</span><br><span class="line">config.xml                     jenkins.install.UpgradeWizard.state  nodeMonitors.xml  secret.key.not-so-secret  users</span><br><span class="line">hudson.model.UpdateCenter.xml  jenkins.telemetry.Correlator.xml     nodes             secrets</span><br><span class="line">identity.key.enc               jobs                                 plugins           updates</span><br><span class="line">jenkins.CLI.xml                logs                                 secret.key        userContent</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、初始化jenkins环境"><a href="#二、初始化jenkins环境" class="headerlink" title="二、初始化jenkins环境"></a><strong>二、初始化jenkins环境</strong></h3><p><strong>1、浏览器打开ip:8080端口输入密码</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e451a5b2.png"><img src="/images/5c412e451a5b2.png"></a></p>
+</blockquote>
+<p><strong>2、选择安装插件</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e52f1168.png"><img src="/images/5c412e52f1168.png"></a> <a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e61e86b0.png"><img src="/images/5c412e61e86b0.png"></a></p>
+</blockquote>
+<p><strong>3、创建初始管理账号</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e6ab2ebe.png"><img src="/images/5c412e6ab2ebe.png"></a></p>
+</blockquote>
+<p><strong>4、设置jenkins url默认<a target="_blank" rel="noopener" href="http://ip:8080/">http://ip:8080</a></strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e7fb97bf.png"><img src="/images/5c412e7fb97bf.png"></a></p>
+</blockquote>
+<p><strong>5、开始使用jenkins</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412e8968e1f.png"><img src="/images/5c412e8968e1f.png"></a></p>
+</blockquote>
+<p><strong>6、jenkins控制台界面，主要配置都在系统管理中</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412ef129292.png"><img src="/images/5c412ef129292.png"></a></p>
+</blockquote>
+<h3 id="三、配置ldap"><a href="#三、配置ldap" class="headerlink" title="三、配置ldap"></a><strong>三、配置ldap</strong></h3><p><strong>1、系统配置-全局安全配置-Security Realm-选择LDAP-Advanced Service Configtion</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412f0dc4a47.png"><img src="/images/5c412f0dc4a47.png"></a></p>
+</blockquote>
+<p><strong>2、Security Realm-Authorization-Add user or group设置权限</strong></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/18/5c412f2972ee1.png"><img src="/images/5c412f2972ee1.png"></a></p>
+</blockquote>
+<p><strong>3、域账号登陆</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jenkins/" rel="tag"># jenkins</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/15/2019/01/2019-01-15-%E5%AD%A6%E4%B9%A0%E9%98%B3%E6%98%8E%E5%BF%83%E5%AD%A6%E4%B9%A6%E7%B1%8D%E6%8E%A8%E8%8D%90/index/" rel="prev" title="学习阳明心学书籍推荐">
+      <i class="fa fa-chevron-left"></i> 学习阳明心学书籍推荐
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/21/2019/01/2019-01-21-kubernets1-13-1%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8ceph-rbd%E5%9D%97%E5%AD%98%E5%82%A8/index/" rel="next" title="kubernets1.13.1集群使用ceph rbd块存储">
+      kubernets1.13.1集群使用ceph rbd块存储 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">参考文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%83%A8%E7%BD%B2jenkins"><span class="nav-number">2.</span> <span class="nav-text">一、部署jenkins</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96jenkins%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">二、初始化jenkins环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%85%8D%E7%BD%AEldap"><span class="nav-number">4.</span> <span class="nav-text">三、配置ldap</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

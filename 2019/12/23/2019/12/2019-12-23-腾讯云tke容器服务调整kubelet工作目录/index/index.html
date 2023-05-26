@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"minminmsn.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="腾讯云默认kubelet工作目录在&#x2F;var&#x2F;lib&#x2F;kubelet使用的是系统盘，系统盘一般不够大也不方便扩容，所以需要修改kubelet工作目录。大概流程如下：  准备工作  驱逐节点  修改配置  重启服务  解封节点  验证服务   准备工作 查找kubelet启动文件，一般配置信息在启动文件中 123456789101112131415161718192021">
+<meta property="og:type" content="article">
+<meta property="og:title" content="腾讯云tke容器服务调整kubelet工作目录">
+<meta property="og:url" content="https://minminmsn.github.io/2019/12/23/2019/12/2019-12-23-%E8%85%BE%E8%AE%AF%E4%BA%91tke%E5%AE%B9%E5%99%A8%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4kubelet%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95/index/index.html">
+<meta property="og:site_name" content="MinMinMsn">
+<meta property="og:description" content="腾讯云默认kubelet工作目录在&#x2F;var&#x2F;lib&#x2F;kubelet使用的是系统盘，系统盘一般不够大也不方便扩容，所以需要修改kubelet工作目录。大概流程如下：  准备工作  驱逐节点  修改配置  重启服务  解封节点  验证服务   准备工作 查找kubelet启动文件，一般配置信息在启动文件中 123456789101112131415161718192021">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-23T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-05-26T07:06:33.278Z">
+<meta property="article:author" content="Jerry Min">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://minminmsn.github.io/2019/12/23/2019/12/2019-12-23-%E8%85%BE%E8%AE%AF%E4%BA%91tke%E5%AE%B9%E5%99%A8%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4kubelet%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95/index/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>腾讯云tke容器服务调整kubelet工作目录 | MinMinMsn</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">MinMinMsn</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://minminmsn.github.io/2019/12/23/2019/12/2019-12-23-%E8%85%BE%E8%AE%AF%E4%BA%91tke%E5%AE%B9%E5%99%A8%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4kubelet%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jerry Min">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MinMinMsn">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          腾讯云tke容器服务调整kubelet工作目录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-23 08:00:00" itemprop="dateCreated datePublished" datetime="2019-12-23T08:00:00+08:00">2019-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-05-26 15:06:33" itemprop="dateModified" datetime="2023-05-26T15:06:33+08:00">2023-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cloud/" itemprop="url" rel="index"><span itemprop="name">cloud</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>腾讯云默认kubelet工作目录在&#x2F;var&#x2F;lib&#x2F;kubelet使用的是系统盘，系统盘一般不够大也不方便扩容，所以需要修改kubelet工作目录。大概流程如下：</strong></p>
+<ul>
+<li><p>准备工作</p>
+</li>
+<li><p>驱逐节点</p>
+</li>
+<li><p>修改配置</p>
+</li>
+<li><p>重启服务</p>
+</li>
+<li><p>解封节点</p>
+</li>
+<li><p>验证服务</p>
+</li>
+</ul>
+<p><strong>准备工作</strong> 查找kubelet启动文件，一般配置信息在启动文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# locate kubelet.service</span><br><span class="line">/etc/systemd/system/multi-user.target.wants/kubelet.service</span><br><span class="line">/usr/lib/systemd/system/kubelet.service</span><br><span class="line">[root@VM_8_9_centos ~]# ls -lh /usr/lib/systemd/system/kubelet.service </span><br><span class="line">[root@VM_8_9_centos ~]# ls -lh  /etc/systemd/system/multi-user.target.wants/kubelet.service</span><br><span class="line">lrwxrwxrwx 1 root root 39 Sep 25 11:59 /etc/systemd/system/multi-user.target.wants/kubelet.service -&gt; /usr/lib/systemd/system/kubelet.service</span><br><span class="line"></span><br><span class="line">[root@VM_8_9_centos ~]# cat /usr/lib/systemd/system/kubelet.service </span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description=kubelet</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Environment=QCLOUD_NORM_URL=</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/kubelet</span><br><span class="line">ExecStart=/usr/bin/kubelet $&#123;CNI_BIN_DIR&#125; $&#123;KUBE_RESERVED&#125; $&#123;MAX_PODS&#125; $&#123;CLOUD_PROVIDER&#125; $&#123;CLOUD_CONFIG&#125; $&#123;POD_INFRA_CONTAINER_IMAGE&#125; $&#123;CLUSTER_DOMAIN&#125; $&#123;ALLOW_PRIVILEGED&#125; $&#123;REGISTER_SCHEDULABLE&#125; $&#123;FAIL_SWAP_ON&#125; $&#123;ANONYMOUS_AUTH&#125; $&#123;IMAGE_PULL_PROGRESS_DEADLINE&#125; $&#123;HOSTNAME_OVERRIDE&#125; $&#123;EVICTION_HARD&#125; $&#123;AUTHENTICATION_TOKEN_WEBHOOK&#125; $&#123;CLIENT_CA_FILE&#125; $&#123;AUTHORIZATION_MODE&#125; $&#123;CLUSTER_DNS&#125; $&#123;NON_MASQUERADE_CIDR&#125; $&#123;NETWORK_PLUGIN&#125; $&#123;KUBECONFIG&#125; $&#123;V&#125;</span><br><span class="line">ExecStartPost=-/bin/bash /etc/kubernetes/deny-tcp-port-10250.sh</span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>根据启动文件发现环境文件在kubelet中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# cat /etc/kubernetes/kubelet</span><br><span class="line">CNI_BIN_DIR=&quot;--cni-bin-dir=/opt/cni/bin/&quot;</span><br><span class="line">KUBE_RESERVED=&quot;--kube-reserved=cpu=90m,memory=1830Mi&quot;</span><br><span class="line">MAX_PODS=&quot;--max-pods=253&quot;</span><br><span class="line">CLOUD_PROVIDER=&quot;--cloud-provider=qcloud&quot;</span><br><span class="line">CLOUD_CONFIG=&quot;--cloud-config=/etc/kubernetes/qcloud.conf&quot;</span><br><span class="line">POD_INFRA_CONTAINER_IMAGE=&quot;--pod-infra-container-image=ccr.ccs.tencentyun.com/library/pause:latest&quot;</span><br><span class="line">CLUSTER_DOMAIN=&quot;--cluster-domain=cluster.local&quot;</span><br><span class="line">ALLOW_PRIVILEGED=&quot;--allow-privileged=true&quot;</span><br><span class="line">REGISTER_SCHEDULABLE=&quot;--register-schedulable=true&quot;</span><br><span class="line">FAIL_SWAP_ON=&quot;--fail-swap-on=false&quot;</span><br><span class="line">ANONYMOUS_AUTH=&quot;--anonymous-auth=false&quot;</span><br><span class="line">IMAGE_PULL_PROGRESS_DEADLINE=&quot;--image-pull-progress-deadline=10m0s&quot;</span><br><span class="line">HOSTNAME_OVERRIDE=&quot;--hostname-override=192.168.8.9&quot;</span><br><span class="line">EVICTION_HARD=&quot;--eviction-hard=nodefs.available&lt;10%,nodefs.inodesFree&lt;5%,imagefs.available&lt;15%,memory.available&lt;100Mi&quot;</span><br><span class="line">AUTHENTICATION_TOKEN_WEBHOOK=&quot;--authentication-token-webhook=true&quot;</span><br><span class="line">CLIENT_CA_FILE=&quot;--client-ca-file=/etc/kubernetes/cluster-ca.crt&quot;</span><br><span class="line">AUTHORIZATION_MODE=&quot;--authorization-mode=Webhook&quot;</span><br><span class="line">CLUSTER_DNS=&quot;--cluster-dns=172.16.255.48&quot;</span><br><span class="line">NON_MASQUERADE_CIDR=&quot;--non-masquerade-cidr=0.0.0.0/0&quot;</span><br><span class="line">NETWORK_PLUGIN=&quot;--network-plugin=cni&quot;</span><br><span class="line">KUBECONFIG=&quot;--kubeconfig=/etc/kubernetes/kubelet-kubeconfig&quot;</span><br><span class="line">V=&quot;--v=2&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>驱逐节点</strong> 驱逐会自动封锁节点（将节点内pod驱逐到集群中其他节点上，不影响集群使用，DaemonSet pod除外），驱逐后会检查节点为不可调度状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# kubectl drain 192.168.8.9</span><br><span class="line">node/192.168.8.9 cordoned</span><br><span class="line">error: unable to drain node &quot;192.168.8.9&quot;, aborting command...</span><br><span class="line"></span><br><span class="line">There are pending nodes to be drained:</span><br><span class="line"> 192.168.8.9</span><br><span class="line">error: DaemonSet-managed pods (use --ignore-daemonsets to ignore): rancher-logging-fluentd-tlqnq, rancher-logging-log-aggregator-m5g69, registry-proxy-xkmk5, exporter-node-cluster-monitoring-t5jj7, cattle-node-agent-j8wcn, ccs-log-collector-x57f8, ip-masq-agent-xt9q2, tke-bridge-agent-8rxgl, tke-cni-agent-lvv98; pods with local storage (use --delete-local-data to override): coupon-service-1, yuedi-passenger-api-1, coupon-service-1, rental-api-1, passenger-api-0, eureka-1, service-9777bd6ff-bsnj7, rental-service-0, passenger-api-0, swift-778d866966-c6nk7</span><br><span class="line"></span><br><span class="line">[root@VM_8_9_centos ~]# kubectl get nodes</span><br><span class="line">NAME        STATUS                     ROLES    AGE    VERSION</span><br><span class="line">192.168.8.14   Ready                      &lt;none&gt;   89d    v1.12.4-tke.10</span><br><span class="line">192.168.8.15   Ready                      &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.3    Ready                      &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.4    Ready                      &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.9    Ready,SchedulingDisabled   &lt;none&gt;   89d    v1.12.4-tke.10</span><br><span class="line"></span><br><span class="line">[root@VM_8_9_centos ~]# ls /data/</span><br><span class="line">docker  kubelet  lost+found</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改配置</strong> 修改kubelet配置文件第一行添加kubelet 目录参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]#  head -n 1 /etc/kubernetes/kubelet</span><br><span class="line">ROOT_DIR=&quot;--root-dir=/data/kubelet&quot;</span><br></pre></td></tr></table></figure>
+
+<p>修改启动配置文件添加ROOT_DIR参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# vim /usr/lib/systemd/system/kubelet.service </span><br><span class="line">ExecStart=/usr/bin/kubelet $&#123;ROOT_DIR&#125; $&#123;CNI_BIN_DIR&#125; $&#123;KUBE_RESERVED&#125; $&#123;MAX_PODS&#125; $&#123;CLOUD_PROVIDER&#125; $&#123;CLOUD_CONFIG&#125; $&#123;POD_INFRA_CONTAINER_IMAGE&#125; $&#123;CLUSTER_DOMAIN&#125; $&#123;ALLOW_PRIVILEGED&#125; $&#123;REGISTER_SCHEDULABLE&#125; $&#123;FAIL_SWAP_ON&#125; $&#123;ANONYMOUS_AUTH&#125; $&#123;IMAGE_PULL_PROGRESS_DEADLINE&#125; $&#123;HOSTNAME_OVERRIDE&#125; $&#123;EVICTION_HARD&#125; $&#123;AUTHENTICATION_TOKEN_WEBHOOK&#125; $&#123;CLIENT_CA_FILE&#125; $&#123;AUTHORIZATION_MODE&#125; $&#123;CLUSTER_DNS&#125; $&#123;NON_MASQUERADE_CIDR&#125; $&#123;NETWORK_PLUGIN&#125; $&#123;KUBECONFIG&#125; $&#123;V&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>重启服务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# systemctl daemon-reload </span><br><span class="line">[root@VM_8_9_centos ~]# systemctl restart kubelet</span><br><span class="line">[root@VM_8_9_centos ~]# systemctl status kubelet -l</span><br><span class="line">● kubelet.service - kubelet</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; vendor preset: disabled)ls /</span><br><span class="line">   Active: active (running) since Mon 2019-12-23 16:38:04 CST; 1min 2s ago</span><br><span class="line">  Process: 24745 ExecStartPost=/bin/bash /etc/kubernetes/deny-tcp-port-10250.sh (code=exited, status=0/SUCCESS)</span><br><span class="line"> Main PID: 24744 (kubelet)</span><br><span class="line">    Tasks: 26</span><br><span class="line">   Memory: 49.2M</span><br><span class="line">   CGroup: /system.slice/kubelet.service</span><br><span class="line">           └─24744 /usr/bin/kubelet --root-dir=/data/kubelet --cni-bin-dir=/opt/cni/bin/ --kube-reserved=cpu=90m,memory=1830Mi --max-pods=253 --cloud-provider=qcloud --cloud-config=/etc/kubernetes/qcloud.conf --pod-infra-container-image=ccr.ccs.tencentyun.com/library/pause:latest --cluster-domain=cluster.local --allow-privileged=true --register-schedulable=true --fail-swap-on=false --anonymous-auth=false --image-pull-progress-deadline=10m0s --hostname-override=192.168.8.9 --eviction-hard=nodefs.available&lt;10%,nodefs.inodesFree&lt;5%,imagefs.available&lt;15%,memory.available&lt;100Mi --authentication-token-webhook=true --client-ca-file=/etc/kubernetes/cluster-ca.crt --authorization-mode=Webhook --cluster-dns=172.16.255.48 --non-masquerade-cidr=0.0.0.0/0 --network-plugin=cni --kubeconfig=/etc/kubernetes/kubelet-kubeconfig  --v=2</span><br></pre></td></tr></table></figure>
+
+<p><strong>取消封锁</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# kubectl uncordon 192.168.8.9</span><br><span class="line">node/192.168.8.9 uncordoned</span><br></pre></td></tr></table></figure>
+
+<p><strong>验证效果</strong></p>
+<p>查看节点信息正常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# kubectl get nodes</span><br><span class="line">NAME        STATUS   ROLES    AGE    VERSION</span><br><span class="line">192.168.8.14   Ready    &lt;none&gt;   89d    v1.12.4-tke.10</span><br><span class="line">192.168.8.15   Ready    &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.3    Ready    &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.4    Ready    &lt;none&gt;   181d   v1.12.4-tke.3</span><br><span class="line">192.168.8.9    Ready    &lt;none&gt;   89d    v1.12.4-tke.10</span><br></pre></td></tr></table></figure>
+
+<p>新建kubelet目录在data下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@VM_8_9_centos ~]# ls /data/kubelet/</span><br><span class="line">cpu_manager_state  plugin-containers  plugins  pods</span><br><span class="line">[root@VM_8_9_centos ~]# du -sh /data/kubelet/</span><br><span class="line">480K    /data/kubelet/</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/19/2019/12/2019-12-19-mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E6%B1%87%E6%80%BB/index/" rel="prev" title="MySQL数据库常用操作汇总">
+      <i class="fa fa-chevron-left"></i> MySQL数据库常用操作汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/24/2019/12/2019-12-24-wordpress5-3-2%E6%89%8B%E5%8A%A8%E6%9B%B4%E6%96%B0/index/" rel="next" title="WordPress5.3.2手动更新">
+      WordPress5.3.2手动更新 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jerry Min</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">260</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Min</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
